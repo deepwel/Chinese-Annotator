@@ -93,5 +93,6 @@ Paper: http://www.jlcl.org/2011_Heft2/11.pdf
 和著名的spacy是一家做的
 
 Website: https://prodi.gy/docs/
- 
+
+Blog: https://explosion.ai/blog/prodigy-annotation-tool-active-learning
  
