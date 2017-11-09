@@ -1,9 +1,11 @@
 # Chinese-Annotator
-Annotator for Chinese Text Corpus (under development, welcome for ideas and codes)
 
-Many NLP tasks require many labelling data. Current annotators are mostly for English. We want to develop Chinese Annotator based on some open source annotators.
+Annotator for Chinese Text Corpus (under development, welcome for ideas and contributions)
 
-Reference:
+Many NLP tasks require lots of labelling data. Current annotators are mostly for English. We want to develop a Chinese Annotator based on existing open source technologies.
+
+
+## Reference:
 
 
 ### IEPY
