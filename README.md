@@ -6,7 +6,7 @@ Many NLP tasks require many labelling data. Current annotators are mostly for En
 Reference:
 
 
-**** IEPY
+### IEPY
 
 整个工程比较完整，有用户管理系统。前端略重，对用户不是非常友好
 
@@ -15,7 +15,7 @@ Reference:
 说明 http://iepy.readthedocs.io/en/latest/index.html
 
  
-**** DeepDive (Mindtagger)
+### DeepDive (Mindtagger)
 
 Screenshot of Mindtagger precision task in progress
 
@@ -34,7 +34,7 @@ https://github.com/qiangsiwei/DeepDive_Chinese
 https://github.com/mcavdar/deepdive/commit/6882178cbd38a5bbbf4eee8b76b1e215537425b2
 
  
-**** BRAT
+### BRAT
 
 介绍 http://brat.nlplab.org/index.html
 
@@ -43,7 +43,7 @@ https://github.com/mcavdar/deepdive/commit/6882178cbd38a5bbbf4eee8b76b1e21553742
 代码 https://github.com/nlplab/brat
 
  
-**** SUTDAnnotator
+### SUTDAnnotator
 
 用的不是网页前端而是pythonGUI，但比较轻量。
 
@@ -52,7 +52,7 @@ https://github.com/mcavdar/deepdive/commit/6882178cbd38a5bbbf4eee8b76b1e21553742
 Paper https://github.com/jiesutd/SUTDAnnotator/blob/master/lrec2018.pdf
  
  
-**** Snorkel
+### Snorkel
 
 Page: https://hazyresearch.github.io/snorkel/
 
@@ -61,14 +61,14 @@ Github: https://github.com/HazyResearch/snorkel
 Demo Paper:https://hazyresearch.github.io/snorkel/pdfs/snorkel_demo.pdf
  
  
-**** Slate
+### Slate
 
 Code: https://bitbucket.org/dainkaplan/slate/
 
 Paper: http://www.jlcl.org/2011_Heft2/11.pdf
  
  
-**** Prodigy
+### Prodigy
 
 和著名的spacy是一家做的
 
