@@ -139,7 +139,7 @@ Code: https://bitbucket.org/dainkaplan/slate/
 Paper: http://www.jlcl.org/2011_Heft2/11.pdf
  
  
-### Prodigy
+### Prodigy(闭源)
 
 ![](/images/9.png)
 
@@ -148,4 +148,12 @@ Paper: http://www.jlcl.org/2011_Heft2/11.pdf
 Website: https://prodi.gy/docs/
 
 Blog: https://explosion.ai/blog/prodigy-annotation-tool-active-learning
+
+
+### labelme(闭源)
+
+[Blog](https://www.toutiao.com/a6486320837224825358/?tt_from=weixin&utm_campaign=client_share&app=news_article&utm_source=weixin&iid=17348668095&utm_medium=toutiao_android&wxshare_count=1)
+
+labelme只有“文本类目标注和关键词标注”两种task；另外active learning的思路基本一致但貌似还没有实现。
+
  
