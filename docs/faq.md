@@ -11,4 +11,4 @@
 这也可以是写入配置文件的参数。一种是用户标够了100个或提前设置好的足够多的新的数据，就可以启用offline model进行训练；另一种是给用户一个按钮，用户可以点击启动后台的offline模型训练并给出进度条。
 
 ## 4.系统使用什么格式的配置文件？
-推荐json格式的.config文件。请参考一个例子在[这里](https://github.com/crownpku/Rasa_NLU_Chi/tree/master/sample_configs)
+推荐json格式的配置文件。请参考一个例子在[这里](https://github.com/crownpku/Rasa_NLU_Chi/tree/master/sample_configs)
