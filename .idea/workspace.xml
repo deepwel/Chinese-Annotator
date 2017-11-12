@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="20286c5b-ad88-4d6b-a86e-ccaa0389d24e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/config/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/offline/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/online/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/faq.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/procedure.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Chinese-Annotator.iml" afterPath="$PROJECT_DIR$/.idea/Chinese-Annotator.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/archi.md" afterPath="$PROJECT_DIR$/docs/archi.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/procedure.md" afterPath="$PROJECT_DIR$/docs/procedure.md" />
     </list>
     <ignored path="Chinese-Annotator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="faq.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="faq.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/faq.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.1586369">
+            <state vertical-scroll-proportion="-4.5">
               <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
               <folding />
             </state>
@@ -81,12 +72,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="procedure.md" pinned="false" current-in-tab="false">
+      <file leaf-file-name="procedure.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docs/procedure.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="FIRST">
-              <first_editor vertical-scroll-proportion="0.5090909">
-                <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+              <first_editor vertical-scroll-proportion="0.6545454">
+                <caret line="72" column="13" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="13" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -618,11 +609,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/procedure.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+    <entry file="file://$PROJECT_DIR$/docs/faq.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.5">
+          <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="FIRST">
-          <first_editor vertical-scroll-proportion="0.5090909">
-            <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <first_editor vertical-scroll-proportion="0.0">
+            <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
             <folding />
           </first_editor>
           <second_editor />
@@ -632,17 +629,11 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/faq.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1586369">
-          <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+    <entry file="file://$PROJECT_DIR$/docs/procedure.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="FIRST">
-          <first_editor vertical-scroll-proportion="0.0">
-            <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <first_editor vertical-scroll-proportion="0.6545454">
+            <caret line="72" column="13" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="13" />
             <folding />
           </first_editor>
           <second_editor />

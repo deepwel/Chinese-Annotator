@@ -16,7 +16,7 @@ Text Classification
 ### step 1: 用户点击页面上的评价按钮 例如：accept 
 ### step 2: 通过ajax方式 异步调用后台的 accept api
 前端传过来的请求参数(request param) 
-```
+```javascript
 {
 	"_id":ObjectId("dfjl32jljfdlsjldf"),
 	"label":"org",
@@ -47,7 +47,7 @@ def do_online_annotation(text, ):
 
 表： dataset
 目标数据集
-```
+```javascript
 {
 	"_id": ObjectId("dfjl32jljfdlsjldf")
 	"text":"联想"，
@@ -61,7 +61,7 @@ def do_online_annotation(text, ):
 
 表： history
 单条标注的操作记录
-```
+```javascript
 {
 	"_id": ObjectId("dfjl32jljfdlsjldf")  # 关联到to_be_labeled
 	"action":"accept" # enum type: accept reject ignore cancel
@@ -70,7 +70,7 @@ def do_online_annotation(text, ):
 ```
 
 ### step 4: 后台api 返回json格式的结果 到前端用户
-```
+```javascript
 {
 	"code": 200, # 状态码  200：成功
 	"msg": "标注成功", # 提示信息
