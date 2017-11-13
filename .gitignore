@@ -93,6 +93,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+.idea/
 
 # mkdocs documentation
 /site
