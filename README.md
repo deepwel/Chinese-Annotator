@@ -5,7 +5,7 @@ Annotator for Chinese Text Corpus (under development, welcome for ideas and cont
 Many NLP tasks require lots of labelling data. Current annotators are mostly for English. We want to develop a Chinese Annotator based on existing open source technologies.
 
 
-# Project Allignment
+## Project Allignment
 
 
 
@@ -40,7 +40,7 @@ Many NLP tasks require lots of labelling data. Current annotators are mostly for
 
 
 
-# 构想：中文文本标注工具
+## 构想：中文文本标注工具
 
 
 
