@@ -28,7 +28,7 @@ Many NLP tasks require lots of labelling data. Current annotators are mostly for
 │       ├── apis
 │       └── static
 │   ├── data                # Database module
-│   ├── user_instance       # User Instance module holding config files for specific tasks
+│   └── user_instance       # User Instance module holding config files for specific tasks
 │       └── examples        # User Instance examples
 |           ├── classify    # Text Classfication
 |           ├── ner         # Named Entity Recognition
