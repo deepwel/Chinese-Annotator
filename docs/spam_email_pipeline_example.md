@@ -2,7 +2,7 @@
 
 * 原始数据在 /tests/data/spam_emails_chi
 
-* 用 [xxx] 来代表程序模块，用 <xxx> 来代表配置参数。
+* 用 [xxx] 来代表程序模块，用 < xxx > 来代表配置参数。
     
 * 此处以尽可能最简单的步骤，实现整个workflow；整个workflow应该预先配置好在 [user_instance] 的config文件中。
 
