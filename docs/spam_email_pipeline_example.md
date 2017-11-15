@@ -2,7 +2,7 @@
 
 * 原始数据在 /tests/data/spam_emails_chi
 
-* 用 [xxx] 来代表程序模块，用 < xxx > 来代表配置参数。
+* 用 [xxx] 来代表程序模块，用 <xxx> 来代表配置参数。
     
 * 此处以尽可能最简单的步骤，实现整个workflow；整个workflow应该预先配置好在 [user_instance] 的config文件中。
 
@@ -12,7 +12,7 @@
 
 2. [task_center] 随机调取最初的 <batch_num> 个句子，传去[WebUI]，一个一个供用户进行spam or not的标注。
 
-3. 新标注数据(golden data)保存于 [database] 中，同时传送给 [algo_factory/online] 的SVM算法，进行实时online training (此处是算法大牛们施展功力的时候)，然后随机选取 <inference_num> 个句子进行预测，找出confidence最低的 <low_conf_num> 个句子，传送给webUI再次进行标注。
+3. 新标注数据(golden data)保存于 [database] 中，同时传送给 [algo_factory/online] 的feature extractor和SVM算法，进行实时online training (此处是算法大牛们施展功力的时候)，然后随机选取 <inference_num> 个句子进行预测，找出confidence最低的 <low_conf_num> 个句子，传送给webUI再次进行标注。
 
 4. 重复2-3的过程，直到所有句子标注结束 或 [algo_factory/online]对全量数据进行预测后confidence达到 <期望阈值>. 将 [algo_factory/online] 模型参数保存去 [user_instance].
 
