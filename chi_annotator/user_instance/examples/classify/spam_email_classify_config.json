@@ -1,0 +1,19 @@
+{
+  "name": "email_spam_classification",
+  "model_type" : "classification",
+  "pipeline": ["nlp_word2vec",
+               "linesplit_preprocess",
+               "feature_extractor",
+               "online_svm_classifier_sklearn".
+               "offline_svm_classifier_sklearn"],
+  "language": "zh",
+  "wordvec_file": "./tests/data/vec.txt",
+  "path" : "./tests/models",
+  "org_data" : "./tests/data/spam_emails_chi",
+  "database_name" : "spam_emails_chi",
+  "labels": ["spam","notspam"],
+  "batch_num" : "10",
+  "inference_num" : "20",
+  "low_conf_num" : "10",
+  "confidence_threshold" : "0.95"
+}
