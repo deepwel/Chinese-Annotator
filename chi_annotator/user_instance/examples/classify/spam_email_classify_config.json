@@ -4,7 +4,7 @@
   "pipeline": ["nlp_word2vec",
                "linesplit_preprocess",
                "feature_extractor",
-               "online_svm_classifier_sklearn".
+               "online_svm_classifier_sklearn",
                "offline_svm_classifier_sklearn"],
   "language": "zh",
   "wordvec_file": "./tests/data/vec.txt",
