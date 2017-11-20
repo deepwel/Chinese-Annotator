@@ -1,23 +1,9 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
 import logging
 import os
 from collections import defaultdict
 
-import typing
 from builtins import object
 import inspect
-
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Set
-from typing import Text
-from typing import Tuple
 
 from rasa_nlu.config import RasaNLUConfig
 from rasa_nlu.training_data import Message
