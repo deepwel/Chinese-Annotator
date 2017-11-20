@@ -1,122 +1,133 @@
-import logging
-import os
-from collections import defaultdict
+from utils import ordered
+from utils import lazyproperty
 
-from builtins import object
-import inspect
+class Message(object):
+    """basic moudule for data"""
+    def __init__(self, text, data=None, output_properties=None, time=None):
+        self.text = text
+        self.time = time
+        self.data = data if data else {}
+        self.output_properties = output_properties if output_properties else set()
 
-from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.training_data import Message
+    def set(self, prop, info, add_to_output=False):
+        self.data[prop] = info
+        if add_to_output:
+            self.output_properties.add(prop)
 
-if typing.TYPE_CHECKING:
-    from rasa_nlu.training_data import TrainingData
-    from rasa_nlu.model import Metadata
-
-logger = logging.getLogger(__name__)
-
-
-def _read_dev_requirements(file_name):
-    """Reads the dev requirements and groups the pinned versions into sections indicated by comments in the file.
-
-    The dev requirements should be grouped by preceeding comments. The comment should start with `#` followed by
-    the name of the requirement, e.g. `# sklearn`. All following lines till the next line starting with `#` will be
-    required to be installed if the name `sklearn` is requested to be available."""
-
-    # pragma: no cover
-    try:
-        import pkg_resources
-        req_lines = pkg_resources.resource_string("rasa_nlu", "../" + file_name).split("\n")
-    except Exception as e:
-        logger.info("Couldn't read dev-requirements.txt. Error: {}".format(e))
-        req_lines = []
-    return _requirements_from_lines(req_lines)
-
-
-def _requirements_from_lines(req_lines):
-    requirements = defaultdict(list)
-    current_name = None
-    for req_line in req_lines:
-        if req_line.startswith("#"):
-            current_name = req_line[1:].strip(' \n')
-        elif current_name is not None:
-            requirements[current_name].append(req_line.strip(' \n'))
-    return requirements
-
-
-def find_unavailable_packages(package_names):
-    # type: (List[Text]) -> Set[Text]
-    """Tries to import all the package names and returns the packages where it failed."""
-    import importlib
-
-    failed_imports = set()
-    for package in package_names:
-        try:
-            importlib.import_module(package)
-        except ImportError:
-            failed_imports.add(package)
-    return failed_imports
-
-
-def validate_requirements(component_names, dev_requirements_file="alt_requirements/requirements_dev.txt"):
-    # type: (List[Text], Text) -> None
-    """Ensures that all required python packages are installed to instantiate and used the passed components."""
-    from rasa_nlu import registry
-
-    # Validate that all required packages are installed
-    failed_imports = set()
-    for component_name in component_names:
-        component_class = registry.get_component_class(component_name)
-        failed_imports.update(find_unavailable_packages(component_class.required_packages()))
-    if failed_imports:  # pragma: no cover
-        # if available, use the development file to figure out the correct version numbers for each requirement
-        all_requirements = _read_dev_requirements(dev_requirements_file)
-        if all_requirements:
-            missing_requirements = [r for i in failed_imports for r in all_requirements[i]]
-            raise Exception("Not all required packages are installed. " +
-                            "Failed to find the following imports {}. ".format(", ".join(failed_imports)) +
-                            "To use this pipeline, you need to install the missing dependencies, e.g. by running:\n\t" +
-                            "> pip install {}".format(" ".join(missing_requirements)))
+    def update(self, prop, info, add_to_output=False):
+        if prop in self.data:
+            if type(info) != type(self.data[prop]):
+                return False
+            if isinstance(self.data[prop], list):
+                self.data[prop].extend(info)
+            elif isinstance(self.data[prop], dict) or isinstance(self.data[prop], set):
+                self.data[prop].update(info)
+            else:
+                return False
         else:
-            raise Exception("Not all required packages are installed. " +
-                            "To use this pipeline, you need to install the missing dependencies. " +
-                            "Please install {}".format(", ".join(failed_imports)))
+            self.data[prop] = info
+        if add_to_output:
+            self.output_properties.add(prop)
+        return True
+
+    def get(self, prop, default=None):
+        return self.data.get(prop, default)
+
+    def as_dict(self, only_output_properties=False):
+        if only_output_properties:
+            d = {key: value for key, value in self.data.items() if key in self.output_properties}
+        else:
+            d = self.data
+        return dict(d, text=self.text)
+
+    def __eq__(self, other):
+        if not isinstance(other, Message):
+            return False
+        else:
+            return (other.text, ordered(other.data)) == (self.text, ordered(self.data))
+
+    def __hash__(self):
+        return hash((self.text, str(ordered(self.data))))
 
 
-def validate_arguments(pipeline, context, allow_empty_pipeline=False):
-    # type: (List[Component], Dict[Text, Any], bool) -> None
-    """Validates a pipeline before it is run. Ensures, that all arguments are present to train the pipeline."""
+class TrainingData(object):
+    """Holds loaded intent and entity training data."""
 
-    # Ensure the pipeline is not empty
-    if not allow_empty_pipeline and len(pipeline) == 0:
-        raise ValueError("Can not train an empty pipeline. " +
-                         "Make sure to specify a proper pipeline in the configuration using the `pipeline` key." +
-                         "The `backend` configuration key is NOT supported anymore.")
+    # Validation will ensure and warn if these lower limits are not met
+    MIN_EXAMPLES_PER_INTENT = 2
+    MIN_EXAMPLES_PER_ENTITY = 2
 
-    provided_properties = set(context.keys())
+    def __init__(self, training_examples=None):
+        # type: (Optional[List[Message]], Optional[Dict[Text, Text]]) -> None
 
-    for component in pipeline:
-        for r in component.requires:
-            if r not in provided_properties:
-                raise Exception("Failed to validate at component '{}'. Missing property: '{}'".format(
-                    component.name, r))
-        provided_properties.update(component.provides)
+        self.training_examples = self.sanitice_examples(training_examples) if training_examples else []
+        self.validate()
 
+    def sanitice_examples(self, examples):
+        # type: (List[Message]) -> List[Message]
+        """Makes sure the training data is cleaned, e.q. removes trailing whitespaces from intent annotations."""
 
-class MissingArgumentError(ValueError):
-    """Raised when a function is called and not all parameters can be filled from the context / config.
+        for e in examples:
+            if e.get("intent") is not None:
+                e.set("intent", e.get("intent").strip())
+        return examples
 
-    Attributes:
-        message -- explanation of which parameter is missing
-    """
+    @lazyproperty
+    def intent_examples(self):
+        # type: () -> List[Message]
+        return [e for e in self.training_examples if e.get("intent") is not None]
 
-    def __init__(self, message):
-        # type: (Text) -> None
-        super(MissingArgumentError, self).__init__(message)
-        self.message = message
+    @lazyproperty
+    def entity_examples(self):
+        # type: () -> List[Message]
+        return [e for e in self.training_examples if e.get("entities") is not None]
 
-    def __str__(self):
-        return self.message
+    @lazyproperty
+    def num_entity_examples(self):
+        # type: () -> int
+        """Returns the number of proper entity training examples (containing at least one annotated entity)."""
 
+        return len([e for e in self.training_examples if len(e.get("entities", [])) > 0])
+
+    @lazyproperty
+    def num_intent_examples(self):
+        # type: () -> int
+        """Returns the number of intent examples."""
+
+        return len(self.intent_examples)
+
+    def as_json(self, **kwargs):
+        # type: (**Any) -> str
+        """Represent this set of training examples as json adding the passed meta information."""
+        pass
+
+    def as_markdown(self, **kwargs):
+        # type: (**Any) -> str
+        """Represent this set of training examples as markdown adding the passed meta information."""
+        pass
+
+    def persist(self, dir_name):
+        # type: (Text) -> Dict[Text, Any]
+        """Persists this training data to disk and returns necessary information to load it again."""
+        pass
+
+    def sorted_entity_examples(self):
+        # type: () -> List[Message]
+        """Sorts the entity examples by the annotated entity."""
+
+        return sorted([entity for ex in self.entity_examples for entity in ex.get("entities")],
+                      key=lambda e: e["entity"])
+
+    def sorted_intent_examples(self):
+        # type: () -> List[Message]
+        """Sorts the intent examples by the name of the intent."""
+
+        return sorted(self.intent_examples, key=lambda e: e.get("intent"))
+
+    def validate(self):
+        # type: () -> None
+        """Ensures that the loaded training data is valid, e.g. has a minimum of certain training examples."""
+        pass
 
 class Component(object):
     """A component is a message processing unit in a pipeline.
@@ -146,17 +157,10 @@ class Component(object):
     requires = []
 
     def __init__(self):
-        self.partial_processing_pipeline = None
-        self.partial_processing_context = None
+        pass
 
     def __getstate__(self):
         d = self.__dict__.copy()
-        # these properties should not be pickled
-        if "partial_processing_context" in d:
-            del d["partial_processing_context"]
-        if "partial_processing_pipeline" in d:
-            del d["partial_processing_pipeline"]
-        return d
 
     @classmethod
     def required_packages(cls):
@@ -231,28 +235,6 @@ class Component(object):
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
-
-    def prepare_partial_processing(self, pipeline, context):
-        """Sets the pipeline and context used for partial processing.
-
-        The pipeline should be a list of components that are previous to this one in the pipeline and
-        have already finished their training (and can therefore be safely used to process messages)."""
-
-        self.partial_processing_pipeline = pipeline
-        self.partial_processing_context = context
-
-    def partially_process(self, message):
-        """Allows the component to process messages during training (e.g. external training data).
-
-        The passed message will be processed by all components previous to this one in the pipeline."""
-
-        if self.partial_processing_context is not None:
-            for component in self.partial_processing_pipeline:
-                component.process(message, **self.partial_processing_context)
-        else:
-            logger.info("Failed to run partial processing due to missing pipeline.")
-        return message
-
 
 class ComponentBuilder(object):
     """Creates trainers and interpreters based on configurations. Caches components for reuse."""
