@@ -1,85 +1,6 @@
-import logging
-import os
-from collections import defaultdict
 
-from builtins import object
-import inspect
-
-from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.training_data import Message
-
-if typing.TYPE_CHECKING:
-    from rasa_nlu.training_data import TrainingData
-    from rasa_nlu.model import Metadata
-
-logger = logging.getLogger(__name__)
-
-
-def _read_dev_requirements(file_name):
-    """Reads the dev requirements and groups the pinned versions into sections indicated by comments in the file.
-
-    The dev requirements should be grouped by preceeding comments. The comment should start with `#` followed by
-    the name of the requirement, e.g. `# sklearn`. All following lines till the next line starting with `#` will be
-    required to be installed if the name `sklearn` is requested to be available."""
-
-    # pragma: no cover
-    try:
-        import pkg_resources
-        req_lines = pkg_resources.resource_string("rasa_nlu", "../" + file_name).split("\n")
-    except Exception as e:
-        logger.info("Couldn't read dev-requirements.txt. Error: {}".format(e))
-        req_lines = []
-    return _requirements_from_lines(req_lines)
-
-
-def _requirements_from_lines(req_lines):
-    requirements = defaultdict(list)
-    current_name = None
-    for req_line in req_lines:
-        if req_line.startswith("#"):
-            current_name = req_line[1:].strip(' \n')
-        elif current_name is not None:
-            requirements[current_name].append(req_line.strip(' \n'))
-    return requirements
-
-
-def find_unavailable_packages(package_names):
-    # type: (List[Text]) -> Set[Text]
-    """Tries to import all the package names and returns the packages where it failed."""
-    import importlib
-
-    failed_imports = set()
-    for package in package_names:
-        try:
-            importlib.import_module(package)
-        except ImportError:
-            failed_imports.add(package)
-    return failed_imports
-
-
-def validate_requirements(component_names, dev_requirements_file="alt_requirements/requirements_dev.txt"):
-    # type: (List[Text], Text) -> None
-    """Ensures that all required python packages are installed to instantiate and used the passed components."""
-    from rasa_nlu import registry
-
-    # Validate that all required packages are installed
-    failed_imports = set()
-    for component_name in component_names:
-        component_class = registry.get_component_class(component_name)
-        failed_imports.update(find_unavailable_packages(component_class.required_packages()))
-    if failed_imports:  # pragma: no cover
-        # if available, use the development file to figure out the correct version numbers for each requirement
-        all_requirements = _read_dev_requirements(dev_requirements_file)
-        if all_requirements:
-            missing_requirements = [r for i in failed_imports for r in all_requirements[i]]
-            raise Exception("Not all required packages are installed. " +
-                            "Failed to find the following imports {}. ".format(", ".join(failed_imports)) +
-                            "To use this pipeline, you need to install the missing dependencies, e.g. by running:\n\t" +
-                            "> pip install {}".format(" ".join(missing_requirements)))
-        else:
-            raise Exception("Not all required packages are installed. " +
-                            "To use this pipeline, you need to install the missing dependencies. " +
-                            "Please install {}".format(", ".join(failed_imports)))
+from chi_annotator.task_center import registry
+from chi_annotator.task_center.common import Metadata
 
 
 def validate_arguments(pipeline, context, allow_empty_pipeline=False):
@@ -100,24 +21,7 @@ def validate_arguments(pipeline, context, allow_empty_pipeline=False):
                 raise Exception("Failed to validate at component '{}'. Missing property: '{}'".format(
                     component.name, r))
         provided_properties.update(component.provides)
-
-
-class MissingArgumentError(ValueError):
-    """Raised when a function is called and not all parameters can be filled from the context / config.
-
-    Attributes:
-        message -- explanation of which parameter is missing
-    """
-
-    def __init__(self, message):
-        # type: (Text) -> None
-        super(MissingArgumentError, self).__init__(message)
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-
+    
 class Component(object):
     """A component is a message processing unit in a pipeline.
 
@@ -146,17 +50,11 @@ class Component(object):
     requires = []
 
     def __init__(self):
-        self.partial_processing_pipeline = None
-        self.partial_processing_context = None
+        pass
 
     def __getstate__(self):
+        # 获取当前componet的状态（成员函数，成员变量）
         d = self.__dict__.copy()
-        # these properties should not be pickled
-        if "partial_processing_context" in d:
-            del d["partial_processing_context"]
-        if "partial_processing_pipeline" in d:
-            del d["partial_processing_pipeline"]
-        return d
 
     @classmethod
     def required_packages(cls):
@@ -187,12 +85,13 @@ class Component(object):
     def provide_context(self):
         # type: () -> Optional[Dict[Text, Any]]
         """Initialize this component for a new pipeline
-
+        初始化Component所依附的额外参数
         This function will be called before the training is started and before the first message is processed using
         the interpreter. The component gets the opportunity to add information to the context that is passed through
         the pipeline during training and message parsing. Most components do not need to implement this method.
         It's mostly used to initialize framework environments like MITIE and spacy
         (e.g. loading word vectors for the pipeline)."""
+
         pass
 
     def train(self, training_data, config, **kwargs):
@@ -208,9 +107,9 @@ class Component(object):
         # type: (Message, **Any) -> None
         """Process an incomming message.
 
-       This is the components chance to process an incommng message. The component can rely on
-       any context attribute to be present, that gets created by a call to `pipeline_init` of ANY component and
-       on any context attributes created by a call to `process` of components previous to this one."""
+        This is the components chance to process an incommng message. The component can rely on
+        any context attribute to be present, that gets created by a call to `pipeline_init` of ANY component and
+        on any context attributes created by a call to `process` of components previous to this one."""
         pass
 
     def persist(self, model_dir):
@@ -222,36 +121,16 @@ class Component(object):
     def cache_key(cls, model_metadata):
         # type: (Metadata) -> Optional[Text]
         """This key is used to cache components.
-
+        如果是单例，那么返回None， 获取这个componet的cache key
         If a component is unique to a model it should return None. Otherwise, an instantiation of the
         component will be reused for all models where the metadata creates the same key."""
-        from rasa_nlu.model import Metadata
 
         return None
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    def prepare_partial_processing(self, pipeline, context):
-        """Sets the pipeline and context used for partial processing.
 
-        The pipeline should be a list of components that are previous to this one in the pipeline and
-        have already finished their training (and can therefore be safely used to process messages)."""
-
-        self.partial_processing_pipeline = pipeline
-        self.partial_processing_context = context
-
-    def partially_process(self, message):
-        """Allows the component to process messages during training (e.g. external training data).
-
-        The passed message will be processed by all components previous to this one in the pipeline."""
-
-        if self.partial_processing_context is not None:
-            for component in self.partial_processing_pipeline:
-                component.process(message, **self.partial_processing_context)
-        else:
-            logger.info("Failed to run partial processing due to missing pipeline.")
-        return message
 
 
 class ComponentBuilder(object):
@@ -266,8 +145,6 @@ class ComponentBuilder(object):
     def __get_cached_component(self, component_name, model_metadata):
         # type: (Text, Metadata) -> Tuple[Optional[Component], Optional[Text]]
         """Load a component from the cache, if it exists. Returns the component, if found, and the cache key."""
-        from rasa_nlu import registry
-        from rasa_nlu.model import Metadata
 
         component_class = registry.get_component_class(component_name)
         cache_key = component_class.cache_key(model_metadata)
@@ -287,11 +164,11 @@ class ComponentBuilder(object):
     def load_component(self, component_name, model_dir, model_metadata, **context):
         # type: (Text, Text, Metadata, **Any) -> Component
         """Tries to retrieve a component from the cache, calls `load` to create a new component."""
-        from rasa_nlu import registry
-        from rasa_nlu.model import Metadata
 
         try:
+            # 看看有没有已经cache的compnent，有的话复用就可以了
             cached_component, cache_key = self.__get_cached_component(component_name, model_metadata)
+            # 加载componet，如果没有，那么就创建一个，最终调用的是componet的load
             component = registry.load_component_by_name(component_name, model_dir,
                                                         model_metadata, cached_component, **context)
             if not cached_component:
@@ -304,8 +181,6 @@ class ComponentBuilder(object):
     def create_component(self, component_name, config):
         # type: (Text, RasaNLUConfig) -> Component
         """Tries to retrieve a component from the cache, calls `create` to create a new component."""
-        from rasa_nlu import registry
-        from rasa_nlu.model import Metadata
 
         try:
             component, cache_key = self.__get_cached_component(component_name, Metadata(config.as_dict(), None))

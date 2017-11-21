@@ -1,103 +1,18 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import datetime
 import io
 import json
 import logging
 import os
-
 import copy
-from builtins import object
-from builtins import str
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Text
 
-import rasa_nlu
-from rasa_nlu import components, utils
-from rasa_nlu.components import Component
-from rasa_nlu.components import ComponentBuilder
-from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.persistor import Persistor
-from rasa_nlu.training_data import TrainingData, Message
-from rasa_nlu.utils import create_dir
+
+from chi_annotator.task_center.components import ComponentBuilder
+from chi_annotator.task_center.components import Component
+from chi_annotator.task_center.common import Metadata
+from chi_annotator.taks_center.common import Message
+from chi_annotator.task_center.utils import *
 
 logger = logging.getLogger(__name__)
-
-
-class InvalidProjectError(Exception):
-    """Raised when a model failed to load.
-
-    Attributes:
-        message -- explanation of why the model is invalid
-    """
-
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-
-class Metadata(object):
-    """Captures all information about a model to load and prepare it."""
-
-    @staticmethod
-    def load(model_dir):
-        # type: (Text) -> 'Metadata'
-        """Loads the metadata from a models directory."""
-        try:
-            metadata_file = os.path.join(model_dir, 'metadata.json')
-            with io.open(metadata_file, encoding="utf-8") as f:
-                data = json.loads(f.read())
-            return Metadata(data, model_dir)
-        except Exception as e:
-            abspath = os.path.abspath(os.path.join(model_dir, 'metadata.json'))
-            raise InvalidProjectError("Failed to load model metadata "
-                                      "from '{}'. {}".format(abspath, e))
-
-    def __init__(self, metadata, model_dir):
-        # type: (Dict[Text, Any], Optional[Text]) -> None
-
-        self.metadata = metadata
-        self.model_dir = model_dir
-
-    def get(self, property_name, default=None):
-        return self.metadata.get(property_name, default)
-
-    @property
-    def language(self):
-        # type: () -> Optional[Text]
-        """Language of the underlying model"""
-
-        return self.get('language')
-
-    @property
-    def pipeline(self):
-        # type: () -> List[Text]
-        """Names of the processing pipeline elements."""
-
-        return self.get('pipeline', [])
-
-    def persist(self, model_dir):
-        # type: (Text) -> None
-        """Persists the metadata of a model to a given directory."""
-
-        metadata = self.metadata.copy()
-
-        metadata.update({
-            "trained_at": datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
-            "rasa_nlu_version": rasa_nlu.__version__,
-        })
-
-        with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
-            f.write(str(json.dumps(metadata, indent=4)))
-
 
 class Trainer(object):
     """Trainer will load the data and train all components.
@@ -106,7 +21,7 @@ class Trainer(object):
     the training."""
 
     # Officially supported languages (others might be used, but might fail)
-    SUPPORTED_LANGUAGES = ["de", "en"]
+    SUPPORTED_LANGUAGES = ["zh"]
 
     def __init__(self, config, component_builder=None, skip_validation=False):
         # type: (RasaNLUConfig, Optional[ComponentBuilder], bool) -> None
@@ -122,8 +37,9 @@ class Trainer(object):
 
         # Before instantiating the component classes, lets check if all
         # required packages are available
-        if not self.skip_validation:
-            components.validate_requirements(config.pipeline)
+        # TODO
+        #if not self.skip_validation:
+        #    components.validate_requirements(config.pipeline)
 
         # Transform the passed names of the pipeline components into classes
         for component_name in config.pipeline:

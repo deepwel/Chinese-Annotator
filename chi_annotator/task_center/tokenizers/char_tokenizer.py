@@ -1,4 +1,4 @@
-from chi_annotator.task_center.refactor.common import Component
+from chi_annotator.task_center.components import Component
 
 class CharTokenizer(Component):
     provides = ["tokens"]
@@ -11,3 +11,7 @@ class CharTokenizer(Component):
 
     def process(self, samples):
         pass
+import sys
+sys.path.append("E:\Git\Chinese-Annotator")
+if __name__ == "__main__":
+    ct = CharTokenizer()
