@@ -11,7 +11,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from chi_annotator.task_center.utils.word2vec_utils import Word2VecNLP
+from chi_annotator.algo_factory.preprocess.nlp_word2vec import Word2VecNLP
 
 
 class TestWord2Vec:

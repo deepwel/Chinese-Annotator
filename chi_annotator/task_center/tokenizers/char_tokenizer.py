@@ -1,5 +1,6 @@
 from chi_annotator.task_center.components import Component
 
+
 class CharTokenizer(Component):
     provides = ["tokens"]
 
