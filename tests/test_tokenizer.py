@@ -10,10 +10,10 @@ if __name__ == "__main__":
     from chi_annotator.algo_factory.common import Message
     from chi_annotator.config import AnnotatorConfig
     cb = ComponentBuilder()
-    msg = Message(u"你好，我是一个demo")
+    msg = Message(u"你好，我是一个demo!!!!")
     cb = ComponentBuilder()
     config = AnnotatorConfig()
     ct = cb.create_component("char_tokenizer", config)
-    msg = Message(u"你好，我是一个demo")
-    ct.process(msg, **{})
-    print msg.get("tokens")
+    if ct is not None:
+        ct.process(msg, **{})
+        print msg.get("tokens")
