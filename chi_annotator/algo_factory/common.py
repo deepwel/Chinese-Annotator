@@ -1,11 +1,16 @@
-from utils import ordered
-from utils import lazyproperty
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
+
+from chi_annotator.algo_factory.utils import ordered
+from chi_annotator.algo_factory.utils import lazyproperty
 
 import os
 import json
 import io
 import datetime
+
 import chi_annotator
+
 
 class InvalidProjectError(Exception):
     """Raised when a model failed to load.
@@ -19,7 +24,22 @@ class InvalidProjectError(Exception):
 
     def __str__(self):
         return self.message
-    
+
+
+class MissingArgumentError(Exception):
+    """Raised when a args missing.
+
+    Attributes:
+        message -- explanation of why the model is invalid
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return self.message
+
+
 class Metadata(object):
     """Captures all information about a model to load and prepare it."""
 
@@ -68,7 +88,7 @@ class Metadata(object):
 
         metadata.update({
             "trained_at": datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
-            "nlu_version": chi_annotator.__version__,
+            "nlu_version": chi_annotator.algo_factory.__version__,
         })
 
         with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
@@ -158,8 +178,15 @@ class TrainingData(object):
     def num_intent_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
-
         return len(self.intent_examples)
+
+    def example_iter(self):
+        """
+        iterator for all samples
+        :return: message
+        """
+        for example in self.training_examples:
+            yield example
 
     def as_json(self, **kwargs):
         # type: (**Any) -> str
