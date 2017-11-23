@@ -5,9 +5,44 @@ Annotator for Chinese Text Corpus (under development, welcome for ideas and cont
 Many NLP tasks require lots of labelling data. Current annotators are mostly for English. We want to develop a Chinese Annotator based on existing open source technologies.
 
 
-# 构想：中文文本标注工具
+## Project Allignment
+
+
 
 ![](images/chinese_annotator_arch.png)
+
+
+```
+.
+├── config                  # System config files
+├── docs                    # Documentations
+├── tests                   # Test cases
+│   └── data                # Raw data for tests
+├── chi_annotator           # Main project folder
+│   ├── algo_factory        # Algo Factory module containing general algorithms
+│       ├── preprocess      # Preprocess codes
+│       ├── online          # Online Algorithms for Active Learning (svm for now)
+│       └── offline         # Offline Algorithms for higher Accuracy (DL models)
+│   ├── task_center         # Task Center module (main entrance and logic control)
+│   ├── webui               # WebUI module
+│       ├── apis
+│       └── static
+│   ├── data                # Database module
+│   └── user_instance       # User Instance module holding config files for specific tasks
+│       └── examples        # User Instance examples
+|           ├── classify    # Text Classfication
+|           ├── ner         # Named Entity Recognition
+|           ├── pos_tagger  # POS Tagger
+|           └── re          # Relation Extraction
+└── ...
+
+```
+
+
+
+## 构想：中文文本标注工具
+
+
 
 
 自然语言处理的大部分任务是监督学习问题。序列标注问题如中文分词、命名实体识别，分类问题如关系识别、情感分析、意图分析等，均需要标注数据进行模型训练。深度学习大行其道的今天，基于深度学习的NLP模型更是数据饥渴。
