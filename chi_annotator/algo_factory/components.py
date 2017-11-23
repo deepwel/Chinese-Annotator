@@ -1,6 +1,13 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+# coding=utf-8
 
-from chi_annotator.task_center import registry
-from chi_annotator.task_center.common import Metadata
+from chi_annotator.algo_factory.common import MissingArgumentError
+from chi_annotator.algo_factory.common import Metadata
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def validate_arguments(pipeline, context, allow_empty_pipeline=False):
@@ -21,7 +28,8 @@ def validate_arguments(pipeline, context, allow_empty_pipeline=False):
                 raise Exception("Failed to validate at component '{}'. Missing property: '{}'".format(
                     component.name, r))
         provided_properties.update(component.provides)
-    
+
+
 class Component(object):
     """A component is a message processing unit in a pipeline.
 
@@ -53,7 +61,7 @@ class Component(object):
         pass
 
     def __getstate__(self):
-        # 获取当前componet的状态（成员函数，成员变量）
+        # get all class funcions and variables
         d = self.__dict__.copy()
 
     @classmethod
@@ -85,7 +93,7 @@ class Component(object):
     def provide_context(self):
         # type: () -> Optional[Dict[Text, Any]]
         """Initialize this component for a new pipeline
-        初始化Component所依附的额外参数
+        init embedding or tf-idf
         This function will be called before the training is started and before the first message is processed using
         the interpreter. The component gets the opportunity to add information to the context that is passed through
         the pipeline during training and message parsing. Most components do not need to implement this method.
@@ -121,7 +129,7 @@ class Component(object):
     def cache_key(cls, model_metadata):
         # type: (Metadata) -> Optional[Text]
         """This key is used to cache components.
-        如果是单例，那么返回None， 获取这个componet的cache key
+        if component is singleton, then get the cache key
         If a component is unique to a model it should return None. Otherwise, an instantiation of the
         component will be reused for all models where the metadata creates the same key."""
 
@@ -129,8 +137,6 @@ class Component(object):
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
-
-
 
 
 class ComponentBuilder(object):
@@ -145,7 +151,7 @@ class ComponentBuilder(object):
     def __get_cached_component(self, component_name, model_metadata):
         # type: (Text, Metadata) -> Tuple[Optional[Component], Optional[Text]]
         """Load a component from the cache, if it exists. Returns the component, if found, and the cache key."""
-
+        from chi_annotator.algo_factory import registry
         component_class = registry.get_component_class(component_name)
         cache_key = component_class.cache_key(model_metadata)
         if cache_key is not None and self.use_cache and cache_key in self.component_cache:
@@ -164,11 +170,11 @@ class ComponentBuilder(object):
     def load_component(self, component_name, model_dir, model_metadata, **context):
         # type: (Text, Text, Metadata, **Any) -> Component
         """Tries to retrieve a component from the cache, calls `load` to create a new component."""
-
+        from chi_annotator.algo_factory import registry
         try:
-            # 看看有没有已经cache的compnent，有的话复用就可以了
+            # reuse cached key
             cached_component, cache_key = self.__get_cached_component(component_name, model_metadata)
-            # 加载componet，如果没有，那么就创建一个，最终调用的是componet的load
+            # load component, call component.load() method
             component = registry.load_component_by_name(component_name, model_dir,
                                                         model_metadata, cached_component, **context)
             if not cached_component:
@@ -179,9 +185,9 @@ class ComponentBuilder(object):
             raise Exception("Failed to load component '{}'. {}".format(component_name, e))
 
     def create_component(self, component_name, config):
-        # type: (Text, RasaNLUConfig) -> Component
+        # type: (Text, AnnotatorConfig) -> Component
         """Tries to retrieve a component from the cache, calls `create` to create a new component."""
-
+        from chi_annotator.algo_factory import registry
         try:
             component, cache_key = self.__get_cached_component(component_name, Metadata(config.as_dict(), None))
             if component is None:

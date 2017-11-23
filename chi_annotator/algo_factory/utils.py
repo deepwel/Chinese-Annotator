@@ -1,6 +1,9 @@
 
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
 import os
 import errno
+
 
 def relative_normpath(f, path):
     # type: (Optional[Text], Text) -> Optional[Text]
@@ -115,4 +118,3 @@ def class_from_module_path(module_path):
         return getattr(m, class_name)
     else:
         return globals()[module_path]
-    
