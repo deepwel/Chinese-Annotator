@@ -1,16 +1,18 @@
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
 """This is a somewhat delicate package. It contains all registered components
 and preconfigured templates.
 
 Hence, it imports all of the components. To avoid cycles, no component should
 import this in module scope."""
 
-
-
+from chi_annotator.algo_factory import utils
+from chi_annotator.algo_factory.preprocess.char_tokenizer import CharTokenizer
 
 # Classes of all known components. If a new component should be added,
 # its class name should be listed here.
 component_classes = [
-    
+    CharTokenizer,
 ]
 
 # Mapping from a components name to its class to allow name based lookup.
@@ -19,6 +21,7 @@ registered_components = {c.name: c for c in component_classes}
 # To simplify usage, there are a couple of model templates, that already add
 # necessary components in the right order. They also implement
 # the preexisting `backends`.
+'''
 registered_pipeline_templates = {
     "spacy_sklearn": [
         "nlp_spacy",
@@ -75,6 +78,7 @@ registered_pipeline_templates = {
         "intent_classifier_mitie",
     ]
 }
+'''
 
 
 def get_component_class(component_name):
@@ -96,11 +100,11 @@ def get_component_class(component_name):
     return registered_components[component_name]
 
 
-def load_component_by_name(component_name,  # type: Text
-                           model_dir,  # type: Text
-                           metadata,  # type: Metadata
-                           cached_component,  # type: Optional[Component]
-                           **kwargs  # type: **Any
+def load_component_by_name(component_name,
+                           model_dir,
+                           metadata,
+                           cached_component,
+                           **kwargs
                            ):
     # type: (...) -> Optional[Component]
     """Resolves a component and calls it's load method to init it based on a

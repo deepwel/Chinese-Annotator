@@ -1,6 +1,9 @@
 
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
 import os
 import errno
+
 
 def relative_normpath(f, path):
     # type: (Optional[Text], Text) -> Optional[Text]
@@ -89,7 +92,7 @@ def list_to_str(l, delim=", ", quote="'"):
 
 def ordered(obj):
     if isinstance(obj, dict):
-        return sorted((k, ordered(v)) for k, v in obj.items())
+        return sorted((k, ordered(v)) for k, v in list(obj.items()))
     if isinstance(obj, list):
         return sorted(ordered(x) for x in obj)
     else:
@@ -115,4 +118,3 @@ def class_from_module_path(module_path):
         return getattr(m, class_name)
     else:
         return globals()[module_path]
-    
