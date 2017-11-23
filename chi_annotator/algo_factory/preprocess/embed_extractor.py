@@ -48,6 +48,7 @@ class EmbeddingExtractor(Component):
             embedding = []
             if tokens is not None:
                 # TODO 根据token取embedding
+                pass
             sample.set("word_embedding", embedding)
 
     def process(self, message, **kwargs):
@@ -55,6 +56,7 @@ class EmbeddingExtractor(Component):
         embedding = []
         if tokens is not None:
             # TODO 根据token取embedding
+            pass
         message.set("word_embedding", embedding)
 
     @classmethod
