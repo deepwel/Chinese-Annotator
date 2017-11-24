@@ -175,7 +175,7 @@ class TrainingData(object):
         return len([e for e in self.training_examples if len(e.get("entities", [])) > 0])
 
     @lazyproperty
-    def num_intent_examples(self):
+    def num_classify_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
         return len(self.intent_examples)

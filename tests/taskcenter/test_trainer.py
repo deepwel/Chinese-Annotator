@@ -1,5 +1,3 @@
-import os
-
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data
 from chi_annotator.task_center.model import Trainer
@@ -97,3 +95,4 @@ class TestTrainer(object):
 
     def test_train_with_empty_data(self):
         pass
+

@@ -27,3 +27,4 @@ def rm_tmp_file(filename):
     :return:
     """
     os.remove('tests/data/'+filename)
+
