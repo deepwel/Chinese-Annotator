@@ -21,64 +21,16 @@ registered_components = {c.name: c for c in component_classes}
 # To simplify usage, there are a couple of model templates, that already add
 # necessary components in the right order. They also implement
 # the preexisting `backends`.
-'''
 registered_pipeline_templates = {
-    "spacy_sklearn": [
-        "nlp_spacy",
-        "tokenizer_spacy",
-        "intent_featurizer_spacy",
-        "intent_entity_featurizer_regex",
-        "ner_crf",
-        "ner_synonyms",
-        "intent_classifier_sklearn",
-    ],
-    "mitie": [
-        "nlp_mitie",
-        "tokenizer_mitie",
-        "ner_mitie",
-        "ner_synonyms",
-        "intent_entity_featurizer_regex",
-        "intent_classifier_mitie",
-    ],
-    "mitie_sklearn": [
-        "nlp_mitie",
-        "tokenizer_mitie",
-        "ner_mitie",
-        "ner_synonyms",
-        "intent_entity_featurizer_regex",
-        "intent_featurizer_mitie",
-        "intent_classifier_sklearn",
-    ],
-    "keyword": [
-        "intent_classifier_keyword",
-    ],
-    # this template really is just for testing
-    # every component should be in here so train-persist-load-use cycle can be
-    # tested they still need to be in a useful order - hence we can not simply
-    # generate this automatically.
-    "all_components": [
-        "nlp_spacy",
-        "nlp_mitie",
-        "tokenizer_whitespace",
-        "tokenizer_jieba",
-        "tokenizer_mitie",
-        "tokenizer_spacy",
-        "intent_featurizer_mitie",
-        "intent_featurizer_spacy",
-        "intent_featurizer_ngrams",
-        "intent_entity_featurizer_regex",
-        "ner_mitie",
-        "ner_crf",
-        "ner_spacy",
-        "ner_duckling",
-        "ner_duckling_http",
-        "ner_synonyms",
-        "intent_classifier_keyword",
-        "intent_classifier_sklearn",
-        "intent_classifier_mitie",
+    # this is tmp default templates copy from config for pipeline in string mode.
+    "word2vec_sklearn": [
+        "nlp_word2vec",
+        "linesplit_preprocess",
+        "feature_extractor",
+        "online_svm_classifier_sklearn",
+        "offline_svm_classifier_sklearn"
     ]
 }
-'''
 
 
 def get_component_class(component_name):

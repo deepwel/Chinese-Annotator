@@ -4,11 +4,11 @@ author: @burkun
 
 ## 基本模块结构
 
-![](../images/arch_taskcenter.png)
+![](/docs/images/arch_taskcenter.png)
 
 ## 基本处理流程
 
-![](../images/pipeline_taskcenter.png)
+![](/docs/images/pipeline_taskcenter.png)
 
 
 

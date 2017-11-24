@@ -31,7 +31,7 @@ def upload_remote_file():
             # flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        print(file.filename)
+        print((file.filename))
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
