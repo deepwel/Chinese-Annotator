@@ -1,5 +1,8 @@
+import os
+
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data
+from tests.utils.txt_to_json import create_tmp_test_file, rm_tmp_file
 
 
 class TestTrainer(object):
@@ -11,8 +14,9 @@ class TestTrainer(object):
         test load local json format data
         :return:
         """
-        local_json_file = "chi_annotator/data/files/spam_classify_chi_shuf_top1000.json"
-        train_data = load_local_data(local_json_file)
+        tmp_path = create_tmp_test_file("tmp.json")
+        train_data = load_local_data(tmp_path)
+        rm_tmp_file("tmp.json")
         assert train_data is not None
         assert len(train_data.training_examples) == 1000
         assert "text" not in train_data.training_examples[0].data
