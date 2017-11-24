@@ -1,4 +1,5 @@
 jsonschema
+simplejson
 Flask==0.12.2
 Flask-Cors==3.0.3
 idna==2.5
