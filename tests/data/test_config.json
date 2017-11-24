@@ -1,0 +1,7 @@
+{
+    "name": "email_spam_classification",
+    "model_type": "classification",
+    "pipeline": ["char_tokenizer"],
+    "language": "zh",
+    "path": "./tests/models"
+}
