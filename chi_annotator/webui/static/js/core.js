@@ -12,7 +12,8 @@ var app = new Vue({
 var example2 = new Vue({
   el: '#example-2',
   data: {
-    name: 'Vue.js'
+    name: 'Vue.js',
+    counter: 1
   },
   // define methods under the `methods` object
   methods: {
@@ -28,4 +29,5 @@ var example2 = new Vue({
     }
   }
 })
+
 

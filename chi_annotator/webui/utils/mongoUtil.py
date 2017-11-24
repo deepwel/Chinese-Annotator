@@ -45,7 +45,7 @@ def get_mongo_client(uri="mongodb://0.0.0.0:27017/", db="ca"):
     # Get a Database handle to a database named "mydb"
     dbh = c[db]
     print('connected succeed.')
-    print('URI: ' + uri + '  Database: ' + db)
+    print(('URI: ' + uri + '  Database: ' + db))
     return dbh
 
 
