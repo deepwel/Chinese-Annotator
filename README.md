@@ -1,6 +1,7 @@
 # Chinese-Annotator
 [![Join the chat at https://gitter.im/Chinese-Annotator/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Chinese-Annotator/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/crownpku/Chinese-Annotator.svg?branch=master)](https://travis-ci.org/crownpku/Chinese-Annotator)
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 Annotator for Chinese Text Corpus (under development, welcome for ideas and contributions)
 
