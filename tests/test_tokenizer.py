@@ -10,7 +10,6 @@ def test_tokenizer_main():
     from chi_annotator.algo_factory.components import ComponentBuilder
     from chi_annotator.algo_factory.common import Message
     from chi_annotator.config import AnnotatorConfig
-
     msg = Message("你好，我是一个demo!!!!")
     cb = ComponentBuilder()
     config = AnnotatorConfig()
