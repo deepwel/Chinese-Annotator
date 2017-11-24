@@ -2,20 +2,18 @@
 # -*- coding: utf8 -*-
 
 import datetime
-import io
-import json
 import logging
 import os
 import copy
 
-
-from chi_annotator.task_center.components import ComponentBuilder
-from chi_annotator.task_center.components import Component
-from chi_annotator.task_center.common import Metadata
-from chi_annotator.taks_center.common import Message
-from chi_annotator.task_center.utils import *
+from chi_annotator.algo_factory import components
+from chi_annotator.algo_factory.common import Metadata
+from chi_annotator.algo_factory.common import Message
+from chi_annotator.algo_factory import utils
+from chi_annotator.task_center.config import AnnotatorConfig
 
 logger = logging.getLogger(__name__)
+
 
 class Trainer(object):
     """Trainer will load the data and train all components.
@@ -27,7 +25,7 @@ class Trainer(object):
     SUPPORTED_LANGUAGES = ["zh"]
 
     def __init__(self, config, component_builder=None, skip_validation=False):
-        # type: (RasaNLUConfig, Optional[ComponentBuilder], bool) -> None
+        # type: (AnnotatorConfig, Optional[ComponentBuilder], bool) -> None
 
         self.config = config
         self.skip_validation = skip_validation
@@ -41,13 +39,13 @@ class Trainer(object):
         # Before instantiating the component classes, lets check if all
         # required packages are available
         # TODO
-        #if not self.skip_validation:
+        # if not self.skip_validation:
         #    components.validate_requirements(config.pipeline)
 
         # Transform the passed names of the pipeline components into classes
         for component_name in config.pipeline:
             component = component_builder.create_component(
-                    component_name, config)
+                component_name, config)
             self.pipeline.append(component)
 
     def train(self, data):
@@ -72,7 +70,8 @@ class Trainer(object):
 
         for i, component in enumerate(self.pipeline):
             logger.info("Starting to train component {}".format(component.name))
-            component.prepare_partial_processing(self.pipeline[:i], context)
+            # TODO , should we need component.prepare_partial_processing now?
+            # component.prepare_partial_processing(self.pipeline[:i], context)
             updates = component.train(working_data, self.config, **context)
             logger.info("Finished training component.")
             if updates:
@@ -94,6 +93,8 @@ class Trainer(object):
                          for component in self.pipeline],
         }
 
+        logger.debug("metadata is :" + metadata)
+
         if project_name is None:
             project_name = "default"
 
@@ -103,9 +104,12 @@ class Trainer(object):
             model_name = "model_" + timestamp
         dir_name = os.path.join(path, project_name, model_name)
 
-        create_dir(dir_name)
+        # create model dir
+        utils.create_dir(dir_name)
 
+        # copy and save train data to dir_name
         if self.training_data:
+            # self.training_data.persist return nothing here
             metadata.update(self.training_data.persist(dir_name))
 
         for component in self.pipeline:
@@ -113,6 +117,7 @@ class Trainer(object):
             if update:
                 metadata.update(update)
 
+        # save metadata to dir_name
         Metadata(metadata, dir_name).persist(dir_name)
 
         if persistor is not None:
@@ -131,18 +136,18 @@ class Interpreter(object):
         return {"intent": {"name": "", "confidence": 0.0}, "entities": []}
 
     @staticmethod
-    def load(model_dir, config=RasaNLUConfig(), component_builder=None,
+    def load(model_dir, config=AnnotatorConfig(), component_builder=None,
              skip_valdation=False):
         """Creates an interpreter based on a persisted model."""
 
         if isinstance(model_dir, Metadata):
             # this is for backwards compatibilities (metadata passed as a dict)
             model_metadata = model_dir
-            logger.warn("Deprecated use of `Interpreter.load` with a metadata "
-                        "object. If you want to directly pass the metadata, "
-                        "use `Interpreter.create(metadata, ...)`. If you want "
-                        "to load the metadata from file, use "
-                        "`Interpreter.load(model_dir, ...)")
+            logger.warning("Deprecated use of `Interpreter.load` with a metadata "
+                           "object. If you want to directly pass the metadata, "
+                           "use `Interpreter.create(metadata, ...)`. If you want "
+                           "to load the metadata from file, use "
+                           "`Interpreter.load(model_dir, ...)")
         else:
             model_metadata = Metadata.load(model_dir)
         return Interpreter.create(model_metadata, config, component_builder,
@@ -150,7 +155,7 @@ class Interpreter(object):
 
     @staticmethod
     def create(model_metadata,  # type: Metadata
-               config,  # type: RasaNLUConfig
+               config,  # type: AnnotatorConfig
                component_builder=None,  # type: Optional[ComponentBuilder]
                skip_valdation=False  # type: bool
                ):
@@ -173,8 +178,8 @@ class Interpreter(object):
 
         for component_name in model_metadata.pipeline:
             component = component_builder.load_component(
-                    component_name, model_metadata.model_dir,
-                    model_metadata, config=config, **context)
+                component_name, model_metadata.model_dir,
+                model_metadata, config=config, **context)
             try:
                 updates = component.provide_context()
                 if updates:
