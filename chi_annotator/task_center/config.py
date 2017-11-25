@@ -162,7 +162,7 @@ class AnnotatorConfig(object):
             # to unify that and ease further usage of the config, we convert everything to unicode
             for k, v in config.items():
                 if type(v) is bytes:
-                    config[k] = str(v, "utf-8")
+                    config[k] = str(v).encode("utf-8")
         return config
 
     def override(self, config):
