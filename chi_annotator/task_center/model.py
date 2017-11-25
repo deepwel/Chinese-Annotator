@@ -79,7 +79,7 @@ class Trainer(object):
 
         return Interpreter(self.pipeline, context)
 
-    def persist(self, path, persistor=None, project_name=None,
+    def persist(self, path, project_name=None,
                 fixed_model_name=None):
         # type: (Text, Optional[Persistor], Text) -> Text
         """Persist all components of the pipeline to the passed path.
@@ -93,8 +93,6 @@ class Trainer(object):
                          for component in self.pipeline],
         }
 
-        logger.debug("metadata is :" + metadata)
-
         if project_name is None:
             project_name = "default"
 
@@ -106,22 +104,17 @@ class Trainer(object):
 
         # create model dir
         utils.create_dir(dir_name)
-
-        # copy and save train data to dir_name
-        if self.training_data:
-            # self.training_data.persist return nothing here
-            metadata.update(self.training_data.persist(dir_name))
+        # TODO we have no need to copy and save train data to model.
+        # if self.training_data:
+        #     # self.training_data.persist return nothing here
+        #     metadata.update(self.training_data.persist(dir_name))
 
         for component in self.pipeline:
             update = component.persist(dir_name)
             if update:
                 metadata.update(update)
-
         # save metadata to dir_name
         Metadata(metadata, dir_name).persist(dir_name)
-
-        if persistor is not None:
-            persistor.persist(dir_name, model_name, project_name)
         logger.info("Successfully saved model into "
                     "'{}'".format(os.path.abspath(dir_name)))
         return dir_name
@@ -133,7 +126,7 @@ class Interpreter(object):
     # Defines all attributes (& default values) that will be returned by `parse`
     @staticmethod
     def default_output_attributes():
-        return {"intent": {"name": "", "confidence": 0.0}, "entities": []}
+        return {"label": {"name": "", "confidence": 0.0}}
 
     @staticmethod
     def load(model_dir, config=AnnotatorConfig(), component_builder=None,
