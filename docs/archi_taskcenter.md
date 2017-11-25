@@ -19,45 +19,46 @@ author: @burkun
     基本成员变量
     
         string：text（保存每条样本的原始文本数据）
+        dict: data (保存经过每个component后attach到message上的附加数据，按照key value格式存储
         date: datetime （数据生成日期）
         
     基本成员函数
     
-        set/get 设置key，和获取key，value对儿，如可以设置分类问题的tag，ner的ne等
+        set/get 设置key，和获取key，value对儿，如可以设置分类问题的tag，ner的ne等，所有的设置都是在self.data上进行的
 
 
 #### TrainData
 
     基本成员变量
     
-        list: Message (代表的是Message的集合）
+        list<Message>: training_examples (代表的是Message的集合）
         
     基本成员函数
     
-        get_classify_sample_num
-        get_ner_sample_num
-        get_ner_rel_sample_num
-        get_sample_num
-        get_sample_iter(sample_type)
+        classify_examples()  获取所有的分类数据
+        entity_examples()    获取所有的ner数据
+        num_entity_examples()   ner任务的样本数量
+        num_classify_examples() 分类任务的样本数量
+        example_iter()  所有样本迭代器
 
 
 #### Component/Module (数据处理的最基础的模块)
 
     基本成员变量
-    
-        in_defs: List<string> 需要上一个component提供的处理数据结果的key（这个结果保存在message中）
-        out_defs: List<string> 在运行数据处理等命令后往Message里面塞入的key，value的key
-        context：全局上下文，跟message无关的（如embedding等，需要在构造函数里面传入）
-        config：包含数据存储路径，模型配置参数，预训练模型地址等
+        string：name，当前模块的名字，默认是空字符串
+        List<string>: requires，需要上一个component提供的处理数据结果的key（这个结果保存在message中）
+        List<string>：provides， 在运行数据处理等命令后往Message里面塞入的key，value的key
+        Dict: context，全局上下文，跟message无关的（如embedding等，需要在构造函数里面传入）
+        Dict: config,包含数据存储路径，模型配置参数，预训练模型地址等
         
     基本成员函数
-    
-        save： 持久化component的数据
+        create：new一个当前模块
+        persist： 持久化component的数据
         load：加载component的数据
         train：批量训练TrainData
         process：预测单条Message
-        init_ctx: 根据传入的context来判定加载全局的变量（Emebding，TF-IDF等）
- 
+        provide_context: 根据传入的context来判定加载全局的变量（Emebding，TF-IDF等）
+        cache_key: 如果改模块是单例，返回None，否则返回一个string标识当前模块的id
 
 --------------------------------------------------------------------------------
 

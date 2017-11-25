@@ -92,7 +92,7 @@ class Metadata(object):
         })
 
         with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
-            f.write(str(json.dumps(metadata, indent=4)))
+            f.write(json.dumps(metadata, ensure_ascii=False, indent=4))
 
 
 class Message(object):
@@ -175,7 +175,7 @@ class TrainingData(object):
         return len([e for e in self.training_examples if len(e.get("entities", [])) > 0])
 
     @lazyproperty
-    def num_intent_examples(self):
+    def num_classify_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
         return len(self.intent_examples)

@@ -27,3 +27,7 @@ def rm_tmp_file(filename):
     :return:
     """
     os.remove('tests/data/'+filename)
+
+if __name__ == '__main__':
+    dirname = create_tmp_test_file("test_data.json")
+    print("test_data.json has been created in " + dirname)
