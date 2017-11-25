@@ -92,7 +92,7 @@ class Metadata(object):
         })
 
         with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
-            f.write(str(json.dumps(metadata, indent=4)))
+            f.write(json.dumps(metadata, ensure_ascii=False, indent=4))
 
 
 class Message(object):

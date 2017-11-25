@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+import json
+import os
+import io
+import shutil
+
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data
 from chi_annotator.task_center.model import Trainer
@@ -79,7 +85,54 @@ class TestTrainer(object):
         :return:
         """
         # TODO because only char_tokenizer now. nothing to be persist
-        pass
+        test_config = "tests/data/test_config.json"
+        config = AnnotatorConfig(test_config)
+
+        trainer = Trainer(config)
+        assert len(trainer.pipeline) == 1
+        # char_tokenizer component should been created
+        assert trainer.pipeline[0] is not None
+        # create tmp train set
+        tmp_path = create_tmp_test_file("tmp.json")
+        train_data = load_local_data(tmp_path)
+        # rm tmp train set
+        rm_tmp_file("tmp.json")
+
+        trainer.train(train_data)
+        persisted_path = trainer.persist(config['path'],
+                                         config['project'],
+                                         config['fixed_model_name'])
+        print(persisted_path)
+        # load persisted metadata
+        metadata_path = os.path.join(persisted_path, 'metadata.json')
+        with io.open(metadata_path) as f:
+            metadata = json.load(f)
+        assert 'trained_at' in metadata
+        # rm tmp files and dirs
+        shutil.rmtree(config['path'], ignore_errors=True)
+
+    def test_predict_flow(self):
+        """
+        test Interpreter flow,
+        :return:
+        """
+        test_config = "tests/data/test_config.json"
+        config = AnnotatorConfig(test_config)
+
+        trainer = Trainer(config)
+        assert len(trainer.pipeline) == 1
+        # char_tokenizer component should been created
+        assert trainer.pipeline[0] is not None
+        # create tmp train set
+        tmp_path = create_tmp_test_file("tmp.json")
+        train_data = load_local_data(tmp_path)
+        # rm tmp train set
+        rm_tmp_file("tmp.json")
+
+        interpreter = trainer.train(train_data)
+        text = "我是测试"
+        output = interpreter.parse(text)
+        assert "label" in output
 
     def test_train_model_empty_pipeline(self):
         pass
