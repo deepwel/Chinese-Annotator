@@ -81,7 +81,7 @@ class TestTrainer(object):
 
     def test_trainer_persist(self):
         """
-        test pipeline persist
+        test pipeline persist, metadata will be saved
         :return:
         """
         # TODO because only char_tokenizer now. nothing to be persist
@@ -102,7 +102,6 @@ class TestTrainer(object):
         persisted_path = trainer.persist(config['path'],
                                          config['project'],
                                          config['fixed_model_name'])
-        print(persisted_path)
         # load persisted metadata
         metadata_path = os.path.join(persisted_path, 'metadata.json')
         with io.open(metadata_path) as f:
@@ -113,7 +112,7 @@ class TestTrainer(object):
 
     def test_predict_flow(self):
         """
-        test Interpreter flow,
+        test Interpreter flow, only predict now
         :return:
         """
         test_config = "tests/data/test_config.json"
@@ -135,17 +134,42 @@ class TestTrainer(object):
         assert "label" in output
 
     def test_train_model_empty_pipeline(self):
+        """
+        train model with no component
+        :return:
+        """
+        # TODO
         pass
 
     def test_train_named_model(self):
+        """
+        test train model with certain name
+        :return:
+        """
+        # TODO
         pass
 
     def test_handles_pipeline_with_non_existing_component(self):
+        """
+        handle no exist component in pipeline
+        :return:
+        """
+        # TODO
         pass
 
     def test_load_and_persist_without_train(self):
+        """
+        test save and load model without train
+        :return:
+        """
+        # TODO
         pass
 
     def test_train_with_empty_data(self):
+        """
+        test train with empty train data
+        :return:
+        """
+        # TODO
         pass
 

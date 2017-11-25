@@ -1,3 +1,25 @@
+"""
+This is a script for run pipeline in command line, just for test data flow, it will be
+ modified in future.
+
+The features of ths script as follow:
+1、load config file from args of command line.
+2、train pipeline and save model according config.
+3、predict is to be added.
+
+You can run shell command below at root dir of project:
+   python -m chi_annotator.task_center.local_offline_train -c ./tests/data/test_config.json
+
+You can modify config file dir follow -c argument. you can refer test_config.json for your
+own target.
+
+Note:
+    It only support load local json format train data for now. you can generate tmp train use
+    command as follow in root dir of project:
+        python -m tests.utils.txt_to_json
+
+    More data load way will be supported in future.
+"""
 import argparse
 import logging
 import os
