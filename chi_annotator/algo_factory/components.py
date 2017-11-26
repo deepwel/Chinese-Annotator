@@ -88,7 +88,7 @@ class Component(object):
         """Creates this component (e.g. before a training is started).
 
         Method can access all configuration parameters."""
-        return cls()
+        return cls(config)
 
     def provide_context(self):
         # type: () -> Optional[Dict[Text, Any]]

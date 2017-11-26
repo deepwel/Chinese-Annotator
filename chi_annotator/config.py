@@ -12,35 +12,18 @@ DEFAULT_CONFIG = {
     "fixed_model_name": None,
     "config": DEFAULT_CONFIG_LOCATION,
     "data": None,
-    "emulate": None,
-    "language": "en",
+    "language": "zh",
     "log_file": None,
     "log_level": 'INFO',
-    "mitie_file": os.path.join("data", "total_word_feature_extractor.dat"),
-    "spacy_model_name": None,
     "num_threads": 1,
     "max_training_processes": 1,
-    "path": "projects",
-    "port": 5000,
-    "token": None,
-    "cors_origins": [],
-    "max_number_of_ngrams": 7,
+    "path": "/",
     "pipeline": [],
-    "response_log": "logs",
-    "aws_endpoint_url": None,
-    "duckling_dimensions": None,
-    "duckling_http_url": None,
-    "ner_crf": {
-        "BILOU_flag": True,
-        "features": [
-            ["low", "title", "upper", "pos", "pos2"],
-            ["bias", "low", "word3", "word2", "upper", "title", "digit", "pos", "pos2", "pattern"],
-            ["low", "title", "upper", "pos", "pos2"]],
-        "max_iterations": 50,
-        "L1_c": 1,
-        "L2_c": 1e-3
+    "embedding":{
+        "path": "data/",
+        "type": "bin",
     },
-    "intent_classifier_sklearn": {
+    "classifier_sklearn": {
         "C": [1, 2, 5, 10, 20, 100],
         "kernel": "linear"
     }

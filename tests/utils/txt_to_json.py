@@ -11,7 +11,6 @@ def create_tmp_test_textfile(tmp_file):
         return 'tests/data/'+tmp_file
             
 
-
 def create_tmp_test_jsonfile(tmp_file):
     with open("chi_annotator/data/files/spam_classify_chi_shuf.txt") as f, open('tests/data/'+tmp_file, 'w') as f2:
         samples = []
