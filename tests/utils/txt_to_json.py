@@ -1,18 +1,24 @@
 import json
 import os
 
+def create_tmp_test_textfile(tmp_file):
+    with open("chi_annotator/data/files/spam_classify_chi_shuf.txt") as f, open('tests/data/'+tmp_file, 'w') as f2:
+        for n, line in enumerate(f):
+            if n >= 1000:
+                break
+            label, text = line.strip().split(" ", 1)
+            f2.write(text+'\n')
+        return 'tests/data/'+tmp_file
+            
 
-def create_tmp_test_file(tmp_file):
+
+def create_tmp_test_jsonfile(tmp_file):
     with open("chi_annotator/data/files/spam_classify_chi_shuf.txt") as f, open('tests/data/'+tmp_file, 'w') as f2:
         samples = []
-        line_num = 0
-        for line in f:
-            line_num += 1
-            if line_num > 1000:
+        for n, line in enumerate(f): 
+            if n >= 1000:
                 break
-            tokens = line.strip().split()
-            label = tokens[0]
-            text = " ".join(tokens[1:])
+            label, text = line.strip().split(" ", 1)
             sample = {}
             sample.setdefault("label", label)
             sample.setdefault("text", text)
@@ -29,5 +35,5 @@ def rm_tmp_file(filename):
     os.remove('tests/data/'+filename)
 
 if __name__ == '__main__':
-    dirname = create_tmp_test_file("test_data.json")
+    dirname = create_tmp_test_jsonfile("test_data.json")
     print("test_data.json has been created in " + dirname)
