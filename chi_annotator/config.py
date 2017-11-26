@@ -19,7 +19,7 @@ DEFAULT_CONFIG = {
     "max_training_processes": 1,
     "path": "/",
     "pipeline": [],
-    "embedding_path": "~/git/Chinese-Annotator/tests/data/vec.txt",
+    "embedding_path": "tests/data/vec.txt",
     "embedding_type": "text",
     "classifier_sklearn": {
         "C": [1, 2, 5, 10, 20, 100],
