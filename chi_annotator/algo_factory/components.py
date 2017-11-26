@@ -57,9 +57,6 @@ class Component(object):
     # previous component in the pipeline needs to have "tokens" within the above described `provides` property.
     requires = []
 
-    def __init__(self):
-        pass
-
     def __getstate__(self):
         # get all class funcions and variables
         d = self.__dict__.copy()
