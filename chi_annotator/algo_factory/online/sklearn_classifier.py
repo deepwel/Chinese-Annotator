@@ -62,17 +62,14 @@ class SklearnClassifier(Component):
         from sklearn.model_selection import GridSearchCV
         from sklearn.svm import SVC
         import numpy as np
-
-        labels = [e.get("classifylabel") for e in training_data.classifylabel_examples]
-
+        labels = [e.get("classify") for e in training_data.classify_examples]
         if len(set(labels)) < 2:
             logger.warn("Can not train an classifier. Need at least 2 different classes. " +
                         "Skipping training of classifier.")
         else:
             y = self.transform_labels_str2num(labels)
             # TODO fix it
-            X = np.stack([example.get("sentence_embedding") for example in training_data.classifylabel_examples])
-
+            X = np.stack([example.get("sentence_embedding") for example in training_data.classify_examples])
             sklearn_config = config.get("classifier_sklearn")
             C = sklearn_config.get("C", [1, 2, 5, 10, 20, 100])
             kernel = sklearn_config.get("kernel", "linear")
@@ -95,7 +92,7 @@ class SklearnClassifier(Component):
             label = None
             label_ranking = []
         else:
-            X = message.get("").reshape(1, -1)
+            X = message.get("sentence_embedding").reshape(1, -1)
             label_ids, probabilities = self.predict(X)
             labels = self.transform_labels_num2str(label_ids)
             # `predict` returns a matrix as it is supposed

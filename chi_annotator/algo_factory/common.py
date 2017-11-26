@@ -183,7 +183,7 @@ class TrainingData(object):
     def num_classify_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
-        return len([e for e in self.training_examples if len(e.get("classify", [])) > 0])
+        return len([e for e in self.training_examples if e.get("classify") is not None])
 
     def example_iter(self):
         """
@@ -241,11 +241,13 @@ class TrainingData(object):
             if size < self.MIN_EXAMPLES_PER_ENTITY:
                 template = "Entity '{}' has only {} training examples! minimum is {}, training may fail."
                 warnings.warn(template.format(entity, size, self.MIN_EXAMPLES_PER_ENTITY))
-
-        logger.info("Training data stats: \n" +
-                    "\t- classify examples: {} ({} distinct intents)\n".format(
-                            self.num_classify_examples, len(different_intents)) +
-                    "\t- found class: {}\n".format(list_to_str(different_intents)) +
-                    "\t- entity examples: {} ({} distinct entities)\n".format(
-                            self.num_entity_examples, len(different_entities)) +
-                    "\t- found entities: {}\n".format(list_to_str(different_entities)))
+        if len(different_intents) > 0:
+            logger.info("Training data stats: \n" +
+                        "\t- classify examples: {} ({} distinct intents)\n".format(
+                                self.num_classify_examples, len(different_intents)) +
+                        "\t- found class: {}\n".format(list_to_str(different_intents)))
+        if len(different_entities) > 0:
+            logger.info("Training data stats: \n" +
+                        "\t- entity examples: {} ({} distinct entities)\n".format(
+                                self.num_entity_examples, len(different_entities)) +
+                        "\t- found entities: {}\n".format(list_to_str(different_entities)))

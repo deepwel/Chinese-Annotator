@@ -19,10 +19,8 @@ DEFAULT_CONFIG = {
     "max_training_processes": 1,
     "path": "/",
     "pipeline": [],
-    "embedding":{
-        "path": "data/",
-        "type": "bin",
-    },
+    "embedding_path": "~/git/Chinese-Annotator/tests/data/vec.txt",
+    "embedding_type": "text",
     "classifier_sklearn": {
         "C": [1, 2, 5, 10, 20, 100],
         "kernel": "linear"
@@ -42,7 +40,7 @@ class AnnotatorConfig(object):
     DEFAULT_PROJECT_NAME = "default"
 
     def __init__(self, filename=None):
-        pass
+        self.override(DEFAULT_CONFIG)
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -73,3 +71,6 @@ class AnnotatorConfig(object):
 
     def as_dict(self):
         return dict(list(self.items()))
+
+    def override(self, config):
+        self.__dict__.update(config)
