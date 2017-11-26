@@ -41,7 +41,10 @@ class MissingArgumentError(Exception):
 
 
 class Metadata(object):
-    """Captures all information about a model to load and prepare it."""
+    """
+    Captures all information about a model to load and prepare it.
+    Interpreter or Components will load  model according metadata file which saved by Trainer.
+    """
 
     @staticmethod
     def load(model_dir):
