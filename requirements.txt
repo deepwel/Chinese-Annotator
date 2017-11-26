@@ -12,3 +12,4 @@ urllib3==1.21.1
 Werkzeug==0.12.2
 pymongo==3.4.0
 gensim==2.3.0
+scikit-learn==0.18.1
