@@ -73,8 +73,6 @@ class SentenceEmbeddingExtractor(Component):
         # type: (Text, Metadata, Optional[Word2VecNLP], **Any) -> Word2VecNLP
         if cached_component:
             return cached_component
-        print(model_metadata)
-        print(cached_component)
         return SentenceEmbeddingExtractor(model_metadata)
 
     def persist(self, model_dir):
