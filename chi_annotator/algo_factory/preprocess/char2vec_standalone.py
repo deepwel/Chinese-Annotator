@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # Licensed under the GNU LGPL v2.1 - 
 
 
@@ -41,7 +38,7 @@ Parameters for training:
         -accuracy <file>
                 Compute accuracy of the resulting model analogical inference power on questions file <file>
 
-Example: python -m gensim.scripts.char2vec_standalone -train data.txt -output vec.txt -size 200 -sample 1e-4 -binary 0 -iter 3
+Example: python -m chi_annotator.algo_factory.preprocess.char2vec_standalone -train data.txt -output vec.txt -size 200 -sample 1e-4 -binary 0 -iter 3
 """
 
 

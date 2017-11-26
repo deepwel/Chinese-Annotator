@@ -7,7 +7,7 @@ import shutil
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data
 from chi_annotator.task_center.model import Trainer
-from tests.utils.txt_to_json import create_tmp_test_file, rm_tmp_file
+from tests.utils.txt_to_json import create_tmp_test_jsonfile, rm_tmp_file
 
 
 class TestTrainer(object):
@@ -19,7 +19,7 @@ class TestTrainer(object):
         test load local json format data
         :return:
         """
-        tmp_path = create_tmp_test_file("tmp.json")
+        tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)
         rm_tmp_file("tmp.json")
         assert train_data is not None
@@ -70,7 +70,7 @@ class TestTrainer(object):
         # char_tokenizer component should been created
         assert trainer.pipeline[0] is not None
         # create tmp train set
-        tmp_path = create_tmp_test_file("tmp.json")
+        tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)
         # rm tmp train set
         rm_tmp_file("tmp.json")
@@ -93,7 +93,7 @@ class TestTrainer(object):
         # char_tokenizer component should been created
         assert trainer.pipeline[0] is not None
         # create tmp train set
-        tmp_path = create_tmp_test_file("tmp.json")
+        tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)
         # rm tmp train set
         rm_tmp_file("tmp.json")
@@ -123,7 +123,7 @@ class TestTrainer(object):
         # char_tokenizer component should been created
         assert trainer.pipeline[0] is not None
         # create tmp train set
-        tmp_path = create_tmp_test_file("tmp.json")
+        tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)
         # rm tmp train set
         rm_tmp_file("tmp.json")
