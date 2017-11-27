@@ -81,7 +81,6 @@ var load_local_data = new Vue({
         });
     }
   }
-<<<<<<< HEAD
 })
 
 var upload_remote_file = new Vue({
@@ -105,6 +104,4 @@ var upload_remote_file = new Vue({
         });
     },
   }
-=======
->>>>>>> upstream/master
 })
