@@ -9,8 +9,6 @@ import os
 import six
 
 # Describes where to search for the config file if no location is specified
-from typing import Text
-
 
 DEFAULT_CONFIG_LOCATION = "config.json"
 

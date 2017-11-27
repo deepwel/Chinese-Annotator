@@ -1,25 +1,19 @@
 #Dummy example for using sklearn for classification
 
-
-
-
-
-
-
 import logging
-import typing
 from builtins import zip
 import os
 import io
-from future.utils import PY3
-from typing import Any, Optional
-from typing import Dict
-from typing import List
-from typing import Text
-from typing import Tuple
-
 import sklearn
 import numpy as np
+
+from chi_annotator.algo_factory.components import Component
+
+logger = logging.getLogger(__name__)
+
+MAX_CV_FOLDS = 5
+CLASSIFY_RANKING_LENGTH = 10
+
 
 class SklearnClassifier(Component):
     """Text classifier using the sklearn framework"""
@@ -28,9 +22,9 @@ class SklearnClassifier(Component):
 
     provides = ["classifylabel", "classifylabel_ranking"]
 
-    requires = ["text_features"]
+    requires = ["sentence_embedding"]
 
-    def __init__(self, clf=None, le=None):
+    def __init__(self, config=None, clf=None, le=None):
         # type: (sklearn.model_selection.GridSearchCV, sklearn.preprocessing.LabelEncoder) -> None
         """Construct a new classifier using the sklearn framework."""
         from sklearn.preprocessing import LabelEncoder
@@ -67,16 +61,14 @@ class SklearnClassifier(Component):
         from sklearn.model_selection import GridSearchCV
         from sklearn.svm import SVC
         import numpy as np
-
-        labels = [e.get("classifylabel") for e in training_data.classifylabel_examples]
-
+        labels = [e.get("label") for e in training_data.classify_examples]
         if len(set(labels)) < 2:
-            logger.warn("Can not train an classifier. Need at least 2 different classes. " +
+            logger.warning("Can not train an classifier. Need at least 2 different classes. " +
                         "Skipping training of classifier.")
         else:
             y = self.transform_labels_str2num(labels)
-            X = np.stack([example.get("text_features") for example in training_data.classifylabel_examples])
-
+            # TODO fix it
+            X = np.stack([example.get("sentence_embedding") for example in training_data.classify_examples])
             sklearn_config = config.get("classifier_sklearn")
             C = sklearn_config.get("C", [1, 2, 5, 10, 20, 100])
             kernel = sklearn_config.get("kernel", "linear")
@@ -87,7 +79,6 @@ class SklearnClassifier(Component):
             self.clf = GridSearchCV(SVC(C=1, probability=True, class_weight='balanced'),
                                     param_grid=tuned_parameters, n_jobs=config["num_threads"],
                                     cv=cv_splits, scoring='f1_weighted', verbose=1)
-
             self.clf.fit(X, y)
 
     def process(self, message, **kwargs):
@@ -99,7 +90,7 @@ class SklearnClassifier(Component):
             label = None
             label_ranking = []
         else:
-            X = message.get("text_features").reshape(1, -1)
+            X = message.get("sentence_embedding").reshape(1, -1)
             label_ids, probabilities = self.predict(X)
             labels = self.transform_labels_num2str(label_ids)
             # `predict` returns a matrix as it is supposed
@@ -107,7 +98,7 @@ class SklearnClassifier(Component):
             labels, probabilities = labels.flatten(), probabilities.flatten()
 
             if labels.size > 0 and probabilities.size > 0:
-                ranking = list(zip(list(labelss), list(probabilities)))[:LABEL_RANKING_LENGTH]
+                ranking = list(zip(list(labels), list(probabilities)))[:CLASSIFY_RANKING_LENGTH]
                 label = {"name": labels[0], "confidence": probabilities[0]}
                 label_ranking = [{"name": label_name, "confidence": score} for label_name, score in ranking]
             else:
@@ -146,10 +137,7 @@ class SklearnClassifier(Component):
         if model_dir and model_metadata.get("classifier_sklearn"):
             classifier_file = os.path.join(model_dir, model_metadata.get("classifier_sklearn"))
             with io.open(classifier_file, 'rb') as f:  # pragma: no test
-                if PY3:
-                    return cloudpickle.load(f, encoding="latin-1")
-                else:
-                    return cloudpickle.load(f)
+                return cloudpickle.load(f, encoding="latin-1")
         else:
             return SklearnClassifier()
 

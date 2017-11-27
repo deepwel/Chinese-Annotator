@@ -8,7 +8,8 @@ class CharTokenizer(Component):
     provides = ["tokens"]
     name = "char_tokenizer"
 
-    def __init__(self):
+    def __init__(self, config=None):
+        self.config = config
         super(Component, self).__init__()
 
     def train(self, training_data, config, **kwargs):

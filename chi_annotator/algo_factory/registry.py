@@ -8,11 +8,15 @@ import this in module scope."""
 
 from chi_annotator.algo_factory import utils
 from chi_annotator.algo_factory.preprocess.char_tokenizer import CharTokenizer
+from chi_annotator.algo_factory.preprocess.sentence_embed_extractor import SentenceEmbeddingExtractor
+from chi_annotator.algo_factory.online.sklearn_classifier import SklearnClassifier
 
 # Classes of all known components. If a new component should be added,
 # its class name should be listed here.
 component_classes = [
     CharTokenizer,
+    SentenceEmbeddingExtractor,
+    SklearnClassifier,
 ]
 
 # Mapping from a components name to its class to allow name based lookup.
@@ -67,7 +71,7 @@ def load_component_by_name(component_name,
 
 
 def create_component_by_name(component_name, config):
-    # type: (Text, RasaNLUConfig) -> Optional[Component]
+    # type: (Text, Config) -> Optional[Component]
     """Resolves a component and calls it's create method to init it based on a
     previously persisted model."""
 

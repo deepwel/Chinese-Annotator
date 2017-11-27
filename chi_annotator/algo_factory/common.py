@@ -3,13 +3,19 @@
 
 from chi_annotator.algo_factory.utils import ordered
 from chi_annotator.algo_factory.utils import lazyproperty
+from chi_annotator.algo_factory.utils import list_to_str
+from itertools import groupby
 
 import os
 import json
 import io
 import datetime
+import logging
+import warnings
 
 import chi_annotator
+
+logger = logging.getLogger(__name__)
 
 
 class InvalidProjectError(Exception):
@@ -86,12 +92,11 @@ class Metadata(object):
     def persist(self, model_dir):
         # type: (Text) -> None
         """Persists the metadata of a model to a given directory."""
-
         metadata = self.metadata.copy()
 
         metadata.update({
             "trained_at": datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
-            "nlu_version": chi_annotator.algo_factory.__version__,
+            "algo_version": chi_annotator.algo_factory.__version__,
         })
 
         with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
@@ -163,7 +168,7 @@ class TrainingData(object):
     @lazyproperty
     def classify_examples(self):
         # type: () -> List[Message]
-        return [e for e in self.training_examples if e.get("classify") is not None]
+        return [e for e in self.training_examples if e.get("label") is not None]
 
     @lazyproperty
     def entity_examples(self):
@@ -181,7 +186,7 @@ class TrainingData(object):
     def num_classify_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
-        return len(self.intent_examples)
+        return len([e for e in self.training_examples if e.get("label") is not None])
 
     def example_iter(self):
         """
@@ -217,9 +222,35 @@ class TrainingData(object):
         # type: () -> List[Message]
         """Sorts the classify examples by the name of the intent."""
 
-        return sorted(self.classify_examples, key=lambda e: e.get("classify"))
+        return sorted(self.classify_examples, key=lambda e: e.get("label"))
 
     def validate(self):
         # type: () -> None
         """Ensures that the loaded training data is valid, e.g. has a minimum of certain training examples."""
-        pass
+        logger.debug("Validating training data...")
+        examples = self.sorted_classify_examples()
+        different_intents = []
+        for intent, group in groupby(examples, lambda e: e.get("label")):
+            size = len(list(group))
+            different_intents.append(intent)
+            if size < self.MIN_EXAMPLES_PER_CLASSIFY:
+                template = "classify '{}' has only {} training examples! minimum is {}, training may fail."
+                warnings.warn(template.format(intent, size, self.MIN_EXAMPLES_PER_CLASSIFY))
+
+        different_entities = []
+        for entity, group in groupby(self.sorted_entity_examples(), lambda e: e["entity"]):
+            size = len(list(group))
+            different_entities.append(entity)
+            if size < self.MIN_EXAMPLES_PER_ENTITY:
+                template = "Entity '{}' has only {} training examples! minimum is {}, training may fail."
+                warnings.warn(template.format(entity, size, self.MIN_EXAMPLES_PER_ENTITY))
+        if len(different_intents) > 0:
+            logger.info("Training data stats: \n" +
+                        "\t- classify examples: {} ({} distinct intents)\n".format(
+                                self.num_classify_examples, len(different_intents)) +
+                        "\t- found class: {}\n".format(list_to_str(different_intents)))
+        if len(different_entities) > 0:
+            logger.info("Training data stats: \n" +
+                        "\t- entity examples: {} ({} distinct entities)\n".format(
+                                self.num_entity_examples, len(different_entities)) +
+                        "\t- found entities: {}\n".format(list_to_str(different_entities)))
