@@ -59,7 +59,7 @@ class Component(object):
 
     def __getstate__(self):
         # get all class funcions and variables
-        d = self.__dict__.copy()
+        return self.__dict__.copy()
 
     @classmethod
     def required_packages(cls):

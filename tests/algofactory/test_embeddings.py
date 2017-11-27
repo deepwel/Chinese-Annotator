@@ -11,7 +11,7 @@ class TestEmbeddings(object):
         """
         create_tmp_test_textfile("spam_email_text_1000")
         os.system("python -m chi_annotator.algo_factory.preprocess.char2vec_standalone -train tests/data/spam_email_text_1000 -output tests/data/test_vec.txt -size 200 -sample 1e-4 -binary 0 -iter 3")
-        os.path.isfile("tests/data/test_vec.txt")
+        assert os.path.isfile("tests/data/test_vec.txt") is not None
         rm_tmp_file("spam_email_text_1000")
         rm_tmp_file("test_vec.txt")
 
@@ -26,6 +26,4 @@ class TestEmbeddings(object):
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
         char_tokenize.process(msg)
         sent_embedding.process(msg, **{})
-        if msg.get("sentence_embedding").sum() + 7.30032945834 < 1e-6:
-            return True
-        return False
+        assert msg.get("sentence_embedding").sum() + 7.30032945834 < 1e-6

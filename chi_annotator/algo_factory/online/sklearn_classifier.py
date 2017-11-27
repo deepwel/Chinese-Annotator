@@ -15,7 +15,6 @@ MAX_CV_FOLDS = 5
 CLASSIFY_RANKING_LENGTH = 10
 
 
-
 class SklearnClassifier(Component):
     """Text classifier using the sklearn framework"""
 
@@ -25,7 +24,7 @@ class SklearnClassifier(Component):
 
     requires = ["sentence_embedding"]
 
-    def __init__(self, clf=None, le=None):
+    def __init__(self, config=None, clf=None, le=None):
         # type: (sklearn.model_selection.GridSearchCV, sklearn.preprocessing.LabelEncoder) -> None
         """Construct a new classifier using the sklearn framework."""
         from sklearn.preprocessing import LabelEncoder
@@ -62,9 +61,9 @@ class SklearnClassifier(Component):
         from sklearn.model_selection import GridSearchCV
         from sklearn.svm import SVC
         import numpy as np
-        labels = [e.get("classify") for e in training_data.classify_examples]
+        labels = [e.get("label") for e in training_data.classify_examples]
         if len(set(labels)) < 2:
-            logger.warn("Can not train an classifier. Need at least 2 different classes. " +
+            logger.warning("Can not train an classifier. Need at least 2 different classes. " +
                         "Skipping training of classifier.")
         else:
             y = self.transform_labels_str2num(labels)
@@ -80,7 +79,6 @@ class SklearnClassifier(Component):
             self.clf = GridSearchCV(SVC(C=1, probability=True, class_weight='balanced'),
                                     param_grid=tuned_parameters, n_jobs=config["num_threads"],
                                     cv=cv_splits, scoring='f1_weighted', verbose=1)
-
             self.clf.fit(X, y)
 
     def process(self, message, **kwargs):

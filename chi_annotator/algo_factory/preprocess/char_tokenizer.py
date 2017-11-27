@@ -8,7 +8,7 @@ class CharTokenizer(Component):
     provides = ["tokens"]
     name = "char_tokenizer"
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         self.config = config
         super(Component, self).__init__()
 

@@ -47,7 +47,10 @@ class MissingArgumentError(Exception):
 
 
 class Metadata(object):
-    """Captures all information about a model to load and prepare it."""
+    """
+    Captures all information about a model to load and prepare it.
+    Interpreter or Components will load  model according metadata file which saved by Trainer.
+    """
 
     @staticmethod
     def load(model_dir):
@@ -165,7 +168,7 @@ class TrainingData(object):
     @lazyproperty
     def classify_examples(self):
         # type: () -> List[Message]
-        return [e for e in self.training_examples if e.get("classify") is not None]
+        return [e for e in self.training_examples if e.get("label") is not None]
 
     @lazyproperty
     def entity_examples(self):
@@ -183,7 +186,7 @@ class TrainingData(object):
     def num_classify_examples(self):
         # type: () -> int
         """Returns the number of intent examples."""
-        return len([e for e in self.training_examples if e.get("classify") is not None])
+        return len([e for e in self.training_examples if e.get("label") is not None])
 
     def example_iter(self):
         """
@@ -219,7 +222,7 @@ class TrainingData(object):
         # type: () -> List[Message]
         """Sorts the classify examples by the name of the intent."""
 
-        return sorted(self.classify_examples, key=lambda e: e.get("classify"))
+        return sorted(self.classify_examples, key=lambda e: e.get("label"))
 
     def validate(self):
         # type: () -> None
@@ -227,7 +230,7 @@ class TrainingData(object):
         logger.debug("Validating training data...")
         examples = self.sorted_classify_examples()
         different_intents = []
-        for intent, group in groupby(examples, lambda e: e.get("classify")):
+        for intent, group in groupby(examples, lambda e: e.get("label")):
             size = len(list(group))
             different_intents.append(intent)
             if size < self.MIN_EXAMPLES_PER_CLASSIFY:

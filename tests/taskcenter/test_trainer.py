@@ -53,9 +53,7 @@ class TestTrainer(object):
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
-        assert len(trainer.pipeline) == 1
-        # char_tokenizer component should been created
-        assert trainer.pipeline[0] is not None
+        assert len(trainer.pipeline) > 0
 
     def test_pipeline_flow(self):
         """
@@ -66,9 +64,7 @@ class TestTrainer(object):
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
-        assert len(trainer.pipeline) == 1
-        # char_tokenizer component should been created
-        assert trainer.pipeline[0] is not None
+        assert len(trainer.pipeline) > 0
         # create tmp train set
         tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)
@@ -89,7 +85,7 @@ class TestTrainer(object):
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
-        assert len(trainer.pipeline) == 1
+        assert len(trainer.pipeline) > 0
         # char_tokenizer component should been created
         assert trainer.pipeline[0] is not None
         # create tmp train set
@@ -119,9 +115,7 @@ class TestTrainer(object):
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
-        assert len(trainer.pipeline) == 1
-        # char_tokenizer component should been created
-        assert trainer.pipeline[0] is not None
+        assert len(trainer.pipeline) > 0
         # create tmp train set
         tmp_path = create_tmp_test_jsonfile("tmp.json")
         train_data = load_local_data(tmp_path)

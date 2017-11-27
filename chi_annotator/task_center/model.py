@@ -163,11 +163,10 @@ class Interpreter(object):
             component_builder = components.ComponentBuilder()
 
         pipeline = []
-
         # Before instantiating the component classes,
         # lets check if all required packages are available
-        if not skip_valdation:
-            components.validate_requirements(model_metadata.pipeline)
+        # if not skip_valdation:
+        #     components.validate_requirements(model_metadata.pipeline)
 
         for component_name in model_metadata.pipeline:
             component = component_builder.load_component(

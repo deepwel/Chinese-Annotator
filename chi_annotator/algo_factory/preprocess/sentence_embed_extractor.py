@@ -23,11 +23,13 @@ class SentenceEmbeddingExtractor(Component):
     requires = ["tokens"]
     provides = ["sentence_embedding"]
 
-    def __init__(self, embedding_cfg):
+    def __init__(self, embedding_cfg=None):
         super(SentenceEmbeddingExtractor, self).__init__()
-        is_binary = True if embedding_cfg.get("embedding_type") == "bin" else False
+        self.embedding_path = embedding_cfg.get("embedding_path")
+        self.embedding_type = embedding_cfg.get("embedding_type")
+        is_binary = True if self.embedding_type == "bin" else False
         from gensim.models.keyedvectors import KeyedVectors
-        self.embedding = KeyedVectors.load_word2vec_format(embedding_cfg.get("embedding_path"), binary=is_binary)
+        self.embedding = KeyedVectors.load_word2vec_format(self.embedding_path, binary=is_binary)
 
     @classmethod
     def required_packages(cls):
@@ -77,4 +79,7 @@ class SentenceEmbeddingExtractor(Component):
 
     def persist(self, model_dir):
         # type: (Text) -> Dict[Text, Any]
-        return {}
+        return {
+            "embedding_path": self.embedding_path,
+            "embedding_type": self.embedding_type
+        }

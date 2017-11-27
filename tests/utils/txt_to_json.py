@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def create_tmp_test_textfile(tmp_file):
     with open("chi_annotator/data/files/spam_classify_chi_shuf.txt") as f, open('tests/data/'+tmp_file, 'w') as f2:
         for n, line in enumerate(f):
