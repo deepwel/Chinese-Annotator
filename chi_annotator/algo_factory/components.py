@@ -57,12 +57,9 @@ class Component(object):
     # previous component in the pipeline needs to have "tokens" within the above described `provides` property.
     requires = []
 
-    def __init__(self):
-        pass
-
     def __getstate__(self):
         # get all class funcions and variables
-        d = self.__dict__.copy()
+        return self.__dict__.copy()
 
     @classmethod
     def required_packages(cls):
@@ -88,7 +85,7 @@ class Component(object):
         """Creates this component (e.g. before a training is started).
 
         Method can access all configuration parameters."""
-        return cls()
+        return cls(config)
 
     def provide_context(self):
         # type: () -> Optional[Dict[Text, Any]]
