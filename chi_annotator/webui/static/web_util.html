@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>anatine - a free css template</title>
     <link rel="stylesheet" href="styles.css" type="text/css" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
@@ -30,11 +30,11 @@
                         <a href="examples.html">Examples</a>
                     </li>
                     <li>
-						<a href="text_classification.html">Text Classification</a>
-					</li>
+                        <a href="text_classification.html">Text Classification</a>
+                    </li>
                     <li>
-						<a href="web_util.html">web api util</a>
-					</li>
+                        <a href="web_util.html">web api util</a>
+                    </li>
                 </ul>
             </nav>
 
@@ -45,26 +45,45 @@
 
             <article>
                 <h3>API Testing</h3>
-
                 <blockquote>
-                    <p>this web is for API testing, it list all API that provided by the web service backend. user can use this web site 
-                        to access the web api send GET or POST request</p>
+                    <p>this web is for API testing, it list all API that provided by the web service backend. user can use this
+                        web site to access the web api send GET or POST request</p>
                 </blockquote>
-
-
-                <h3>Load Local Data</h3>
-                <!--<div class="article-info">Posted on <time datetime="2013-05-14">14 May</time> by <a href="#" rel="author">Joe Bloggs</a></div>-->
-                <div id="load_local_data">
-                    <label></label>
-                    <input type="text" size="50" v-model="file_path"/>
-                    <button class="formbutton" v-on:click="load_local_data_post">load local data by POST</button>
-                    <button class="formbutton" v-on:click="load_local_data_get">load local data by GET</button>
-                    <p>{{ message }}</p>
-                </div>
-
-    
             </article>
-
+            <article class="expanded">
+                <h3>Load Local Data</h3>
+                <fieldset>
+                    <form>
+                        <p>web service interface
+                            <strong>http://localhost:5000/load_local_dataset/</strong>
+                            it's function is to upload the data from local data file to Mongo DB. It support both GET and POST method</p>
+                        <div id="load_local_data">
+                            <label for="file_paht_local">local file path</label>
+                            <input type="text" name="file_paht_local" size="50" v-model="file_path" />
+                            <a href="#" class="button" v-on:click="load_local_data_post">load local data by POST</a>
+                            <a href="#" class="button" v-on:click="load_local_data_get">load local data by GET</a>
+                            <p>{{ message }}</p>
+                        </div>
+                    </form>
+                </fieldset>
+            </article>
+            <article class="expanded">
+                <h3>Upload remote file</h3>
+                <fieldset>
+                    <form action="" method=post enctype=multipart/form-data>
+                        <p>web service interface
+                            <strong>http://localhost:5000/upload_remote_file/</strong>
+                            it's function is to upload the data from data file provied by http request to Mongo DB. It only support both POST method</p>
+                        <div id="upload_remote_file">
+                            <p>
+                                <input type="file" name="file">
+                                <input class="formbutton" type="submit" value="Upload">
+                            </p>
+                            <p>{{ message }}</p>
+                        </div>
+                    </form>
+                </fieldset>
+            </article>
 
             <footer class="clear">
                 <p>&copy; 2017 sitename.

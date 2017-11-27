@@ -46,8 +46,8 @@ axios.defaults.baseURL = 'http://localhost:5000';
 var load_local_data = new Vue({
   el: '#load_local_data',
   data: {
-    message: "load local test data",
-    file_path: 'D:\\Github\\Chinese-Annotator\\chi_annotator\\data\\files\\spam_classify_chi_shuf.txt',
+    message: "fill the local data file path",
+    file_path: '',
   },
   // define methods under the `methods` object
   methods: {
@@ -75,5 +75,28 @@ var load_local_data = new Vue({
           console.log(error);
         });
     }
+  }
+})
+
+var upload_remote_file = new Vue({
+  el: '#upload_remote_file',
+  data: {
+    message: "select file to do upload",
+  },
+  // define methods under the `methods` object
+  methods: {
+    upload_remote_file: function (event) {
+      // Make a request for a user with a given ID
+        axios.post('/upload_remote_file',{
+          filepath:  this.file_path,
+        })
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
   }
 })
