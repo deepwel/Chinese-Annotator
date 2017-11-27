@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>anatine - a free css template</title>
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+</head>
+
+<body>
+    <section id="body" class="width">
+        <aside id="sidebar" class="column-left">
+
+            <header>
+                <h1>
+                    <a href="#">anatine</a>
+                </h1>
+
+                <h2>Welcome to canno chinese annotator!!</h2>
+
+            </header>
+
+            <nav id="mainnav">
+                <ul>
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li class="selected-item">
+                        <a href="examples.html">Examples</a>
+                    </li>
+                    <li>
+						<a href="text_classification.html">Text Classification</a>
+					</li>
+                    <li>
+						<a href="web_util.html">web api util</a>
+					</li>
+                </ul>
+            </nav>
+
+
+
+        </aside>
+        <section id="content" class="column-right">
+
+            <article>
+                <h3>API Testing</h3>
+
+                <blockquote>
+                    <p>this web is for API testing, it list all API that provided by the web service backend. user can use this web site 
+                        to access the web api send GET or POST request</p>
+                </blockquote>
+
+
+                <h3>Load Local Data</h3>
+                <!--<div class="article-info">Posted on <time datetime="2013-05-14">14 May</time> by <a href="#" rel="author">Joe Bloggs</a></div>-->
+                <div id="load_local_data">
+                    <label></label>
+                    <input type="text" size="50" v-model="file_path"/>
+                    <button class="formbutton" v-on:click="load_local_data_post">load local data by POST</button>
+                    <button class="formbutton" v-on:click="load_local_data_get">load local data by GET</button>
+                    <p>{{ message }}</p>
+                </div>
+
+    
+            </article>
+
+
+            <footer class="clear">
+                <p>&copy; 2017 sitename.
+                    <a href="http://zypopwebtemplates.com/">Free CSS Templates</a> by ZyPOP</p>
+            </footer>
+
+        </section>
+
+        <div class="clear"></div>
+
+    </section>
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="js/core.js"></script>
+</body>
+
+</html>
