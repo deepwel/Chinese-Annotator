@@ -48,13 +48,12 @@ def upload_remote_file():
             file.save(filepath)
 
             # read file
-            ca = get_mongo_client()
-            with open(filepath) as f:
+            ca = get_mongo_client(uri='mongodb://localhost:27017/')
+            with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
                     label, txt = line.split(" ", 1)
                     ca["test"].insert_one({"txt": txt, "label": label})
-
-            return redirect(url_for('uploaded_file', filename=filename))
+            return jsonify(data={"status": "success"}, code=200, message="load success")
     return '''
     <!doctype html>
     <title>Upload new File</title>

@@ -68,7 +68,9 @@ var load_local_data = new Vue({
       // Make a request for a user with a given ID
         axios.get('/load_local_dataset?filepath=' + this.file_path)
         .then(function (response) {
-          this.message = response.data.message
+          data=>{
+            message=data.response
+          }
           console.log(response);
         })
         .catch(function (error) {
@@ -81,15 +83,19 @@ var load_local_data = new Vue({
 var upload_remote_file = new Vue({
   el: '#upload_remote_file',
   data: {
+    files: "",
     message: "select file to do upload",
   },
   // define methods under the `methods` object
   methods: {
     upload_remote_file: function (event) {
       // Make a request for a user with a given ID
-        axios.post('/upload_remote_file',{
-          filepath:  this.file_path,
-        })
+        let formData = new FormData();
+        formData.append('file', this.files[0])
+        const config = {
+            headers: { 'content-type': 'multipart/form-data' }
+        }
+        axios.post('/upload_remote_file', formData, config)
         .then(function (response) {
           this.message = response.data.message
           console.log(response);
@@ -98,5 +104,9 @@ var upload_remote_file = new Vue({
           console.log(error);
         });
     },
+    tirggerFile : function (event) {
+      this.files = event.target.files
+    }
   }
 })
+
