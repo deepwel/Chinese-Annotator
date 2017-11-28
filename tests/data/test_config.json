@@ -13,6 +13,7 @@
     "embedding_path": "./tests/data/vec.txt",
     "embedding_type": "text",
     "org_data" : "./tests/data/test_data.json",
+    "confidence_threshold" : 0.95,
     "log_level": "INFO",
     "log_file": null
 }
