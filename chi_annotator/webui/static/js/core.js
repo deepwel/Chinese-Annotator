@@ -46,13 +46,8 @@ axios.defaults.baseURL = 'http://localhost:5000';
 var load_local_data = new Vue({
   el: '#load_local_data',
   data: {
-<<<<<<< HEAD
     message: "fill the local data file path",
     file_path: '',
-=======
-    message: "load local test data",
-    file_path: 'D:\\Github\\Chinese-Annotator\\chi_annotator\\data\\files\\spam_classify_chi_shuf.txt',
->>>>>>> upstream/master
   },
   // define methods under the `methods` object
   methods: {
