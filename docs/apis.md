@@ -23,4 +23,10 @@
 支持post和get请求
 参数：filepath 本地文件的绝对路径
 
-功能： 将本地的文件load到Mongo数据库
+功能： 将本地的data文件中的内容存入MongoDB
+
+//upload_remote_file
+仅支持post请求
+参数：上传的file文件
+
+功能：解析上次的data文件，并将其内容存入mongoDB
