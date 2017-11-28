@@ -4,7 +4,6 @@ import logging
 from builtins import zip
 import os
 import io
-import sklearn
 import numpy as np
 
 from chi_annotator.algo_factory.components import Component
@@ -60,14 +59,13 @@ class SklearnClassifier(Component):
         :param num_threads: number of threads used during training time"""
         from sklearn.model_selection import GridSearchCV
         from sklearn.svm import SVC
-        import numpy as np
         labels = [e.get("label") for e in training_data.classify_examples]
         if len(set(labels)) < 2:
             logger.warning("Can not train an classifier. Need at least 2 different classes. " +
                         "Skipping training of classifier.")
         else:
             y = self.transform_labels_str2num(labels)
-            # TODO fix it
+            # TODO fix it, in future sentence will replaced by "features"
             X = np.stack([example.get("sentence_embedding") for example in training_data.classify_examples])
             sklearn_config = config.get("classifier_sklearn")
             C = sklearn_config.get("C", [1, 2, 5, 10, 20, 100])
@@ -121,8 +119,6 @@ class SklearnClassifier(Component):
         """Given a bow vector of an input text, predict most probable label. Returns only the most likely label.
         :param X: bow of input text
         :return: tuple of first, the most probable label and second, its probability"""
-
-        import numpy as np
 
         pred_result = self.predict_prob(X)
         # sort the probabilities retrieving the indices of the elements in sorted order

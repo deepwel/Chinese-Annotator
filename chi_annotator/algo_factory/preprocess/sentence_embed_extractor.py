@@ -5,8 +5,6 @@ author: bookerbai
 create:2017/11/22
 """
 import os
-import io
-import json
 import typing
 import numpy as np
 
@@ -62,10 +60,8 @@ class SentenceEmbeddingExtractor(Component):
                 # if word in vocab then add into list
                 if token in self.embedding:
                     embeddings.append(self.embedding[token])
-        words_len = len(embeddings)
-        if words_len > 0:
-            sentence_embeds = np.asarray(embeddings, dtype=float).sum(axis=0)
-            sentence_embeds /= words_len
+        if len(embeddings) > 0:
+            sentence_embeds = np.asarray(embeddings, dtype=float).mean(axis=0)
             message.set("sentence_embedding", sentence_embeds)
         else:
             message.set("sentence_embedding", None)
