@@ -1,5 +1,8 @@
 {
     "name": "email_spam_classification",
+    "path": "./tests/models",
+    "project": "chi_annotator",
+    "fixed_model_name": "chi_annotator_models",
     "model_type": "classification",
     "pipeline": [
         "char_tokenizer",
@@ -7,16 +10,9 @@
         "classifier_sklearn"
     ],
     "language": "zh",
-    "path": "./tests/models",
     "embedding_path": "./tests/data/vec.txt",
     "embedding_type": "text",
     "org_data" : "./tests/data/test_data.json",
-    "database_name" : "spam_emails_chi",
-    "labels": ["spam","notspam"],
-    "batch_num" : "10",
-    "inference_num" : "20",
-    "low_conf_num" : "10",
-    "confidence_threshold" : "0.95",
     "log_level": "INFO",
     "log_file": null
 }

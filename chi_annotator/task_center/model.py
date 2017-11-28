@@ -126,7 +126,7 @@ class Interpreter(object):
     # Defines all attributes (& default values) that will be returned by `parse`
     @staticmethod
     def default_output_attributes():
-        return {"label": {"name": "", "confidence": 0.0}}
+        return {'classifylabel': {'name': '', 'confidence': 0.0}}
 
     @staticmethod
     def load(model_dir, config=AnnotatorConfig(), component_builder=None,
