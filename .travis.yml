@@ -12,7 +12,7 @@ script:
 notifications:
   email: false
   # command to integrate travis with gitter notifications
-  webbooks:
+  webhooks:
     urls:
       - https://webhooks.gitter.im/e/d627377180466a7d65b8
     on_success: change #options: [always|never|change] default: always
