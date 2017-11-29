@@ -97,7 +97,7 @@ def export_data():
     filepath = request.args.get("filepath")
 
     # # read file
-    ca = get_mongo_client()
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
     with open("../../data/files/test.json", "w") as f:
         # texts = list(ca["test"].find())
         # print(texts)
@@ -112,12 +112,6 @@ def export_data():
             }
             result.append(data)
         json.dump(result, f)
-
-    #
-    # with open(filepath) as f:
-    #     for line in f:
-    #         label, txt = line.split(" ", 1)
-    #         ca["test"].insert_one({"txt": txt, "label": label})
 
     return send_from_directory('../../data/files', "test.json")
 

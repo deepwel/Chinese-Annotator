@@ -25,8 +25,14 @@
 
 功能： 将本地的data文件中的内容存入MongoDB
 
-//upload_remote_file
+/upload_remote_file
 仅支持post请求
 参数：上传的file文件
 
 功能：解析上次的data文件，并将其内容存入mongoDB
+
+/export_data
+仅支持get请求
+参数：无
+
+功能：将MongoDB中的数据，导出到本地 ../../data/files 文件夹的 test.json 文件中

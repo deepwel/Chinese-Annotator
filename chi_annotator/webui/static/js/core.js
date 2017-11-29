@@ -68,9 +68,7 @@ var load_local_data = new Vue({
       // Make a request for a user with a given ID
         axios.get('/load_local_dataset?filepath=' + this.file_path)
         .then(function (response) {
-          data=>{
-            message=data.response
-          }
+          this.message = response.data.message
           console.log(response);
         })
         .catch(function (error) {
@@ -107,6 +105,27 @@ var upload_remote_file = new Vue({
     tirggerFile : function (event) {
       this.files = event.target.files
     }
+  }
+})
+
+var export_data = new Vue({
+  el: '#export_data',
+  data: {
+    message: "export data",
+  },
+  // define methods under the `methods` object
+  methods: {
+    export_data: function (event) {
+      // Make a request for a user with a given ID
+        axios.get('/export_data')
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
   }
 })
 

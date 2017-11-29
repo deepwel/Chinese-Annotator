@@ -70,7 +70,6 @@
             <article class="expanded">
                 <h3>Upload remote file</h3>
                 <fieldset>
-                    <!-- <form action="http://localhost:5000/upload_remote_file" method=post enctype=multipart/form-data> -->
                     <form>
                         <p>web service interface
                             <strong>http://localhost:5000/upload_remote_file/</strong>
@@ -80,6 +79,21 @@
                                 <input @change="tirggerFile($event)" type="file" name="file">
                                 <input v-on:click="upload_remote_file" class="formbutton" type="submit" value="Upload">
                             </p>
+                            <p>{{ message }}</p>
+                        </div>
+                    </form>
+                </fieldset>
+            </article>
+
+            <article class="expanded">
+                <h3>Export Data as File</h3>
+                <fieldset>
+                    <form>
+                        <p>web service interface
+                            <strong>http://localhost:5000/export_data/</strong>
+                            it's function is to export data from MongoDB as file to ../../data/files/test.json. It only support both POST method</p>
+                        <div id="export_data">
+                            <a href="#" v-on:click="export_data" class="button">Export Data</a>
                             <p>{{ message }}</p>
                         </div>
                     </form>
