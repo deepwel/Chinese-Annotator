@@ -3,9 +3,13 @@
 [![Build Status](https://travis-ci.org/crownpku/Chinese-Annotator.svg?branch=master)](https://travis-ci.org/crownpku/Chinese-Annotator)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-Annotator for Chinese Text Corpus (under development, welcome for ideas and contributions)
+Annotator for Chinese Text Corpus
 
 Many NLP tasks require lots of labelling data. Current annotators are mostly for English. We want to develop a Chinese Annotator based on existing open source technologies.
+
+## [Chinese-Annotator Gitter聊天室](https://gitter.im/Chinese-Annotator/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+欢迎一起加入讨论。
 
 
 ## Project Allignment
