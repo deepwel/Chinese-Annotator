@@ -18,7 +18,7 @@ class TestEmbeddings(object):
     def test_senten_embedding_extractor(self):
         from chi_annotator.algo_factory.components import ComponentBuilder
         from chi_annotator.algo_factory.common import Message
-        from chi_annotator.config import AnnotatorConfig
+        from chi_annotator.task_center.config import AnnotatorConfig
         cfg = AnnotatorConfig()
         msg = Message("你好，我是一个demo!!!!")
         cb = ComponentBuilder()
