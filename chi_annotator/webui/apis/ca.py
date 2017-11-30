@@ -163,4 +163,8 @@ def check_offline_progress():
     return jsonify(data={"progress": 50}, code=200, message="annotate success")
 
 if __name__=="__main__":
-    app.run()
+    app.run(
+        host = '0.0.0.0',
+        port = 5000,  
+        debug = True 
+    )
