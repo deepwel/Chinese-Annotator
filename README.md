@@ -1,15 +1,22 @@
 # Chinese-Annotator
+[![Join the chat at https://gitter.im/Chinese-Annotator/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Chinese-Annotator/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/crownpku/Chinese-Annotator.svg?branch=master)](https://travis-ci.org/crownpku/Chinese-Annotator)
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-Annotator for Chinese Text Corpus (under development, welcome for ideas and contributions)
+Annotator for Chinese Text Corpus
 
 Many NLP tasks require lots of labelling data. Current annotators are mostly for English. We want to develop a Chinese Annotator based on existing open source technologies.
+
+## [Chinese-Annotator Gitter聊天室](https://gitter.im/Chinese-Annotator/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+欢迎一起加入讨论。
 
 
 ## Project Allignment
 
 
 
-![](images/chinese_annotator_arch.png)
+![](/docs/images/chinese_annotator_arch.png)
 
 
 ```
@@ -82,13 +89,13 @@ Prodigy给了一个非常好的[demo](https://prodi.gy/demo)，每一次的标�
 
 真正应用中，应该还要加入一个用户自己加入标注的交互方式，比如用户可以高亮一个词然后选择是“公司”，或者链接两个实体选择他们的关系等等。
 
-![](/images/10.png)
+![](/docs/images/10.png)
 
 
 
 以上是个人觉得的一个智能中文文本标注工具的最大亮点。算法本身还有很多细节需要思考，比如online机器学习算法与offline深度学习算法的协作、中文NLP的特征提取与模型构建、正则规则的引入、word embedding的训练和使用等等。系统本身还要考虑后台存储(SQLite?)和数据导入导出，前端框架选型和开发，前后端交互(django? flask? RestAPI?)等等的问题。下面是Prodigy的简单架构图。
 
-![](/images/11.png)
+![](/docs/images/11.png)
 
 我们希望专注于中文文本标注的功能。前期我们想实现三种中文NLP任务的标注工具：**中文命名实体识别**，**中文关系识别**，**中文文本分类**。未来如果有更多如中文图片问答、中文图片描述之类的任务，我们可以再研究加入图片标注这一块。
 

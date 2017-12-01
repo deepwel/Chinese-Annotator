@@ -1,6 +1,7 @@
 import json
 
 from flask import Flask, request, redirect, url_for, jsonify, send_from_directory
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 from utils.mongoUtil import get_mongo_client
@@ -10,6 +11,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+CORS(app)
 
 
 @app.route("/")
@@ -31,7 +33,7 @@ def upload_remote_file():
             # flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        print(file.filename)
+        print((file.filename))
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
@@ -46,13 +48,12 @@ def upload_remote_file():
             file.save(filepath)
 
             # read file
-            ca = get_mongo_client()
-            with open(filepath) as f:
+            ca = get_mongo_client(uri='mongodb://localhost:27017/')
+            with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
                     label, txt = line.split(" ", 1)
                     ca["test"].insert_one({"txt": txt, "label": label})
-
-            return redirect(url_for('uploaded_file', filename=filename))
+            return jsonify(data={"status": "success"}, code=200, message="load success")
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -70,13 +71,19 @@ def load_local_dataset():
     load local unlabeled dataset
     :return:
     """
-    filepath = request.args.get("filepath")
+    if request.method == 'POST':
+        filepath = request.data.get("filepath")
+    else:
+        filepath = request.args.get("filepath")
+    print(filepath)
     # read file
-    ca = get_mongo_client()
-    with open(filepath) as f:
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
+    with open(filepath, 'r', encoding='utf-8') as f:
         for line in f:
             # label, txt = line.split(" ", 1)
-            ca["test"].insert_one({"txt": line})
+            print("get string %s" % line)
+            label, txt = line.split(" ", 1)
+            ca["test"].insert_one({"txt": txt, "label": label})
 
     return jsonify(data={"status": "success"}, code=200, message="load success")
 
@@ -90,7 +97,7 @@ def export_data():
     filepath = request.args.get("filepath")
 
     # # read file
-    ca = get_mongo_client()
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
     with open("../../data/files/test.json", "w") as f:
         # texts = list(ca["test"].find())
         # print(texts)
@@ -105,12 +112,6 @@ def export_data():
             }
             result.append(data)
         json.dump(result, f)
-
-    #
-    # with open(filepath) as f:
-    #     for line in f:
-    #         label, txt = line.split(" ", 1)
-    #         ca["test"].insert_one({"txt": txt, "label": label})
 
     return send_from_directory('../../data/files', "test.json")
 
@@ -160,3 +161,10 @@ def check_offline_progress():
     text = ca["test"].insert_one({"label": label, "text": text})
 
     return jsonify(data={"progress": 50}, code=200, message="annotate success")
+
+if __name__=="__main__":
+    app.run(
+        host = '0.0.0.0',
+        port = 5000,  
+        debug = True 
+    )
