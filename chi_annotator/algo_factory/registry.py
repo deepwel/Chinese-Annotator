@@ -10,6 +10,8 @@ from chi_annotator.algo_factory import utils
 from chi_annotator.algo_factory.preprocess.char_tokenizer import CharTokenizer
 from chi_annotator.algo_factory.preprocess.sentence_embed_extractor import SentenceEmbeddingExtractor
 from chi_annotator.algo_factory.online.sklearn_classifier import SklearnClassifier
+from chi_annotator.algo_factory.preprocess.embedding import Embedding
+from chi_annotator.algo_factory.preprocess.embedding import EmbeddingExtractor
 
 # Classes of all known components. If a new component should be added,
 # its class name should be listed here.
@@ -17,6 +19,8 @@ component_classes = [
     CharTokenizer,
     SentenceEmbeddingExtractor,
     SklearnClassifier,
+    Embedding,
+    EmbeddingExtractor
 ]
 
 # Mapping from a components name to its class to allow name based lookup.
