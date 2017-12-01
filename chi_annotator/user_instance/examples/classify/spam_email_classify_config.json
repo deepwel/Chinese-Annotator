@@ -15,5 +15,7 @@
   "batch_num" : "10",
   "inference_num" : "20",
   "low_conf_num" : "10",
-  "confidence_threshold" : "0.95"
+  "confidence_threshold" : "0.95",
+  "log_level": "INFO",
+  "log_file": null
 }

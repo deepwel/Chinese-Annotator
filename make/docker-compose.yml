@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  webui:
+    restart: always
+    build: ./webui
+    expose:
+      - "5000"
+    depends_on:
+      - mongodb
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - /www/static
+
+    volumes_from:
+      - webui
+    depends_on:
+      - webui
+
+  mongodb:
+
+  server:

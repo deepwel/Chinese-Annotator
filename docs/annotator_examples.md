@@ -4,7 +4,7 @@
 
 ### IEPY
 
-![](../images/1.png)
+![](/docs/images/1.png)
 
 整个工程比较完整，有用户管理系统。前端略重，对用户不是非常友好
 
@@ -15,7 +15,7 @@
  
 ### DeepDive (Mindtagger)
 
-![](../images/2.png)
+![](/docs/images/2.png)
 
 Screenshot of Mindtagger precision task in progress
 
@@ -36,7 +36,7 @@ https://github.com/mcavdar/deepdive/commit/6882178cbd38a5bbbf4eee8b76b1e21553742
  
 ### BRAT
 
-![](../images/3.png)
+![](/docs/images/3.png)
 
 介绍 http://brat.nlplab.org/index.html
 
@@ -47,7 +47,7 @@ https://github.com/mcavdar/deepdive/commit/6882178cbd38a5bbbf4eee8b76b1e21553742
  
 ### SUTDAnnotator
 
-![](../images/4.png)
+![](/docs/images/4.png)
 
 用的不是网页前端而是pythonGUI，但比较轻量。
 
@@ -58,9 +58,9 @@ Paper https://github.com/jiesutd/SUTDAnnotator/blob/master/lrec2018.pdf
  
 ### Snorkel
 
-![](../images/5.png)
+![](/docs/images/5.png)
 
-![](../images/6.png)
+![](/docs/images/6.png)
 
 Page: https://hazyresearch.github.io/snorkel/
 
@@ -71,9 +71,9 @@ Demo Paper:https://hazyresearch.github.io/snorkel/pdfs/snorkel_demo.pdf
  
 ### Slate
 
-![](../images/7.png)
+![](/docs/images/7.png)
 
-![](../images/8.png)
+![](/docs/images/8.png)
 
 Code: https://bitbucket.org/dainkaplan/slate/
 
@@ -82,7 +82,7 @@ Paper: http://www.jlcl.org/2011_Heft2/11.pdf
  
 ### Prodigy(闭源)
 
-![](../images/9.png)
+![](/docs/images/9.png)
 
 和著名的spacy是一家做的
 
