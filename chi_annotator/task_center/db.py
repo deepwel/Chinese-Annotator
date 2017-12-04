@@ -14,7 +14,7 @@ class DBManager(object):
         self.table = config.get("table_name", "corpus")
 
         # TODO for test, this config param will be remove later.
-        self.active = config.get("database_active", False)
+        self.active = config.get("database_active", True)
 
         if self.type == "mongodb" and self.active:
             self.client = MongoClient(self.hostname, self.port)
