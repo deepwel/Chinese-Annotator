@@ -16,7 +16,7 @@ class ActiveLearner(object):
         active_leaner.train(data_to_train)
 
         data_to_rank = get_data_from_db()
-        low_confidence_data = active_leaner.rank(data_to_rank)
+        low_confidence_data = active_leaner.process_batch(data_to_rank)
     """
 
     def __init__(self, config):
