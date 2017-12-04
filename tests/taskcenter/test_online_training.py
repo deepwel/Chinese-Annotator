@@ -4,7 +4,10 @@ import shutil
 import simplejson
 
 from chi_annotator.algo_factory.common import TrainingData, Message
+<<<<<<< HEAD
 from chi_annotator.task_center.active_learner import ActiveLearner
+=======
+>>>>>>> crownpku-master
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data, validate_local_data
 from chi_annotator.task_center.model import Trainer

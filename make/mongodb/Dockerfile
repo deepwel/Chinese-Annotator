@@ -1,0 +1,2 @@
+# mongodb image
+FROM mongo

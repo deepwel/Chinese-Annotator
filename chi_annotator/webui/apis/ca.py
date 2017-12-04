@@ -48,13 +48,12 @@ def upload_remote_file():
             file.save(filepath)
 
             # read file
-            ca = get_mongo_client()
-            with open(filepath) as f:
+            ca = get_mongo_client(uri='mongodb://localhost:27017/')
+            with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
                     label, txt = line.split(" ", 1)
                     ca["test"].insert_one({"txt": txt, "label": label})
-
-            return redirect(url_for('uploaded_file', filename=filename))
+            return jsonify(data={"status": "success"}, code=200, message="load success")
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -98,7 +97,7 @@ def export_data():
     filepath = request.args.get("filepath")
 
     # # read file
-    ca = get_mongo_client()
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
     with open("../../data/files/test.json", "w") as f:
         # texts = list(ca["test"].find())
         # print(texts)
@@ -113,12 +112,6 @@ def export_data():
             }
             result.append(data)
         json.dump(result, f)
-
-    #
-    # with open(filepath) as f:
-    #     for line in f:
-    #         label, txt = line.split(" ", 1)
-    #         ca["test"].insert_one({"txt": txt, "label": label})
 
     return send_from_directory('../../data/files', "test.json")
 
@@ -170,4 +163,8 @@ def check_offline_progress():
     return jsonify(data={"progress": 50}, code=200, message="annotate success")
 
 if __name__=="__main__":
-    app.run()
+    app.run(
+        host = '0.0.0.0',
+        port = 5000,  
+        debug = True 
+    )
