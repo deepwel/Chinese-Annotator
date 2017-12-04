@@ -112,7 +112,7 @@ class TestOnlineTraining(object):
         faker_user_labeled_data = data_set[:50]
 
         # text to be predict
-        texts = [{"id": 1, "text": "我是测试"}, {"id": 2, "text": "我是测试2"}]
+        texts = [{"uuid": 1, "text": "我是测试"}, {"uuid": 2, "text": "我是测试2"}]
 
         active_learner = ActiveLearner(config)
         active_learner.train(faker_user_labeled_data)

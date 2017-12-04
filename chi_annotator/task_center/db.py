@@ -102,9 +102,10 @@ class DBManager(object):
                 res.append(item)
         return res
 
-    def get_row_by_ids(self, ids, database_name=None, table=None):
+    def get_row_by_ids(self, ids, col_name="uuid", database_name=None, table=None):
         """
         get rows according conditions
+        :param col_name:
         :param table:
         :param database_name:
         :param conditions: json format data
@@ -117,7 +118,7 @@ class DBManager(object):
             table = self.table
 
         if self.type == "mongodb":
-            result = self.client[database_name][table].find({"id": {"$in": ids}})
+            result = self.client[database_name][table].find({col_name: {"$in": ids}})
             for item in result:
                 res.append(item)
         return res
