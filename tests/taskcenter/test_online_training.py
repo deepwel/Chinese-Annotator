@@ -4,6 +4,7 @@ import shutil
 import simplejson
 
 from chi_annotator.algo_factory.common import TrainingData, Message
+from chi_annotator.task_center.active_learner import ActiveLearner
 from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.task_center.data_loader import load_local_data, validate_local_data
 from chi_annotator.task_center.model import Trainer
@@ -89,5 +90,32 @@ class TestOnlineTraining(object):
         for candidate in ranking_candidates:
             assert candidate.get("classifylabel").get("confidence") < confidence_threshold
 
-
         # TODO sort ranking_candidates data and push to user.
+
+    def test_active_leaner_process_texts(self):
+        """
+        test active_leaner process raw texts
+        :return:
+        """
+        test_config = "tests/data/test_config.json"
+        config = AnnotatorConfig(test_config)
+        # init trainer first
+
+        # load all data for test, in actual data should get from user label
+        with io.open(config["org_data"], encoding="utf-8-sig") as f:
+            data = simplejson.loads(f.read())
+        validate_local_data(data)
+
+        data_set = data.get("data_set", list())
+
+        # faker user labeled data, user has labeled 50 texts.
+        faker_user_labeled_data = data_set[:50]
+
+        # text to be predict
+        texts = [{"uuid": 1, "text": "我是测试"}, {"uuid": 2, "text": "我是测试2"}]
+
+        active_learner = ActiveLearner(config)
+        active_learner.train(faker_user_labeled_data)
+        predicted = active_learner.process_texts(texts)
+        assert len(predicted) == 2
+        assert "classifylabel" in predicted[0]
