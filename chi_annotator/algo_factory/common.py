@@ -171,6 +171,11 @@ class TrainingData(object):
         return [e for e in self.training_examples if e.get("label") is not None]
 
     @lazyproperty
+    def cluster_examples(self):
+        # type: () -> List[Message]
+        return [e for e in self.training_examples]
+
+    @lazyproperty
     def entity_examples(self):
         # type: () -> List[Message]
         return [e for e in self.training_examples if e.get("entities") is not None]
