@@ -79,7 +79,7 @@ def load_local_dataset():
             # label, txt = line.split(" ", 1)
             print("get string %s" % line)
             label, txt = line.split(" ", 1)
-            ca["test"].insert_one({"txt": txt, "label": label})
+            ca["annotation_data"].insert_one({"txt": txt, "label": label})
 
     return jsonify(data={"status": "success"}, code=200, message="load success")
 
@@ -99,7 +99,7 @@ def export_data():
         # print(texts)
         # datas = [delattr(text, "_id") for text in texts if "_id" in text]
 
-        annotations = ca["test"].find({}).batch_size(50)
+        annotations = ca["annotation_data"].find({}).batch_size(50)
         result = []
         for annotation in annotations:
             data = {
@@ -115,14 +115,17 @@ def export_data():
 @app.route('/load_single_unlabeled', methods=['GET', 'POST'])
 def load_single_unlabeled():
     """
-
+    load one unlabeled text from Mongo DB to web
     :return:
     """
     # read file
     ca = get_mongo_client()
-    text = ca["test"].find_one({"label": {"$exists": False}})
+    text = ca["annotation_data"].find_one({"label": {"$exists": False}})
 
-    return jsonify(data={"text": text.get("txt")}, code=200, message="load success")
+    return jsonify(data={"text": text.get("txt"), "uuid": text.get("uuid")}, code=200, message="load success")
+    # text = "贵公司负责人：你好！ 本公司(祥泰实业有限公司）具有良 好有的进口来源，有剩余的发票及广泛的网 络可为贵公司谋利获得双嬴，本公司原则是 满意付款。有诚意来电洽商。 电  话：013631690076 邮  箱：shitailong-9688@163.com 联系人：郭 生"
+    # text_uuid = uuid.uuid1()
+    # return jsonify(data={"text": text, "uuid": text_uuid}, code=200, message="load success")
 
 
 @app.route('/annotate_single_unlabeled', methods=['POST'])
@@ -137,7 +140,7 @@ def annotate_single_unlabeled():
     print(text)
     print(label)
     ca = get_mongo_client()
-    text = ca["test"].insert_one({"label": label, "text": text})
+    text = ca["annotation_data"].insert_one({"label": label, "text": text})
 
     return jsonify(data={}, code=200, message="annotate success")
 
@@ -154,7 +157,7 @@ def check_offline_progress():
     print(text)
     print(label)
     ca = get_mongo_client()
-    text = ca["test"].insert_one({"label": label, "text": text})
+    text = ca["annotation_data"].insert_one({"label": label, "text": text})
 
     return jsonify(data={"progress": 50}, code=200, message="annotate success")
 
