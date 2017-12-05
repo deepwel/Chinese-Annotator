@@ -7,7 +7,7 @@
     "pipeline": [
         "char_tokenizer",
         "sentence_embedding_extractor",
-        "classifier_sklearn"
+        "SVM_classifier"
     ],
     "language": "zh",
     "embedding_path": "./tests/data/vec.txt",
