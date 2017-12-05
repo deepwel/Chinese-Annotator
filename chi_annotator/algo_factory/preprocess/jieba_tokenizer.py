@@ -13,8 +13,10 @@ class JiebaTokenizer(Component):
     name = "tokenizer_jieba"
     provides = ["tokens"]
     
-    def __init__(self):
-        pass
+    def __init__(self, config=None):
+        # type: (AnnotatorConfig) -> None
+        self.config = config
+        super(Component, self).__init__()
 
     @classmethod
     def required_packages(cls):

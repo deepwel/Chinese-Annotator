@@ -7,7 +7,9 @@ Hence, it imports all of the components. To avoid cycles, no component should
 import this in module scope."""
 
 from chi_annotator.algo_factory import utils
+from chi_annotator.algo_factory.online.sklearn_cluster import SklearnCluster
 from chi_annotator.algo_factory.preprocess.char_tokenizer import CharTokenizer
+from chi_annotator.algo_factory.preprocess.jieba_tokenizer import JiebaTokenizer
 from chi_annotator.algo_factory.preprocess.sentence_embed_extractor import SentenceEmbeddingExtractor
 from chi_annotator.algo_factory.online.sklearn_classifier import SklearnClassifier
 from chi_annotator.algo_factory.preprocess.embedding import Embedding
@@ -17,10 +19,12 @@ from chi_annotator.algo_factory.preprocess.embedding import EmbeddingExtractor
 # its class name should be listed here.
 component_classes = [
     CharTokenizer,
+    JiebaTokenizer,
     SentenceEmbeddingExtractor,
     SklearnClassifier,
     Embedding,
     EmbeddingExtractor,
+    SklearnCluster
 ]
 
 # Mapping from a components name to its class to allow name based lookup.
