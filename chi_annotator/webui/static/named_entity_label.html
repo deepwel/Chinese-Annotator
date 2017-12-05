@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>anatine - a free css template</title>
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+    <!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+    <!--
+anatine, a free CSS web template by ZyPOP (zypopwebtemplates.com/)
+
+Download: http://zypopwebtemplates.com/
+
+License: Creative Commons Attribution
+//-->
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+</head>
+
+<body>
+    <section id="body" class="width">
+        <aside id="sidebar" class="column-left">
+
+            <header>
+                <h1>
+                    <a href="#">Chinese-Annotator</a>
+                </h1>
+
+                <h2>中文文本标注工具</h2>
+
+            </header>
+
+            <nav id="mainnav">
+                <ul>
+                    <li class="selected-item"><a href="text_classification.html">Text Classification</a></li>
+                    <li><a href="named_entity_label.html">Named Entity Recognition</a></li>
+                    <li><a href="#">Information Extraction</a></li>
+                    <li><a href="web_util.html">Web API Utilities</a></li>
+                    <li><a href="index.html">Help</a></li>      
+                </ul>
+            </nav>
+        </aside>
+        <section id="content" class="column-right">
+
+            <article class="expanded">
+
+                <h2>Named Entity Labeling</h2>
+
+                <br/>
+                <h3>Labeled Text</h3>
+
+                <p>仿YEDDA，实现了在当前页面内对文本做标志。目前键盘按键a,b,c分别映射为PEOPLE, ORGANIZATION, LOCATION。 </p>
+                <p>任意选取一段文字，按键盘a,b,c，测试效果。 </p>
+                
+                <p>深圳今天天气怎么样。</p>
+                <p>给我放一首周杰伦的歌曲。 </p>
+                <p>TCL集团的股价多少。</p>
+
+
+
+                <p> 我不是很懂，没有这句话，页面就崩坏了。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。</p>
+                <p>.</p>
+                <p>.</p>
+                <p>.</p>
+                <p>Javascript代码初学者。。我先抛砖引玉实现功能。后续，希望有人帮忙优化代码. :)</p>
+
+
+                <a href="#" class="button">right</a>
+                <a href="#" class="button button-reversed">wrong</a>
+                &nbsp;&nbsp;
+                <a href="#" class="button">undo</a>
+                <a href="#" class="button button-reversed">cancel</a>
+            </article>
+            <article class="expanded">
+                <h3>History</h3>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Text</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>John Smith</td>
+                        <td>28</td>
+
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Fred James</td>
+                        <td>49</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Rachel Johnson</td>
+                        <td>19</td>
+                    </tr>
+
+                </table>
+                <p>&nbsp;</p>
+
+            </article>
+
+
+            <footer class="clear">
+                <p>&copy; 2017 sitename.
+                    <a href="http://zypopwebtemplates.com/">Free CSS Templates</a> by Canno Groups</p>
+            </footer>
+
+        </section>
+
+        <div class="clear"></div>
+
+    </section>
+
+    <script src="js/core.js"></script>
+
+<script type="text/javascript">
+// todo: select的时候，自动strip
+// todo: 修改的时候，stack保存记录，从而能实现undo
+// todo: 修改了“北京”时，文中其他北京也被修改。
+// todo: 选取某个文本的时候，支持q，删除标示
+// todo: 修改一个字符，不能在该字符上标示
+
+
+keyMap = new Map([
+  ['a', ['PEOPLE', 'color:blue']],
+  ['b', ['ORGANIZATION', 'color:red']],
+  ['c', ['LOCATION', 'color:green']]
+  ])
+
+
+label = function(entityName, style){
+    sel = document.getSelection();
+    if (sel.rangeCount && sel.getRangeAt) {
+        range = sel.getRangeAt(0);
+        text = range.cloneContents().textContent;
+    }
+
+    if(text.length!=0)
+    {
+      span = document.createElement("span");
+
+      span.textContent = "#" + entityName + ":" + text + "#";
+      span.className = "annotator-hl";
+      span.style = style;
+
+      range.deleteContents();
+      range.insertNode(span);      
+    }
+}
+
+// 监听按键
+document.addEventListener('keypress', (event) => {
+  const keyName = event.key.toLowerCase();
+
+  if(keyMap.has(keyName)){
+    [entity, style] = keyMap.get(keyName)
+    label(entity, style)
+  }
+
+});
+
+</script>
+
+</body>
+
+</html>
