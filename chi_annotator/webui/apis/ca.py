@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from flask import Flask, request, redirect, url_for, jsonify, send_from_directory
 from flask_cors import CORS
@@ -26,6 +27,10 @@ def allowed_file(filename):
 
 @app.route('/upload_remote_file', methods=['GET', 'POST'])
 def upload_remote_file():
+    """
+    load data from file to mongodb, this is the main interface to load data
+    :return:
+    """
     print("test>>>>>")
     if request.method == 'POST':
         # check if the post request has the file part
@@ -40,8 +45,6 @@ def upload_remote_file():
             # flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            # print(file.read())
-
             # save file
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -51,18 +54,11 @@ def upload_remote_file():
             ca = get_mongo_client(uri='mongodb://localhost:27017/')
             with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
-                    label, txt = line.split(" ", 1)
-                    ca["test"].insert_one({"txt": txt, "label": label})
+                    txt = line.strip()
+                    text_uuid = uuid.uuid1()
+                    ca["annotation_data"].insert_one({"txt": txt, "uuid": text_uuid})
             return jsonify(data={"status": "success"}, code=200, message="load success")
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    return jsonify(data={"status": "fail"}, code=302, message="the upload file is incorrect")
 
 
 @app.route('/load_local_dataset', methods=['GET', 'POST'])
