@@ -7,15 +7,15 @@ from chi_annotator.task_center.config import AnnotatorConfig
 from chi_annotator.algo_factory.common import TrainingData
 
 class TestClassify(object):
-    self.pos_msg1 = Message(u"你好，我是一个demo!!!!", {"label": "good"})
-    self.pos_msg2 = Message(u"你好,你好,你好", {"label": "good"})
-    self.pos_msg3 = Message(u"好的呀，不错", {"label": "good"})
-    self.neg_msg1 = Message(u"如果发现有文件漏提或注释有误", {"label": "bad"})
-    self.neg_msg2 = Message(u"增加一个需要上传的文件", {"label": "bad"})
-    self.neg_msg3 = Message(u"有一个上传的文件", {"label": "bad"})
+    pos_msg1 = Message(u"你好，我是一个demo!!!!", {"label": "good"})
+    pos_msg2 = Message(u"你好,你好,你好", {"label": "good"})
+    pos_msg3 = Message(u"好的呀，不错", {"label": "good"})
+    neg_msg1 = Message(u"如果发现有文件漏提或注释有误", {"label": "bad"})
+    neg_msg2 = Message(u"增加一个需要上传的文件", {"label": "bad"})
+    neg_msg3 = Message(u"有一个上传的文件", {"label": "bad"})
     def test_svm_classify(self):
         cfg = AnnotatorConfig()
-        train_data = TrainingData([neg_msg1, neg_msg2, pos_msg1, pos_msg2])
+        train_data = TrainingData([self.neg_msg1, self.neg_msg2, self.pos_msg1, self.pos_msg2])
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
@@ -32,7 +32,7 @@ class TestClassify(object):
         assert test_msg.get("classifylabel").get("name") == "bad"
     def test_sgd_classify(self):
         cfg = AnnotatorConfig()
-        train_data = TrainingData([neg_msg1, neg_msg2, pos_msg1, pos_msg2])
+        train_data = TrainingData([self.neg_msg1, self.neg_msg2, self.pos_msg1, self.pos_msg2])
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
@@ -49,7 +49,7 @@ class TestClassify(object):
         assert test_msg.get("classifylabel").get("name") == "bad"
     def test_knn_classify(self):
         cfg = AnnotatorConfig()
-        train_data = TrainingData([neg_msg1, neg_msg2, neg_msg3, pos_msg1, pos_msg2, pos_msg3])
+        train_data = TrainingData([self.neg_msg1, self.neg_msg2, self.neg_msg3, self.pos_msg1, self.pos_msg2, self.pos_msg3])
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
@@ -66,7 +66,7 @@ class TestClassify(object):
         assert test_msg.get("classifylabel").get("name") == "bad"
     def test_randomforest_classify(self):
         cfg = AnnotatorConfig()
-        train_data = TrainingData([neg_msg1, neg_msg2, pos_msg1, pos_msg2])
+        train_data = TrainingData([self.neg_msg1, self.neg_msg2, self.pos_msg1, self.pos_msg2])
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
@@ -83,7 +83,7 @@ class TestClassify(object):
         assert test_msg.get("classifylabel").get("name") == "bad"
     def test_adaboost_classify(self):
         cfg = AnnotatorConfig()
-        train_data = TrainingData([neg_msg1, neg_msg2, pos_msg1, pos_msg2])
+        train_data = TrainingData([self.neg_msg1, self.neg_msg2, self.pos_msg1, self.pos_msg2])
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
