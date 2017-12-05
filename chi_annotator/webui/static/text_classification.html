@@ -2,8 +2,8 @@
 <html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>anatine - a free css template</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Chinese-Annotator</title>
 	<link rel="stylesheet" href="styles.css" type="text/css" />
 	<!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,7 +33,6 @@ License: Creative Commons Attribution
 
 			<nav id="mainnav">
 				<ul>
-
 					<li>
 						<a href="index.html">Text Classification</a>
 					</li>
@@ -53,62 +52,55 @@ License: Creative Commons Attribution
 			</nav>
 		</aside>
 		<section id="content" class="column-right">
+			<article>
+				<h2>Introduction</h2>
+				<p>The text has been auto labeld by model, but it maybe incorrect, it is your to detemind if it is correct, if it is correct
+					please click Right Button, if it incorrect please click the Wrong button and provide a correct answer</p>
+			</article>
 
 			<article class="expanded">
+				<div id="load_and_annotation_data">
+					<h2>Text Classification</h2>
+					<br/>
+					<h3>{{ auto_label }}</h3>
 
-				<h2>Text Classification</h2>
-				<!--<div class="article-info">Posted on <time datetime="2013-05-14">14 May</time> by <a href="#" rel="author">Joe Bloggs</a></div>-->
+					<p>{{ annotation_text }}</p>
+					<!--<p>Writers From the Right and Left on Trump Jr., the Future of the F.B.I.ORG, Health Care and More</p>-->
+
+					<a href="#" v-on:click="annotate_single_unlabeled" class="button">right</a>
+					<a href="#" v-on:click="click_wrong_button" class="button button-reversed">wrong</a>
+					&nbsp;&nbsp;
+					<!-- <a href="#" class="button">undo</a>
+					<a href="#" class="button button-reversed">cancel</a> -->
+					<br/>
+					<p></p>
+					<div v-show="incorrect_label">
+						<label for="file_paht_local">Select a right class</label>
+						<select v-model='item'>
+							<option v-for=" item in calss_list"> {{ item.name}}</option>
+						</select>
+						<a href="#" v-on:click="annotate_single_correct" class="button">submit</a>
+					</div>
 
 
-				<!--<p>Purchasing a template license for 8.00 GBP (at time of writing around 12 USD) gives you the right to remove any branding including links, logos and source tags relating to ZyPOP. As well as waiving the attribution requirement, your payment will also help us provide continued support for users as well as creating new web templates. Find out more about how to buy at the licensing page on our website which can be accessed at <a href="http://zypopwebtemplates.com/licensing" title="template license">http://zypopwebtemplates.com/licensing</a></p>-->
-
-				<!--<br/>-->
-				<!--<br/>-->
-				<!--<br/>-->
-				<br/>
-				<h3>Labeled Text</h3>
-
-				<p>Morbi fermentum condimentum felis, commodo vestibulum sem mattis sed.
-					<label class="labeled">Aliquam magna ante</label>, mollis vitae tincidunt in, malesuada vitae turpis. Sed aliquam libero ut velit bibendum
-					consectetur. Quisque sagittis, est in laoreet semper, enim dui consequat felis, faucibus ornare urna velit nec leo.
-					Maecenas condimentum velit vitae est lobortis fermentum. In tristique sem vitae metus ornare luctus tempus nisl volutpat.
-					Integer et est id nisi tempus pharetra sagittis et libero.</p>
-				<!--<p>Writers From the Right and Left on Trump Jr., the Future of the F.B.I.ORG, Health Care and More</p>-->
-
-				<a href="#" class="button">right</a>
-				<a href="#" class="button button-reversed">wrong</a>
-				&nbsp;&nbsp;
-				<a href="#" class="button">undo</a>
-				<a href="#" class="button button-reversed">cancel</a>
+				</div>
 			</article>
 			<article class="expanded">
-				<h3>History</h3>
-				<table>
-					<tr>
-						<th>ID</th>
-						<th>Text</th>
-						<th>Status</th>
-					</tr>
-					<tr>
-						<td>1</td>
-						<td>John Smith</td>
-						<td>28</td>
-
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>Fred James</td>
-						<td>49</td>
-					</tr>
-					<tr>
-						<td>3</td>
-						<td>Rachel Johnson</td>
-						<td>19</td>
-					</tr>
-
-				</table>
-				<p>&nbsp;</p>
-
+				<div id="annotation_history">
+					<h3>History</h3>
+					<table >
+						<tr>
+							<th>Label</th>
+							<th>Text</th>
+							
+						</tr>
+						<tr v-for=" annptaion in annptaion_list">
+							<td>{{ annptaion.label }}</td>
+							<td>{{ annptaion.text }}</td>
+						</tr>
+					</table>
+					<p>&nbsp;</p>
+				</div>
 			</article>
 
 
@@ -123,6 +115,8 @@ License: Creative Commons Attribution
 
 	</section>
 
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="js/vue.js"></script>
 	<script src="js/core.js"></script>
 </body>
 
