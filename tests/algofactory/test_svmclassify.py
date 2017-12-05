@@ -1,4 +1,5 @@
 #test relation extration
+#author shimin
 
 
 class TestClassify(object):
@@ -17,7 +18,7 @@ class TestClassify(object):
         cb = ComponentBuilder()
         char_tokenize = cb.create_component("char_tokenizer", cfg)
         sent_embedding = cb.create_component("sentence_embedding_extractor", cfg)
-        svm_classifer = cb.create_component("classifier_sklearn", cfg)
+        svm_classifer = cb.create_component("SVM_classifier", cfg)
         char_tokenize.train(train_data, cfg)
         sent_embedding.train(train_data, cfg)
         svm_classifer.train(train_data, cfg)
