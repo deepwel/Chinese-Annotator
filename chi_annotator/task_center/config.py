@@ -27,7 +27,7 @@ DEFAULT_CONFIG = {
     "max_training_processes": 1,
     "path": "projects",
     "port": 5000,
-    "embedding_path": "vec.txt",
+    "embedding_path": "tests/data/vec.txt",
     "embedding_type": "text",
     "pipeline": [],
     # "response_log": "logs",
