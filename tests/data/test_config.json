@@ -7,7 +7,7 @@
     "pipeline": [
         "tokenizer_jieba",
         "sentence_embedding_extractor",
-        "cluster_sklearn"
+        "SVM_classifier"
     ],
     "language": "zh",
     "embedding_path": "./tests/data/mobile.vec",
