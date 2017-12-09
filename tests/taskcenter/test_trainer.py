@@ -101,6 +101,7 @@ class TestTrainer(object):
 
         interpreter_loaded = Interpreter.load(persisted_path, config)
         out2 = interpreter_loaded.parse("点连接拿红包啦")
+        print(out1)
         assert out1.get("classifylabel").get("name") == out2.get("classifylabel").get("name")
 
         # remove tmp models

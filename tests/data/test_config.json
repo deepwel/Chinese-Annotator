@@ -5,14 +5,14 @@
     "fixed_model_name": "chi_annotator_models",
     "model_type": "classification",
     "pipeline": [
-        "char_tokenizer",
+        "tokenizer_jieba",
         "sentence_embedding_extractor",
-        "classifier_sklearn"
+        "cluster_sklearn"
     ],
     "language": "zh",
-    "embedding_path": "./tests/data/vec.txt",
+    "embedding_path": "./tests/data/mobile.vec",
     "embedding_type": "text",
-    "org_data" : "./tests/data/test_data.json",
+    "org_data" : "./tests/data/user_sentence.json",
     "confidence_threshold" : 0.95,
     "inference_num" : 20,
     "batch_num": 20,
