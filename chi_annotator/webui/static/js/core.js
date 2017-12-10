@@ -126,96 +126,96 @@ var export_data = new Vue({
   }
 })
 
-// var load_and_annotation_data = new Vue({
-//   el: '#load_and_annotation_data',
-//   data: {
-//     auto_label: "label",
-//     annotation_text: "annotation text",
-//     message: "select file to do upload",
-//     incorrect_label: false,
-//     uuid:"",
-//     calss_list: [{
-//         name: "span"
-//       },
-//       {
-//         name: "nonspan"
-//       }
-//     ],
-//     annptaion_list: [{
-//         label: "span",
-//         text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-//       },
-//       {
-//         label: "nonspan",
-//         text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-//       }
-//     ],
-//   },
-//   created: function () {
-//     this.load_single_unlabeled()
-//   },
-//   // define methods under the `methods` object
-//   methods: {
-//     load_single_unlabeled: function () {
-//       axios.get('/load_single_unlabeled')
-//         .then(function (response) {
-//           this.auto_label = "span"
-//           this.annotation_text = response.data.data.text
-//           this.uuid = response.data.data.uuid
-//           console.log(response);
-//         }.bind(this))
-//         .catch(function (error) {
-//           console.log(error);
-//         });
-//     },
+var load_and_annotation_data = new Vue({
+  el: '#load_and_annotation_data',
+  data: {
+    auto_label: "label",
+    annotation_text: "annotation text",
+    message: "select file to do upload",
+    incorrect_label: false,
+    uuid:"",
+    calss_list: [{
+        name: "span"
+      },
+      {
+        name: "nonspan"
+      }
+    ],
+    annptaion_list: [{
+        label: "span",
+        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
+      },
+      {
+        label: "nonspan",
+        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
+      }
+    ],
+  },
+  created: function () {
+    this.load_single_unlabeled()
+  },
+  // define methods under the `methods` object
+  methods: {
+    load_single_unlabeled: function () {
+      axios.get('/load_single_unlabeled/')
+        .then(function (response) {
+          this.auto_label = "span"
+          this.annotation_text = response.data.data.text
+          this.uuid = response.data.data.uuid
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
 
-//     annotate_single_unlabeled: function () {
-//       // Make a request for a user with a given ID
-//       axios.post('/annotate_single_unlabeled', {
-//           label: this.auto_label,
-//           text: this.annotation_text
-//         })
-//         .then(function (response) {
-//           this.load_single_unlabeled()
-//           console.log(response);
-//         }.bind(this))
-//         .catch(function (error) {
-//           console.log(error);
-//         });
-//     },
+    annotate_single_unlabeled: function () {
+      // Make a request for a user with a given ID
+      axios.post('/annotate_single_unlabeled', {
+          label: this.auto_label,
+          text: this.annotation_text
+        })
+        .then(function (response) {
+          this.load_single_unlabeled()
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
 
-//     annotate_single_correct: function () {
-//       // Make a request for a user with a given ID
-//       axios.post('/annotate_single_unlabeled', {
-//           label: this.item,
-//           text: this.annotation_text
-//         })
-//         .then(function (response) {
-//           this.load_single_unlabeled()
-//           console.log(response);
-//         }.bind(this))
-//         .catch(function (error) {
-//           console.log(error);
-//         });
-//     },
+    annotate_single_correct: function () {
+      // Make a request for a user with a given ID
+      axios.post('/annotate_single_unlabeled', {
+          label: this.item,
+          text: this.annotation_text
+        })
+        .then(function (response) {
+          this.load_single_unlabeled()
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
 
-//     click_wrong_button: function () {
-//       this.incorrect_label = true
-//     },
-//   }
-// })
+    click_wrong_button: function () {
+      this.incorrect_label = true
+    },
+  }
+})
 
-// var annotation_history = new Vue({
-//   el: '#annotation_history',
-//   data: {
-//     annptaion_list: [{
-//         label: "span",
-//         text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-//       },
-//       {
-//         label: "nonspan",
-//         text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-//       }
-//     ],
-//   },
-// })
+var annotation_history = new Vue({
+  el: '#annotation_history',
+  data: {
+    annptaion_list: [{
+        label: "span",
+        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
+      },
+      {
+        label: "nonspan",
+        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
+      }
+    ],
+  },
+})
