@@ -32,7 +32,7 @@ var example2 = new Vue({
 
 
 
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
 // axios.interceptors.request.use(
 //   config =>{
 //     config.data = JSON.stringify(config.data)
@@ -53,7 +53,7 @@ var load_local_data = new Vue({
   methods: {
     load_local_data_post: function (event) {
       // Make a request for a user with a given ID
-      axios.post('/load_local_dataset', {
+      axios.post('/load_local_dataset/', {
           filepath: this.file_path,
         })
         .then(function (response) {
@@ -66,7 +66,7 @@ var load_local_data = new Vue({
     },
     load_local_data_get: function (event) {
       // Make a request for a user with a given ID
-      axios.get('/load_local_dataset?filepath=' + this.file_path)
+      axios.get('/load_local_dataset/?filepath=' + this.file_path)
         .then(function (response) {
           this.message = response.data.message
           console.log(response);
@@ -90,12 +90,7 @@ var upload_remote_file = new Vue({
       // Make a request for a user with a given ID
       let formData = new FormData();
       formData.append('file', this.files[0])
-      const config = {
-        headers: {
-          'content-type': 'multipart/form-data'
-        }
-      }
-      axios.post('/upload_remote_file', formData, config)
+      axios.post('/upload_remote_file/', formData)
         .then(function (response) {
           this.message = response.data.message
           console.log(response);
@@ -119,7 +114,7 @@ var export_data = new Vue({
   methods: {
     export_data: function (event) {
       // Make a request for a user with a given ID
-      axios.get('/export_data')
+      axios.get('/export_data/')
         .then(function (response) {
           this.message = response.data.message
           console.log(response);
@@ -162,7 +157,7 @@ var load_and_annotation_data = new Vue({
   // define methods under the `methods` object
   methods: {
     load_single_unlabeled: function () {
-      axios.get('/load_single_unlabeled')
+      axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
           this.annotation_text = response.data.data.text
