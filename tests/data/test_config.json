@@ -7,13 +7,15 @@
     "pipeline": [
         "char_tokenizer",
         "sentence_embedding_extractor",
-        "classifier_sklearn"
+        "SVM_classifier"
     ],
     "language": "zh",
     "embedding_path": "./tests/data/vec.txt",
     "embedding_type": "text",
     "org_data" : "./tests/data/test_data.json",
     "confidence_threshold" : 0.95,
+    "inference_num" : 20,
+    "batch_num": 20,
     "log_level": "INFO",
     "log_file": null
 }
