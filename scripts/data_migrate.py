@@ -36,6 +36,8 @@ if __name__ == '__main__':
     sys_conf = get_config(arguments["SYS_CONFIG"])
     user_conf = get_config(arguments["USER_CONFIG"])
 
+    database_host = sys_conf["database_host"]
+    database_port = sys_conf["database_port"]
     database_name = user_conf["database_name"]
     table_name = user_conf["table_name"]
     user_instance_path = user_conf["path"]
@@ -43,10 +45,12 @@ if __name__ == '__main__':
     if arguments.get("-e"):
         # export data
         output_file = arguments["DATAFILE"]
-        command = "mongoexport " \
-                  + "-d " + database_name \
+        command = "mongoexport" \
+                  + " --host " + database_host \
+                  + " --port " + str(database_port) \
+                  + " -d " + database_name \
                   + " -c " + table_name \
-                  + " -o " + output_file
+                  + output_file
         status = subprocess.call(command, shell=True)
         print(status)
         if status != 0:
@@ -58,4 +62,21 @@ if __name__ == '__main__':
                       + " " + output_file
         status = subprocess.call(zip_command, shell=True)
 
-    # TODO import data
+    if arguments.get("-i"):
+        # export data
+        zip_command = "unzip -o user_instance.zip"
+        status = subprocess.call(zip_command, shell=True)
+
+        output_file = arguments["DATAFILE"]
+        command = "mongoimport" \
+                  + " --host " + database_host \
+                  + " --port " + str(database_port) \
+                  + " -d " + database_name \
+                  + " -c " + table_name \
+                  + " " + output_file
+        status = subprocess.call(command, shell=True)
+        if status != 0:
+            print("export data form database error. exit, log in stdout.")
+            exit()
+
+    # TODO MORE CLEAN ACTIONS

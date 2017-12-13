@@ -95,8 +95,6 @@ def do_train(config,  # type: AnnotatorConfig
     persisted_path = trainer.persist(config['path'],
                                      config['project'],
                                      config['fixed_model_name'])
-    out2 = interpreter.parse("点连接拿红包啦")
-    print(out2)
     return trainer, interpreter, persisted_path
 
 
