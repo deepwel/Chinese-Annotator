@@ -35,7 +35,7 @@ class SklearnCluster(Component):
         X = np.stack([example.get("sentence_embedding")
                       for example in training_data.cluster_examples
                       if example.get("sentence_embedding") is not None])
-        self.clf = KMeans(n_clusters=40, random_state=0)
+        self.clf = KMeans(n_clusters=2, random_state=0)
         self.clf.fit(X)
 
     def process(self, message, **kwargs):
