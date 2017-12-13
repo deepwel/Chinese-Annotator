@@ -19,7 +19,7 @@
   "max_sentence_length": 100000,
   "limit": false,
   "train_config": {
-    "sentence": "./chi_annotator/data/spam_classify_chi_shuf.txt",
+    "sentence": "./tests/data/spam_classify_chi_shuf.txt",
     "size": 50,
     "alpha": 0.025,
     "window": 5,

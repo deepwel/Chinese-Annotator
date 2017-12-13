@@ -119,7 +119,7 @@ def load_single_unlabeled():
     :return:
     """
     # read file
-    ca = get_mongo_client()
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
     text = ca["annotation_data"].find_one({"label": {"$exists": False}})
 
     return jsonify(data={"text": text.get("txt"), "uuid": text.get("uuid")}, code=200, message="load success")
