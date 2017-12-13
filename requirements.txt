@@ -20,3 +20,4 @@ django==2.0
 Markdown==2.6.10
 django-cors-headers==2.1.0
 djangorestframework==3.7.3
+pytest
