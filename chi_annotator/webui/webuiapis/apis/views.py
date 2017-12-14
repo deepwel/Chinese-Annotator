@@ -154,3 +154,33 @@ def load_single_unlabeled(request):
     return JsonResponse(serializer.data)
 
 
+def annotate_single_unlabeled(request):
+    """
+    save the labeled annotation to DB
+    :return:
+    """
+    # read file
+    text = request.form.get("text", "")
+    label = request.form.get("label", "")
+    print(text)
+    print(label)
+    ca = get_mongo_client()
+    text = ca["annotation_data"].insert_one({"label": label, "text": text})
+
+    return JsonResponse(data={}, code=200, message="annotate success")
+
+
+def check_offline_progress(request):
+    """
+    check offline training process
+    :return:
+    """
+    # read file
+    text = request.form.get("text", "")
+    label = request.form.get("label", "")
+    print(text)
+    print(label)
+    ca = get_mongo_client()
+    text = ca["annotation_data"].insert_one({"label": label, "text": text})
+
+    return JsonResponse(data={"progress": 50}, code=200, message="annotate success")
