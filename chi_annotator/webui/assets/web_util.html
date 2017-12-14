@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>anatine - a free css template</title>
+		<link rel="stylesheet" href="styles.css" type="text/css" />
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+	</head>
+
+	<body>
+		<section id="body" class="width">
+			<aside id="sidebar" class="column-left">
+
+				<header>
+					<h1>
+						<a href="#">Chinese Annotator</a>
+					</h1>
+
+					<h2>中文文本标注工具</h2>
+
+				</header>
+
+				<nav id="mainnav">
+					<ul>
+						<li>
+							<a href="index.html">Home</a>
+						</li>
+						<li class="selected-item">
+							<a href="examples.html">Examples</a>
+						</li>
+						<li>
+							<a href="text_classification.html">Text Classification</a>
+						</li>
+						<li>
+							<a href="web_util.html">web api util</a>
+						</li>
+					</ul>
+				</nav>
+
+
+
+			</aside>
+			<section id="content" class="column-right">
+
+				<article>
+					<h3>API Testing</h3>
+					<blockquote>
+						<p>this web is for API testing, it list all API that provided by the web service backend. user can use this
+							web site to access the web api send GET or POST request</p>
+					</blockquote>
+				</article>
+				<article class="expanded">
+					<h3>Load Local Data</h3>
+					<fieldset>
+						<form>
+							<p>web service interface
+								<strong>http://localhost:5000/load_local_dataset/</strong>
+								it's function is to upload the data from local data file to Mongo DB. It support both GET and POST method</p>
+							<div id="load_local_data">
+								<label for="file_paht_local">local file path</label>
+								<input type="text" name="file_paht_local" size="50" v-model="file_path" />
+								<a href="#" class="button" v-on:click="load_local_data_post">load local data by POST</a>
+								<a href="#" class="button" v-on:click="load_local_data_get">load local data by GET</a>
+								<p>{{ message }}</p>
+							</div>
+						</form>
+					</fieldset>
+				</article>
+				<article class="expanded">
+					<h3>Upload remote file</h3>
+					<fieldset>
+						<form>
+							<p>web service interface
+								<strong>http://localhost:5000/upload_remote_file/</strong>
+								it's function is to upload the data from data file provied by http request to Mongo DB. It only support both POST method</p>
+							<div id="upload_remote_file">
+								<p>
+									<input @change="tirggerFile($event)" type="file" name="file">
+									<input v-on:click="upload_remote_file" class="formbutton" type="submit" value="Upload">
+								</p>
+								<p>{{ message }}</p>
+							</div>
+						</form>
+					</fieldset>
+				</article>
+
+				<article class="expanded">
+					<h3>Export Data as File</h3>
+					<fieldset>
+						<form>
+							<p>web service interface
+								<strong>http://localhost:5000/export_data/</strong>
+								it's function is to export data from MongoDB as file to ../../data/files/test.json. It only support both POST method</p>
+							<div id="export_data">
+								<a href="#" v-on:click="export_data" class="button">Export Data</a>
+								<p>{{ message }}</p>
+							</div>
+						</form>
+					</fieldset>
+				</article>
+
+				<footer class="clear">
+					<p>&copy; 2017 sitename.
+						<a href="http://zypopwebtemplates.com/">Free CSS Templates</a> by ZyPOP</p>
+				</footer>
+
+			</section>
+
+			<div class="clear"></div>
+
+		</section>
+
+
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script src="js/vue.js"></script>
+		<script src="js/core.js"></script>
+	</body>
+
+</html>
