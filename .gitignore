@@ -100,3 +100,15 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+# Vue/Node.js
+node_modules/
+dist/
+
+# some dummy files
+*#
+*~
+.#*
+log/
+tmp/

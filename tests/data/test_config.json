@@ -13,6 +13,8 @@
     "embedding_path": "./tests/data/vec.txt",
     "embedding_type": "text",
     "org_data" : "./tests/data/test_data.json",
+    "database_name": "test_dataset",
+    "table_name": "test_table",
     "confidence_threshold" : 0.95,
     "inference_num" : 20,
     "batch_num": 20,
