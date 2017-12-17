@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from werkzeug.utils import secure_filename
@@ -9,12 +9,15 @@ from werkzeug.utils import secure_filename
 from chi_annotator.webui.webuiapis.apis.apiresponse import APIResponse
 from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData
 from chi_annotator.webui.webuiapis.apis.serializers import APIResponseSerializer, AnnotationRawDataSerializer
+from chi_annotator.webui.webuiapis.utils.config import WebUIConfig
 from chi_annotator.webui.webuiapis.utils.mongoUtil import get_mongo_client
 import json
 
 
 UPLOAD_FOLDER = '../../data/files'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+config = WebUIConfig()
+
 
 class AnnotationDataViewSet(APIView):
     pass
@@ -23,6 +26,20 @@ class AnnotationDataViewSet(APIView):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def project_info(request):
+    """
+    get the project in as json
+    :param request:
+    :return:
+    """
+    response = APIResponse()
+    response.data = config.view()
+    response.code = 200
+    response.message = "Connect REST SUCCESS"
+    serializer = APIResponseSerializer(response)
+    return JsonResponse(serializer.data)
 
 
 def upload_remote_file(request):
@@ -95,7 +112,7 @@ def load_local_dataset(request):
                 text = line.strip()
                 text_uuid = uuid.uuid1()
                 annotation_data = AnnotationRawData(text=text, uuid=text_uuid)
-                annotation_data_serializer = AnnotationDataSerializer(annotation_data)
+                annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
                 ca["annotation_data"].insert_one(annotation_data_serializer.data)
         response.data = {"status": "success"}
         response.code = 200
@@ -145,7 +162,7 @@ def load_single_unlabeled(request):
     text = ca["annotation_data"].find_one({"label": ""})
 
     annotation_data = AnnotationRawData(text=text.get("text"), uuid=text.get("uuid"))
-    annotation_data_serializer = AnnotationDataSerializer(annotation_data)
+    annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
 
     response = APIResponse()
     response.data = annotation_data_serializer.data
