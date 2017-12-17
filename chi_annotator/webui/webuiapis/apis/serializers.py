@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from apis.apiresponse import APIResponse
-from apis.mongomodel import AnnotationData
+from chi_annotator.webui.webuiapis.apis.apiresponse import APIResponse
+from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData
 
 
 class APIResponseSerializer(serializers.Serializer):
@@ -25,7 +25,7 @@ class APIResponseSerializer(serializers.Serializer):
         return instance
 
 
-class AnnotationDataSerializer(serializers.Serializer):
+class AnnotationRawDataSerializer(serializers.Serializer):
     text = serializers.CharField()
     label = serializers.CharField()
     uuid = serializers.CharField()
@@ -36,7 +36,7 @@ class AnnotationDataSerializer(serializers.Serializer):
         """
         Create and return a new `Snippet` instance, given the validated data.
         """
-        return AnnotationData(**validated_data)
+        return AnnotationRawData(**validated_data)
 
     def update(self, instance, validated_data):
         """

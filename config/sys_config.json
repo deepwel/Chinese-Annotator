@@ -1,5 +1,6 @@
 {
   "ip" : "localhost",  
-  "port": "8888",
-  "database_type": "mongodb"
+  "port": "8000",
+  "database_type": "mongodb",
+  "type": "classification"
 }
