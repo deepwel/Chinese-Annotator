@@ -68,11 +68,46 @@ var project_info = new Vue({
   }
 })
 
+var load_local_data = new Vue({
+  el: '#load_local_data',
+  data: {
+    message: "Fill the local data file path in the input text field",
+    file_path: '',
+  },
+  // define methods under the `methods` object
+  methods: {
+    load_local_data_post: function (event) {
+      // Make a request for a user with a given ID
+      axios.post('/load_local_dataset/', {
+          filepath: this.file_path,
+        })
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    load_local_data_get: function (event) {
+      // Make a request for a user with a given ID
+      axios.get('/load_local_dataset/?filepath=' + this.file_path)
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }
+})
+
 var upload_remote_file = new Vue({
   el: '#upload_remote_file',
   data: {
     files: "",
-    message: "select file to do upload",
+    message: "Select file to do upload",
   },
   // define methods under the `methods` object
   methods: {
@@ -141,9 +176,9 @@ var load_and_annotation_data = new Vue({
       }
     ],
   },
-  created: function () {
-    this.load_single_unlabeled()
-  },
+  // created: function () {
+  //   this.load_single_unlabeled()
+  // },
   // define methods under the `methods` object
   methods: {
     load_single_unlabeled: function () {
