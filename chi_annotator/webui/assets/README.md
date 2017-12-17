@@ -1,4 +1,5 @@
 
+
 # Chinese Anotator
 
 > 中文标注工具的前端项目，项目采用前后端分离的结构进行开发。使用Vue.js作为前端的主框架。
@@ -7,6 +8,7 @@
 ## Build Setup
 
 ``` bash
+
 # 安装依赖
 npm install
 

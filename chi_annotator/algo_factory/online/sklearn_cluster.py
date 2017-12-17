@@ -46,6 +46,10 @@ class SklearnCluster(Component):
             # component is either not trained or didn't receive enough training data
             label = None
         else:
+            if message.get("sentence_embedding") is None:
+                logger.warning("text has no embedding, this may because text word not in vocab dict, skipped.")
+                message.set("cluster_center", {"center": None}, add_to_output=True)
+                return
             X = message.get("sentence_embedding").reshape(1, -1)
             label_ids = self.clf.predict(X)
             # `predict` returns a matrix as it is supposed

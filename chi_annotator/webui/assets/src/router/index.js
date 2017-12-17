@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import LoadingPage from '@/components/LoadingPage'
 import WorkingSpace from '@/components/WorkingSpace'
 import TextClassification from '@/components/workspaces/TextClassification'

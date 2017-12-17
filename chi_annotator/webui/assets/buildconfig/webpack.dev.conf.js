@@ -37,6 +37,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
+
 	    'process.env': require('../config/dev.env'),
 	    'SERVER_BASE_URL': "http://localhost:3000/"
     }),
