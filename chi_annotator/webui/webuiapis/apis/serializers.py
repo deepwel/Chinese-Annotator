@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from chi_annotator.webui.webuiapis.apis.apiresponse import APIResponse
-from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData, DataSet
+from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData
 
 
 class APIResponseSerializer(serializers.Serializer):
@@ -27,9 +27,9 @@ class APIResponseSerializer(serializers.Serializer):
 
 class AnnotationRawDataSerializer(serializers.Serializer):
     text = serializers.CharField()
-    labeled = serializers.BooleanField()
-    uuid = serializers.UUIDField()
-    dataset_uuid = serializers.UUIDField()
+    label = serializers.CharField()
+    uuid = serializers.CharField()
+    dataset_id = serializers.IntegerField()
     time_stamp = serializers.DateTimeField()
 
     def create(self, validated_data):
@@ -43,28 +43,8 @@ class AnnotationRawDataSerializer(serializers.Serializer):
         Update and return an existing `Snippet` instance, given the validated data.
         """
         instance.text = validated_data.get('text', instance.text)
-        instance.labeled = validated_data.get('label', instance.labeled)
+        instance.label = validated_data.get('label', instance.label)
         instance.uuid = validated_data.get('uuid', instance.uuid)
-        instance.dataset_uuid = validated_data.get('dataset_uuid', instance.dataset_uuid)
+        instance.dataset_id = validated_data.get('dataset_id', instance.dataset_id)
         instance.time_stamp = validated_data.get('time_stamp', instance.time_stamp)
-        return instance
-
-
-class DataSetSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    uuid = serializers.UUIDField()
-    user_uuid = serializers.UUIDField()
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Snippet` instance, given the validated data.
-        """
-        return DataSet(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing `Snippet` instance, given the validated data.
-        """
-        instance.name = validated_data.get('name', instance.name)
-        instance.uuid = validated_data.get('uuid', instance.uuid)
         return instance

@@ -113,7 +113,7 @@ var upload_remote_file = new Vue({
   methods: {
     upload_remote_file: function (event) {
       // Make a request for a user with a given ID
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append('file', this.files[0])
       axios.post('/upload_remote_file/', formData)
         .then(function (response) {
