@@ -80,11 +80,9 @@
                         <p>web service interface
                             <strong>http://localhost:8000/upload_remote_file/</strong>
                             it's function is to upload the data from data file provied by http request to Mongo DB. It only support both POST method</p>
-                        <div id="upload_remote_file">
-                            <p>
-                                <input @change="tirggerFile($event)" type="file" name="file">
-                                <input v-on:click="upload_remote_file" class="formbutton" type="submit" value="Upload">
-                            </p>
+                        <div id="upload_remote_file"> 
+                            <input @change="tirggerFile($event)" type="file" name="file">
+                            <a href="javascript:void(0);" v-on:click="upload_remote_file" class="button">Upload</a>
                             <p>{{ message }}</p>
                         </div>
                     </form>
@@ -99,7 +97,7 @@
                             <strong>http://localhost:8000/export_data/</strong>
                             it's function is to export data from MongoDB as file to ../../data/files/test.json. It only support both POST method</p>
                         <div id="export_data">
-                            <a href="#" v-on:click="export_data" class="button">Export Data</a>
+                            <a href="javascript:void(0);" v-on:click="export_data" class="button">Export Data</a>
                             <p>{{ message }}</p>
                         </div>
                     </form>
@@ -115,6 +113,7 @@
                             <strong>http://localhost:8000/export_data/</strong>
                             it's function is to load an unannotated text from data and let use select a correct one for it and submit it to DB again</p>
                             <div id="load_and_annotation_data">
+                                <a href="javascript:void(0);" v-on:click="load_single_unlabeled" class="button">Load an unAnnotated data</a>
                                 <h3>{{ auto_label }}</h3>
                                 <p>{{ annotation_text }}</p>
                                 <!--<p>Writers From the Right and Left on Trump Jr., the Future of the F.B.I.ORG, Health Care and More</p>-->

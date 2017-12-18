@@ -7,10 +7,11 @@ from rest_framework.views import APIView
 from werkzeug.utils import secure_filename
 
 from chi_annotator.webui.webuiapis.apis.apiresponse import APIResponse
-from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData
-from chi_annotator.webui.webuiapis.apis.serializers import APIResponseSerializer, AnnotationRawDataSerializer
+from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData, DataSet
+from chi_annotator.webui.webuiapis.apis.serializers import *
 from chi_annotator.webui.webuiapis.utils.config import WebUIConfig
 from chi_annotator.webui.webuiapis.utils.mongoUtil import get_mongo_client
+from rest_framework.renderers import JSONRenderer
 import json
 
 
@@ -59,6 +60,8 @@ def upload_remote_file(request):
             # submit a empty part without filename
             if file.name != '':
                 if file and allowed_file(file.name):
+
+
                     # save file
                     filename = secure_filename(file.name)
                     file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -68,13 +71,20 @@ def upload_remote_file(request):
 
                     # read file
                     ca = get_mongo_client(uri='mongodb://localhost:27017/')
+                    # save data set
+                    data_set_uuid = uuid.uuid1()
+                    data_set = DataSet(name=file.name, uuid=data_set_uuid)
+                    data_set_serializer = DataSetSerializer(data_set)
+                    ca["dataset"].insert_one(data_set_serializer.data)
+
+                    # save annotation data
                     with open(file_path, 'r', encoding='utf-8') as f:
                         for line in f:
                             text = line.strip()
                             text_uuid = uuid.uuid1()
-                            annotation_data = AnnotationRawData(text=text, uuid=text_uuid)
-                            annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
-                            ca["annotation_raw_data"].insert_one(annotation_data_serializer.data)
+                            annotation_raw_data = AnnotationRawData(text=text, uuid=text_uuid, dataset_uuid=data_set_uuid)
+                            annotation_raw_data_serializer = AnnotationRawDataSerializer(annotation_raw_data)
+                            ca["annotation_raw_data"].insert_one(annotation_raw_data_serializer.data)
                     response.data = {"status": "success"}
                     response.code = 200
                     response.message = "Load SUCCESS"
@@ -111,9 +121,9 @@ def load_local_dataset(request):
                 print("get string %s" % line)
                 text = line.strip()
                 text_uuid = uuid.uuid1()
-                annotation_data = AnnotationRawData(text=text, uuid=text_uuid)
-                annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
-                ca["annotation_data"].insert_one(annotation_data_serializer.data)
+                annotation_raw_data = AnnotationRawData(text=text, uuid=text_uuid)
+                annotation_raw_data_serializer = AnnotationRawDataSerializer(annotation_raw_data)
+                ca["annotation_raw_data"].insert_one(annotation_raw_data_serializer.data)
         response.data = {"status": "success"}
         response.code = 200
         response.message = "Load SUCCESS"
@@ -132,14 +142,13 @@ def export_data(request):
     """
     # read file
     ca = get_mongo_client(uri='mongodb://localhost:27017/')
-    with open("../../data/files/data.json", "w") as f:
+    with open("../../data/files/annotation_data.json", "w") as f:
         annotations = ca["annotation_data"].find({}).batch_size(50)
         result = []
         for annotation in annotations:
             data = {
                 "label": annotation["label"],
                 "txt": annotation["txt"],
-
             }
             result.append(data)
         json.dump(result, f)
@@ -159,13 +168,13 @@ def load_single_unlabeled(request):
     """
     # read file
     ca = get_mongo_client(uri='mongodb://localhost:27017/')
-    text = ca["annotation_data"].find_one({"label": ""})
+    text = ca["annotation_raw_data"].find_one({"labeled": False})
 
     annotation_data = AnnotationRawData(text=text.get("text"), uuid=text.get("uuid"))
     annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
 
     response = APIResponse()
-    response.data = annotation_data_serializer.data
+    response.data = JSONRenderer().render(annotation_data_serializer.data)
     response.code = 200
     serializer = APIResponseSerializer(response)
     return JsonResponse(serializer.data)
