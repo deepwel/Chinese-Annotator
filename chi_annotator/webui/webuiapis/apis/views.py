@@ -174,7 +174,7 @@ def load_single_unlabeled(request):
     annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
 
     response = APIResponse()
-    response.data = JSONRenderer().render(annotation_data_serializer.data)
+    response.data = json.dumps(annotation_data_serializer.data)
     response.code = 200
     serializer = APIResponseSerializer(response)
     return JsonResponse(serializer.data)

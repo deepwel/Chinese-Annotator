@@ -47,7 +47,6 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
 
 var project_info = new Vue({
   el: '#project_info',
-<<<<<<< HEAD
   data: {
     message: "Click Test to see if can connnect Backend REST, and got project info",
     project_info: '',
@@ -74,11 +73,6 @@ var load_local_data = new Vue({
   data: {
     message: "Fill the local data file path in the input text field",
     file_path: '',
-=======
-  data: {
-    message: "Click Test to see if can connnect Backend REST, and got project info",
-    project_info: '',
->>>>>>> upstream/master
   },
   // define methods under the `methods` object
   methods: {
@@ -179,8 +173,9 @@ var load_and_annotation_data = new Vue({
       axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
-          this.annotation_text = response.data.data.text
-          this.uuid = response.data.data.uuid
+          var annotaton_data = JSON.parse(response.data.data)
+          this.annotation_text = annotaton_data.text
+          this.uuid = annotaton_data.uuid
           console.log(response);
         }.bind(this))
         .catch(function (error) {

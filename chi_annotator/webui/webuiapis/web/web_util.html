@@ -66,8 +66,8 @@
                         <div id="load_local_data">
                             <label for="file_paht_local">local file path</label>
                             <input type="text" name="file_paht_local" size="50" v-model="file_path" />
-                            <a href="#" class="button" v-on:click="load_local_data_post">load local data by POST</a>
-                            <a href="#" class="button" v-on:click="load_local_data_get">load local data by GET</a>
+                            <a href="javascript:void(0);" class="button" v-on:click="load_local_data_post">load local data by POST</a>
+                            <a href="javascript:void(0);" class="button" v-on:click="load_local_data_get">load local data by GET</a>
                             <p>{{ message }}</p>
                         </div>
                     </form>
@@ -130,7 +130,7 @@
                                     <select v-model='item'>
                                         <option v-for=" item in calss_list"> {{ item.name}}</option>
                                     </select>
-                                    <a href="#" v-on:click="annotate_single_correct" class="button">submit</a>
+                                    <a href="javascript:void(0);" v-on:click="annotate_single_correct" class="button">submit</a>
                                 </div>
             
             
