@@ -170,6 +170,7 @@ var load_and_annotation_data = new Vue({
   // define methods under the `methods` object
   methods: {
     load_single_unlabeled: function () {
+      this.incorrect_label = false
       axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
