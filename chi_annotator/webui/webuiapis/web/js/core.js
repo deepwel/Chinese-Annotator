@@ -47,6 +47,7 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
 
 var project_info = new Vue({
   el: '#project_info',
+<<<<<<< HEAD
   data: {
     message: "Click Test to see if can connnect Backend REST, and got project info",
     project_info: '',
@@ -73,33 +74,26 @@ var load_local_data = new Vue({
   data: {
     message: "Fill the local data file path in the input text field",
     file_path: '',
+=======
+  data: {
+    message: "Click Test to see if can connnect Backend REST, and got project info",
+    project_info: '',
+>>>>>>> upstream/master
   },
   // define methods under the `methods` object
   methods: {
-    load_local_data_post: function (event) {
+    get_project_info: function (event) {
       // Make a request for a user with a given ID
-      axios.post('/load_local_dataset/', {
-          filepath: this.file_path,
-        })
+      axios.get('/project_info/')
         .then(function (response) {
-          this.message = response.data.message
+          this.message = "REST Status: " + response.data.message
+          this.project_info = "Project Info: " + response.data.data
           console.log(response);
         }.bind(this))
         .catch(function (error) {
-          console.log(error);
+          this.message = "Error Failed to Connect"
         });
     },
-    load_local_data_get: function (event) {
-      // Make a request for a user with a given ID
-      axios.get('/load_local_dataset/?filepath=' + this.file_path)
-        .then(function (response) {
-          this.message = response.data.message
-          console.log(response);
-        }.bind(this))
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
   }
 })
 
