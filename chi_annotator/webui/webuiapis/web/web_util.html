@@ -17,21 +17,12 @@
                     <a href="#">Chinese Annotator</a>
                 </h1>
 
-                <h2>中文文本标注工具</h2>
+                <h2>中文文本标注工具UI测试</h2>
 
             </header>
 
             <nav id="mainnav">
                 <ul>
-                    <li>
-                        <a href="index.html">Home</a>
-                    </li>
-                    <li class="selected-item">
-                        <a href="examples.html">Examples</a>
-                    </li>
-                    <li>
-                        <a href="text_classification.html">Text Classification</a>
-                    </li>
                     <li>
                         <a href="web_util.html">web api util</a>
                     </li>
@@ -51,11 +42,26 @@
                 </blockquote>
             </article>
             <article class="expanded">
+                <h3>Test Connect Backend</h3>
+                <fieldset>
+                    <form>
+                        <p>web service interface
+                            <strong>http://localhost:8000/project_info/</strong>
+                            it's function is to test if the frond end web can connect the backend REST API and GET project info.</p>
+                        <div id="project_info">
+                            <a href="#" class="button" v-on:click="get_project_info">Test Connection</a>
+                            <p>{{ message }}</p>
+                            <p>{{ project_info }}</p>
+                        </div>
+                    </form>
+                </fieldset>
+            </article>
+            <article class="expanded">
                 <h3>Load Local Data</h3>
                 <fieldset>
                     <form>
                         <p>web service interface
-                            <strong>http://localhost:5000/load_local_dataset/</strong>
+                            <strong>http://localhost:8000/load_local_dataset/</strong>
                             it's function is to upload the data from local data file to Mongo DB. It support both GET and POST method</p>
                         <div id="load_local_data">
                             <label for="file_paht_local">local file path</label>
