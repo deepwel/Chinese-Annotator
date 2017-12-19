@@ -68,17 +68,40 @@ var project_info = new Vue({
   }
 })
 
+var load_local_data = new Vue({
+  el: '#load_local_data',
+  data: {
+    message: "Fill the local data file path in the input text field",
+    file_path: '',
+  },
+  // define methods under the `methods` object
+  methods: {
+    get_project_info: function (event) {
+      // Make a request for a user with a given ID
+      axios.get('/project_info/')
+        .then(function (response) {
+          this.message = "REST Status: " + response.data.message
+          this.project_info = "Project Info: " + response.data.data
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          this.message = "Error Failed to Connect"
+        });
+    },
+  }
+})
+
 var upload_remote_file = new Vue({
   el: '#upload_remote_file',
   data: {
     files: "",
-    message: "select file to do upload",
+    message: "Select file to do upload",
   },
   // define methods under the `methods` object
   methods: {
     upload_remote_file: function (event) {
       // Make a request for a user with a given ID
-      let formData = new FormData();
+      var formData = new FormData();
       formData.append('file', this.files[0])
       axios.post('/upload_remote_file/', formData)
         .then(function (response) {
@@ -141,17 +164,18 @@ var load_and_annotation_data = new Vue({
       }
     ],
   },
-  created: function () {
-    this.load_single_unlabeled()
-  },
+  // created: function () {
+  //   this.load_single_unlabeled()
+  // },
   // define methods under the `methods` object
   methods: {
     load_single_unlabeled: function () {
       axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
-          this.annotation_text = response.data.data.text
-          this.uuid = response.data.data.uuid
+          var annotaton_data = JSON.parse(response.data.data)
+          this.annotation_text = annotaton_data.text
+          this.uuid = annotaton_data.uuid
           console.log(response);
         }.bind(this))
         .catch(function (error) {
