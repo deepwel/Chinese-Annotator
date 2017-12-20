@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from werkzeug.utils import secure_filename
 
 from chi_annotator.webui.webuiapis.apis.apiresponse import APIResponse
-from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData, DataSet
+from chi_annotator.webui.webuiapis.apis.mongomodel import AnnotationRawData, DataSet, AnnotationData
 from chi_annotator.webui.webuiapis.apis.serializers import *
 from chi_annotator.webui.webuiapis.utils.config import WebUIConfig
 from chi_annotator.webui.webuiapis.utils.mongoUtil import get_mongo_client
@@ -176,6 +176,7 @@ def load_single_unlabeled(request):
     response = APIResponse()
     response.data = json.dumps(annotation_data_serializer.data)
     response.code = 200
+    response.message = "SUCCESS"
     serializer = APIResponseSerializer(response)
     return JsonResponse(serializer.data)
 
@@ -186,15 +187,56 @@ def annotate_single_unlabeled(request):
     :return:
     """
     # read file
-    text = request.form.get("text", "")
-    label = request.form.get("label", "")
-    print(text)
-    print(label)
-    ca = get_mongo_client()
-    text = ca["annotation_data"].insert_one({"label": label, "text": text})
+    text = request.POST.get("text", "")
+    label = request.POST.get("label", "")
+    uuid = request.POST.get("uuid", "")
 
-    return JsonResponse(data={}, code=200, message="annotate success")
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
 
+    raw_text = ca["annotation_raw_data"].find_one({"uuid": uuid})
+    if raw_text:
+        ca["annotation_raw_data"].update({"uuid": uuid}, {"$set": {"labeled": True}})
+
+        annotation_data = AnnotationData(text=text, label=label, uuid=uuid, dataset_uuid=raw_text.get("dataset_uuid"))
+        annotation_data_serializer = AnnotationDataSerializer(annotation_data)
+        ca["annotation_data"].insert_one(annotation_data_serializer.data)
+
+    response = APIResponse()
+    response.data = {"status": "success"}
+    response.code = 200
+    response.message = "SUCCESS"
+    serializer = APIResponseSerializer(response)
+    return JsonResponse(serializer.data)
+
+
+def query_annotatoin_history(request):
+    """
+    load one unlabeled text from Mongo DB to web
+    :return:
+    """
+    # read file
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
+    rec_number = int(request.GET.get("RecNum"))
+    page_number = int(request.GET.get("page_number"))
+
+
+    text = ca["annotation_data"].find().limit(rec_number).skip(page_number*rec_number)
+    result = list()
+    for t in text:
+        data = dict()
+        data["text"] = t.get("text")
+        data["label"] = t.get("label")
+        data["uuid"] = t.get("uuid")
+        data["dataset_uuid"] = t.get("dataset_uuid")
+        data["time_stamp"] = t.get("time_stamp")
+        result.append(data)
+
+    response = APIResponse()
+    response.data = json.dumps(result)
+    response.code = 200
+    response.message = "SUCCESS"
+    serializer = APIResponseSerializer(response)
+    return JsonResponse(serializer.data)
 
 def check_offline_progress(request):
     """

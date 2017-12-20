@@ -71,23 +71,35 @@ var project_info = new Vue({
 var load_local_data = new Vue({
   el: '#load_local_data',
   data: {
-    message: "Fill the local data file path in the input text field",
+    message: "fill the local data file path",
     file_path: '',
   },
   // define methods under the `methods` object
   methods: {
-    get_project_info: function (event) {
+    load_local_data_post: function (event) {
       // Make a request for a user with a given ID
-      axios.get('/project_info/')
+      axios.post('/load_local_dataset/', {
+        filepath: this.file_path,
+      })
         .then(function (response) {
-          this.message = "REST Status: " + response.data.message
-          this.project_info = "Project Info: " + response.data.data
+          this.message = response.data.message
           console.log(response);
         }.bind(this))
         .catch(function (error) {
-          this.message = "Error Failed to Connect"
+          console.log(error);
         });
     },
+    load_local_data_get: function (event) {
+      // Make a request for a user with a given ID
+      axios.get('/load_local_dataset/?filepath=' + this.file_path)
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }
 })
 
@@ -146,22 +158,13 @@ var load_and_annotation_data = new Vue({
     annotation_text: "annotation text",
     message: "select file to do upload",
     incorrect_label: false,
-    uuid:"",
+    uuid: "",
     calss_list: [{
-        name: "span"
-      },
-      {
-        name: "nonspan"
-      }
-    ],
-    annptaion_list: [{
-        label: "span",
-        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-      },
-      {
-        label: "nonspan",
-        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-      }
+      name: "span"
+    },
+    {
+      name: "nonspan"
+    }
     ],
   },
   // created: function () {
@@ -186,10 +189,11 @@ var load_and_annotation_data = new Vue({
 
     annotate_single_unlabeled: function () {
       // Make a request for a user with a given ID
-      axios.post('/annotate_single_unlabeled', {
-          label: this.auto_label,
-          text: this.annotation_text
-        })
+      var params = new URLSearchParams();
+      params.append('label', this.auto_label);
+      params.append('text', this.annotation_text);
+      params.append('uuid', this.uuid);
+      axios.post('/annotate_single_unlabeled/', params)
         .then(function (response) {
           this.load_single_unlabeled()
           console.log(response);
@@ -201,10 +205,11 @@ var load_and_annotation_data = new Vue({
 
     annotate_single_correct: function () {
       // Make a request for a user with a given ID
-      axios.post('/annotate_single_unlabeled', {
-          label: this.item,
-          text: this.annotation_text
-        })
+      var params = new URLSearchParams();
+      params.append('label', this.item);
+      params.append('text', this.annotation_text);
+      params.append('uuid', this.uuid);
+      axios.post('/annotate_single_unlabeled/', params)
         .then(function (response) {
           this.load_single_unlabeled()
           console.log(response);
@@ -223,14 +228,30 @@ var load_and_annotation_data = new Vue({
 var annotation_history = new Vue({
   el: '#annotation_history',
   data: {
-    annptaion_list: [{
-        label: "span",
-        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-      },
-      {
-        label: "nonspan",
-        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-      }
-    ],
+    history_annotaiton_number:1,
+    history_annotation_page:0,
+    annptaion_list: [],
   },
+  methods: {
+    query_annotatoin_history: function (event) {
+      var params = new URLSearchParams();
+      params.append('RecNum', this.history_annotaiton_number);
+      params.append('page_number', this.history_annotation_page);
+      axios.get('/query_annotatoin_history/',{
+        params: {
+          'RecNum': this.history_annotaiton_number,
+          'page_number': this.history_annotation_page
+          }
+        })
+        .then(function (response) {
+          var annotaton_data = JSON.parse(response.data.data)
+          this.annptaion_list = annotaton_data
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+  }
 })
