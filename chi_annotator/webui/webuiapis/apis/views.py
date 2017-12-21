@@ -14,7 +14,6 @@ from chi_annotator.webui.webuiapis.utils.mongoUtil import get_mongo_client
 from rest_framework.renderers import JSONRenderer
 import json
 
-
 UPLOAD_FOLDER = '../../data/files'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 config = WebUIConfig()
@@ -61,7 +60,6 @@ def upload_remote_file(request):
             if file.name != '':
                 if file and allowed_file(file.name):
 
-
                     # save file
                     filename = secure_filename(file.name)
                     file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -82,7 +80,8 @@ def upload_remote_file(request):
                         for line in f:
                             text = line.strip()
                             text_uuid = uuid.uuid1()
-                            annotation_raw_data = AnnotationRawData(text=text, uuid=text_uuid, dataset_uuid=data_set_uuid)
+                            annotation_raw_data = AnnotationRawData(text=text, uuid=text_uuid,
+                                                                    dataset_uuid=data_set_uuid)
                             annotation_raw_data_serializer = AnnotationRawDataSerializer(annotation_raw_data)
                             ca["annotation_raw_data"].insert_one(annotation_raw_data_serializer.data)
                     response.data = {"status": "success"}
@@ -134,6 +133,7 @@ def load_local_dataset(request):
 
     serializer = APIResponseSerializer(response)
     return JsonResponse(serializer.data)
+
 
 def export_data(request):
     """
@@ -219,8 +219,7 @@ def query_annotatoin_history(request):
     rec_number = int(request.GET.get("RecNum"))
     page_number = int(request.GET.get("page_number"))
 
-
-    text = ca["annotation_data"].find().limit(rec_number).skip(page_number*rec_number)
+    text = ca["annotation_data"].find().limit(rec_number).skip(page_number * rec_number)
     result = list()
     for t in text:
         data = dict()
@@ -237,6 +236,7 @@ def query_annotatoin_history(request):
     response.message = "SUCCESS"
     serializer = APIResponseSerializer(response)
     return JsonResponse(serializer.data)
+
 
 def check_offline_progress(request):
     """
