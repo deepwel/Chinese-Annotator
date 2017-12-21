@@ -68,7 +68,7 @@ class TestTrainer(object):
         test trainer
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -79,7 +79,7 @@ class TestTrainer(object):
         test trainer's train func for pipeline
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -111,7 +111,7 @@ class TestTrainer(object):
         test pipeline persist, metadata will be saved
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -141,7 +141,7 @@ class TestTrainer(object):
         train model with no component
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         config['pipeline'] = []
 
@@ -158,7 +158,7 @@ class TestTrainer(object):
         handle no exist component in pipeline
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         config['pipeline'].append("unknown_component")
 
@@ -176,7 +176,7 @@ class TestTrainer(object):
         test save and load model without train
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -205,7 +205,7 @@ class TestTrainer(object):
         test train with empty train data
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)

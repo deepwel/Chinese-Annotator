@@ -18,7 +18,7 @@ class TestOnlineTraining(object):
         usually contains tests).
         """
         # create test data for test case
-        create_tmp_test_jsonfile("test_data.json")
+        create_tmp_test_jsonfile("test_config/test_data.json")
 
     @classmethod
     def teardown_class(cls):
@@ -26,7 +26,7 @@ class TestOnlineTraining(object):
         setup_class.
         """
         # remove tmp files and dirs created in test case
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         rm_tmp_file("test_data.json")
@@ -37,7 +37,7 @@ class TestOnlineTraining(object):
         test online training.
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         # init trainer first
         trainer = Trainer(config)
@@ -97,7 +97,7 @@ class TestOnlineTraining(object):
         test active_leaner process raw texts
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         # init trainer first
 

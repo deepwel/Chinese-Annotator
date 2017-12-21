@@ -1,9 +1,8 @@
 import json
 import os
 
-# base_path = "../../tests/data/"
-# spam_classify_chi_shuf_path = "../../chi_annotator/data/files/spam_classify_chi_shuf.txt"
-spam_classify_chi_shuf_path = "tests/data/spam_classify_chi_shuf.txt"
+
+spam_classify_chi_shuf_path = "tests/data/test_email_classify/email_classify_chi.txt"
 base_path = "tests/data/"
 
 

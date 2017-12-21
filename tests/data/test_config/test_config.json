@@ -10,7 +10,7 @@
         "SVM_classifier"
     ],
     "language": "zh",
-    "embedding_path": "./tests/data/vec.txt",
+    "embedding_path": "./tests/data/test_embedding/vec.txt",
     "embedding_type": "text",
     "org_data" : "./tests/data/test_data.json",
     "database_name": "test_dataset",
