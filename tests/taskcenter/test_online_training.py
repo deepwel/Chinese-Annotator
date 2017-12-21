@@ -26,7 +26,7 @@ class TestOnlineTraining(object):
         setup_class.
         """
         # remove tmp files and dirs created in test case
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         rm_tmp_file("test_data.json")
@@ -35,9 +35,8 @@ class TestOnlineTraining(object):
     def test_online_training(self):
         """
         test online training.
-        :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         # init trainer first
         trainer = Trainer(config)
@@ -97,7 +96,7 @@ class TestOnlineTraining(object):
         test active_leaner process raw texts
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         # init trainer first
 

@@ -68,7 +68,7 @@ class TestTrainer(object):
         test trainer
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -79,7 +79,7 @@ class TestTrainer(object):
         test trainer's train func for pipeline
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -111,7 +111,7 @@ class TestTrainer(object):
         test pipeline persist, metadata will be saved
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -134,14 +134,14 @@ class TestTrainer(object):
             metadata = json.load(f)
         assert 'trained_at' in metadata
         # rm tmp files and dirs
-        shutil.rmtree(config['path'], ignore_errors=True)
+        shutil.rmtree(config['path'], ignore_errors=False)
 
     def test_train_model_empty_pipeline(self):
         """
         train model with no component
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         config['pipeline'] = []
 
@@ -158,7 +158,7 @@ class TestTrainer(object):
         handle no exist component in pipeline
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
         config['pipeline'].append("unknown_component")
 
@@ -176,7 +176,7 @@ class TestTrainer(object):
         test save and load model without train
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -198,14 +198,14 @@ class TestTrainer(object):
         assert interpreter_loaded.parse("hello") is not None
         assert interpreter_loaded.parse("Hello today is Monday, again!") is not None
         # remove tmp models
-        shutil.rmtree(config['path'], ignore_errors=True)
+        shutil.rmtree(config['path'], ignore_errors=False)
 
     def test_train_with_empty_data(self):
         """
         test train with empty train data
         :return:
         """
-        test_config = "tests/data/test_config.json"
+        test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
         trainer = Trainer(config)
@@ -222,10 +222,13 @@ class TestTrainer(object):
                                          config['fixed_model_name'])
 
         interpreter_loaded = Interpreter.load(persisted_path, config)
-        # remove tmp models
+        
         assert interpreter_loaded.pipeline
         assert interpreter_loaded.parse("hello") is not None
         assert interpreter_loaded.parse("Hello today is Monday, again!") is not None
+        
+        # remove tmp models
+        shutil.rmtree(config['path'], ignore_errors=False)
 
 
 
