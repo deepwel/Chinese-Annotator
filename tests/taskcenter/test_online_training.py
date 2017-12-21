@@ -18,7 +18,7 @@ class TestOnlineTraining(object):
         usually contains tests).
         """
         # create test data for test case
-        create_tmp_test_jsonfile("test_config/test_data.json")
+        create_tmp_test_jsonfile("test_data.json")
 
     @classmethod
     def teardown_class(cls):
@@ -29,13 +29,12 @@ class TestOnlineTraining(object):
         test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
-        rm_tmp_file("test_config/test_data.json")
+        rm_tmp_file("test_data.json")
         shutil.rmtree(config['path'], ignore_errors=True)
 
     def test_online_training(self):
         """
         test online training.
-        :return:
         """
         test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)

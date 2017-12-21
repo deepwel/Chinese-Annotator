@@ -47,7 +47,7 @@ class TestEmbeddings(object):
                 res.append(line)
         res = TrainingData(res)
 
-        cfg = AnnotatorConfig(filename="tests/data/test_config_embedding.json")
+        cfg = AnnotatorConfig(filename="tests/data/test_config/test_config_embedding.json")
         cb = ComponentBuilder()
 
         # char_tokenize, embedding的训练暂时不用用到
