@@ -6,9 +6,8 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config buildconfig/webpack.dev.conf.js",
-
-      "start": "npm run dev",
-	  "mock" : "json-server --watch mock/mock-db.json",
+    "start": "npm run dev",
+    "mock": "json-server --watch mock/mock-db.json",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
@@ -16,8 +15,8 @@
     "build": "node buildconfig/build.js"
   },
   "dependencies": {
-
     "axios": "^0.17.1",
+    "element-ui": "^2.0.8",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
