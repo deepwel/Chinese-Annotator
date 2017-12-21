@@ -29,7 +29,7 @@ class TestOnlineTraining(object):
         test_config = "tests/data/test_config/test_config.json"
         config = AnnotatorConfig(test_config)
 
-        rm_tmp_file("test_data.json")
+        rm_tmp_file("test_config/test_data.json")
         shutil.rmtree(config['path'], ignore_errors=True)
 
     def test_online_training(self):
