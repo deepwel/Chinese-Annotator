@@ -18,7 +18,8 @@
     "axios": "^0.17.1",
     "element-ui": "^2.0.8",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -54,6 +55,7 @@
     "jest": "^21.2.0",
     "jest-serializer-vue": "^0.3.0",
     "json-server": "^0.12.1",
+    "mockjs": "^1.0.1-beta3",
     "nightwatch": "^0.9.12",
     "node-notifier": "^5.1.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",

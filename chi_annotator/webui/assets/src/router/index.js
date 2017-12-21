@@ -5,6 +5,7 @@ import TextClassification from '@/components/workspaces/TextClassification'
 
 const router = new Router({
   routes: [
+    { path: '/', redirect: '/loading' },
     { path: '/loading', component: LoadingPage },
     {
       path: '/working-space',
@@ -15,4 +16,5 @@ const router = new Router({
     }
   ]
 })
+
 export default router

@@ -2,21 +2,22 @@
 
 <template>
   <div id="working-space">
-    <menu-bar/>
+    <menu-bar :info="menuBarInfo"></menu-bar>
     <div class="content-view">
-      <router-view />
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
   import MenuBar from '@/components/MenuBar'
-  import axios from 'axios'
 
   export default {
     name: 'working-space',
     data: function () {
-      return {}
+      return {
+        menuBarInfo: this.$store.state.menuBarInfo
+      }
     },
     components: {
       'menu-bar': MenuBar
