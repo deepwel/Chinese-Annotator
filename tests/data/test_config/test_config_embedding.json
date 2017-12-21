@@ -10,8 +10,8 @@
     "classifier_sklearn"
   ],
   "language": "zh",
-  "wv_model_path": "./tests/data/test_embedding/word2vec.model",
-  "embedding_path": "./tests/data/test_embedding/word2vec.model.vector",
+  "wv_model_path": "./tests/data/word2vec.model",
+  "embedding_path": "./tests/data/word2vec.model.vector",
   "embedding_type": "text",
   "confidence_threshold": 0.95,
   "log_level": "INFO",

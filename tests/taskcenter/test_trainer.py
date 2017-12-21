@@ -134,7 +134,7 @@ class TestTrainer(object):
             metadata = json.load(f)
         assert 'trained_at' in metadata
         # rm tmp files and dirs
-        shutil.rmtree(config['path'], ignore_errors=True)
+        shutil.rmtree(config['path'], ignore_errors=False)
 
     def test_train_model_empty_pipeline(self):
         """
@@ -198,7 +198,7 @@ class TestTrainer(object):
         assert interpreter_loaded.parse("hello") is not None
         assert interpreter_loaded.parse("Hello today is Monday, again!") is not None
         # remove tmp models
-        shutil.rmtree(config['path'], ignore_errors=True)
+        shutil.rmtree(config['path'], ignore_errors=False)
 
     def test_train_with_empty_data(self):
         """
@@ -222,10 +222,13 @@ class TestTrainer(object):
                                          config['fixed_model_name'])
 
         interpreter_loaded = Interpreter.load(persisted_path, config)
-        # remove tmp models
+        
         assert interpreter_loaded.pipeline
         assert interpreter_loaded.parse("hello") is not None
         assert interpreter_loaded.parse("Hello today is Monday, again!") is not None
+        
+        # remove tmp models
+        shutil.rmtree(config['path'], ignore_errors=False)
 
 
 
