@@ -48,8 +48,39 @@
         return this.annotations.length > 5 ? 'small' : 'large'
       }
     },
-    watch: {
-      sentence: function () {
+    methods: {
+      selectTag: function (selectedId) {
+        this.sentence.annotation_id = selectedId
+      },
+      prev: function () {
+        this.updateProgress()
+
+        if (!this.sentence || this.sentence.id < 1) {
+          return
+        }
+
+        this.sentence = this.sentences[this.sentence.id - 1]
+      },
+      neglect: function () {
+        this.sentence.annotation_id = false
+        this.updateProgress()
+
+        if (!this.sentence || this.sentence.id === this.sentences.length - 1) {
+          return
+        }
+
+        this.sentence = this.sentences[this.sentence.id + 1]
+      },
+      next: function () {
+        this.updateProgress()
+
+        if (!this.sentence || this.sentence.id === this.sentences.length - 1) {
+          return
+        }
+
+        this.sentence = this.sentences[this.sentence.id + 1]
+      },
+      updateProgress: function () {
         if (this.sentences.length > 0) {
           let done = 0
 
@@ -64,36 +95,6 @@
             count: this.sentences.length
           })
         }
-
-        return null
-      }
-    },
-    methods: {
-      selectTag: function (selectedId) {
-        this.sentence.annotation_id = selectedId
-      },
-      prev: function () {
-        if (!this.sentence || this.sentence.id < 1) {
-          return
-        }
-
-        this.sentence = this.sentences[this.sentence.id - 1]
-      },
-      neglect: function () {
-        this.sentences.annotation_id = false
-
-        if (!this.sentence || this.sentence.id === this.sentences.length - 1) {
-          return
-        }
-
-        this.sentence = this.sentences[this.sentence.id + 1]
-      },
-      next: function () {
-        if (!this.sentence || this.sentence.id === this.sentences.length - 1) {
-          return
-        }
-
-        this.sentence = this.sentences[this.sentence.id + 1]
       }
     },
     created: function () {
@@ -111,6 +112,7 @@
         this.sentences = sentences
         this.annotations = mockData.data.annotations
         this.$store.commit('updateBasic', mockData.data.basic)
+        this.updateProgress()
 
         document.onkeydown = function () {
           let key = window.event.keyCode
@@ -123,7 +125,7 @@
               component.next()
               break
             case 88:
-              component.next()
+              component.neglect()
               break
             default:
               const number = key - 48
