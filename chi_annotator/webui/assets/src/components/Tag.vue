@@ -5,7 +5,7 @@
     @click="selectTag"
   >
     <div class="tag-name">{{ name }}</div>
-    <div class="shortcuts">（{{ shortcuts }}）</div>
+    <div class="shortcuts" v-if="shortcuts">（{{ shortcuts }}）</div>
   </div>
 </template>
 
