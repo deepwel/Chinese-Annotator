@@ -68,17 +68,52 @@ var project_info = new Vue({
   }
 })
 
+var load_local_data = new Vue({
+  el: '#load_local_data',
+  data: {
+    message: "fill the local data file path",
+    file_path: '',
+  },
+  // define methods under the `methods` object
+  methods: {
+    load_local_data_post: function (event) {
+      // Make a request for a user with a given ID
+      axios.post('/load_local_dataset/', {
+        filepath: this.file_path,
+      })
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    load_local_data_get: function (event) {
+      // Make a request for a user with a given ID
+      axios.get('/load_local_dataset/?filepath=' + this.file_path)
+        .then(function (response) {
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }
+})
+
 var upload_remote_file = new Vue({
   el: '#upload_remote_file',
   data: {
     files: "",
-    message: "select file to do upload",
+    message: "Select file to do upload",
   },
   // define methods under the `methods` object
   methods: {
     upload_remote_file: function (event) {
       // Make a request for a user with a given ID
-      let formData = new FormData();
+      var formData = new FormData();
       formData.append('file', this.files[0])
       axios.post('/upload_remote_file/', formData)
         .then(function (response) {
@@ -123,35 +158,28 @@ var load_and_annotation_data = new Vue({
     annotation_text: "annotation text",
     message: "select file to do upload",
     incorrect_label: false,
-    uuid:"",
+    uuid: "",
     calss_list: [{
-        name: "span"
-      },
-      {
-        name: "nonspan"
-      }
-    ],
-    annptaion_list: [{
-        label: "span",
-        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-      },
-      {
-        label: "nonspan",
-        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-      }
+      name: "span"
+    },
+    {
+      name: "nonspan"
+    }
     ],
   },
-  created: function () {
-    this.load_single_unlabeled()
-  },
+  // created: function () {
+  //   this.load_single_unlabeled()
+  // },
   // define methods under the `methods` object
   methods: {
     load_single_unlabeled: function () {
+      this.incorrect_label = false
       axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
-          this.annotation_text = response.data.data.text
-          this.uuid = response.data.data.uuid
+          var annotaton_data = JSON.parse(response.data.data)
+          this.annotation_text = annotaton_data.text
+          this.uuid = annotaton_data.uuid
           console.log(response);
         }.bind(this))
         .catch(function (error) {
@@ -161,10 +189,11 @@ var load_and_annotation_data = new Vue({
 
     annotate_single_unlabeled: function () {
       // Make a request for a user with a given ID
-      axios.post('/annotate_single_unlabeled', {
-          label: this.auto_label,
-          text: this.annotation_text
-        })
+      var params = new URLSearchParams();
+      params.append('label', this.auto_label);
+      params.append('text', this.annotation_text);
+      params.append('uuid', this.uuid);
+      axios.post('/annotate_single_unlabeled/', params)
         .then(function (response) {
           this.load_single_unlabeled()
           console.log(response);
@@ -176,10 +205,11 @@ var load_and_annotation_data = new Vue({
 
     annotate_single_correct: function () {
       // Make a request for a user with a given ID
-      axios.post('/annotate_single_unlabeled', {
-          label: this.item,
-          text: this.annotation_text
-        })
+      var params = new URLSearchParams();
+      params.append('label', this.item);
+      params.append('text', this.annotation_text);
+      params.append('uuid', this.uuid);
+      axios.post('/annotate_single_unlabeled/', params)
         .then(function (response) {
           this.load_single_unlabeled()
           console.log(response);
@@ -198,14 +228,30 @@ var load_and_annotation_data = new Vue({
 var annotation_history = new Vue({
   el: '#annotation_history',
   data: {
-    annptaion_list: [{
-        label: "span",
-        text: "您好： 我是广州市实达贸易有限公司,现有剩余(广告.运输.服务.商品.) 等各种普通发票可以代开,只收2% 的税点 联 人: 张高伟 手 机:  13828415779",
-      },
-      {
-        label: "nonspan",
-        text: "那如果之前很多次用手啥的会有影响吗?那个叫不叫湿疹~~还是用过手的性质就跟女生跳鞍马导致那个啥啥破一样的性质~ 嗯",
-      }
-    ],
+    history_annotaiton_number:1,
+    history_annotation_page:0,
+    annptaion_list: [],
   },
+  methods: {
+    query_annotatoin_history: function (event) {
+      var params = new URLSearchParams();
+      params.append('RecNum', this.history_annotaiton_number);
+      params.append('page_number', this.history_annotation_page);
+      axios.get('/query_annotatoin_history/',{
+        params: {
+          'RecNum': this.history_annotaiton_number,
+          'page_number': this.history_annotation_page
+          }
+        })
+        .then(function (response) {
+          var annotaton_data = JSON.parse(response.data.data)
+          this.annptaion_list = annotaton_data
+          this.message = response.data.message
+          console.log(response);
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+  }
 })
