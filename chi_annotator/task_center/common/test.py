@@ -4,112 +4,73 @@
 author burkun
 time 
 """
-from common import Linker, Command, TaskManager
+from common import Command, TaskManager
 from linkers import DBLinker
-import time
-import random
+import datetime
+import pymongo
 
-
-class Printer(Linker):
-    WRITE_666 = 1
-    WRITE_233 = 2
-    WRITE_ooo = 3
-
-    def open(self):
-        pass
-
-    def close(self):
-        pass
-
-    def action(self, action_type, **args):
-        if action_type == Printer.WRITE_666:
-            print("666")
-            time.sleep(1)
-        elif action_type == Printer.WRITE_233:
-            print("233")
-            time.sleep(0.5)
-        elif action_type == Printer.WRITE_ooo:
-            print("ooo")
-            time.sleep(0.5)
-        else:
-            raise Exception("can not find action type!")
-        return True
-
-
-class Command233(Command):
-
-    def __init__(self, printer):
-        super(Command233, self).__init__(printer)
-
-    def exec(self):
-        return self.linker.action(Printer.WRITE_233)
-
-
-class Commandooo(Command):
-
-    def __init__(self, printer):
-        super(Commandooo, self).__init__(printer)
-
-    def exec(self):
-        return self.linker.action(Printer.WRITE_ooo)
-
-
-class Command666(Command):
-
-    def __init__(self, printer):
-        super(Command666, self).__init__(printer)
-
-    def exec(self):
-        return self.linker.action(Printer.WRITE_666)
-
-
-def create_command(printer):
-    ret = random.randint(0, 2)
-    if ret == 0:
-        return Commandooo(printer)
-    elif ret == 1:
-        return Command233(printer)
-    elif ret == 2:
-        return Command666(printer)
-    else:
-        return Command666(printer)
-
-def test_task_manager():
-    tm = TaskManager(4, max_task_in_queue=100)
-    printer = Printer()
-    for idx in range(20):
-        command = create_command(printer)
-        tm.exec_command(command)
-    time.sleep(10)
-    print(tm.is_all_done())
-    print(len(tm.task_map))
-
-##------------------------------------------------------
 
 class BatchTrainCmd(Command):
 
-    def __init__(self, linker, condition):
-        super(BatchTrainCmd, self).__init__(linker)
-        self.condition = condition
-        self.config = linker.config
+    def __init__(self, db_linker, task_config):
+        super(BatchTrainCmd, self).__init__(db_linker)
+        self.liner_config = db_linker.config
+        self.task_config = task_config
+
+    def __create_insert(self):
+        return {
+            "user_uuid" : self.uid,
+            "dataset_uuid": self.dataset_id,
+            "model_name": self.task_config["model_name"],
+            "model_version": self.timestamp,
+            "is_full_train": False,
+            "status": Command.STATUS_RUNNING,
+            "start_timestamp": datetime.datetime(),
+            "end_timestamp": None
+        }
+
+    def __create_update(self, status):
+        return {"model_version": self.timestamp}, {"$set": {"status": status}}
 
     def exec(self):
-        # get batch data
-        condition = {"condition": self.condition, "tabel_name" :DBLinker.RAW_DATA_TABLE}
-        result = self.linker.action(DBLinker.BATCH_FETCH, condition)
         # mark train status in db, self.timestamp = task id
-        insert_data = {"item": {"user_uuid": self.uid, "dataset_uuid": self.dataset_id }}
-        self.linker.action(DBLinker.INSERT_SINGLE, )
+        self.linker.action(DBLinker.INSERT_SINGLE, {"table_name": DBLinker.TRAIN_STATUS_TABLE,
+                                                    "item": self.__create_insert()})
+
+        # get batch data
+        batch_exec_args = {"condition": self.task_config["condition"],
+                           "table_name": DBLinker.ANNO_DATA_TABLE,
+                           "sort_limit": self.task_config["sort_limit"]}
+        batch_result = self.linker.action(DBLinker.BATCH_FETCH, **batch_exec_args)
         # train process
 
         # mark train done in db
+        condition, item = self.__create_update(Command.STATUS_DONE)
+        self.linker.action(DBLinker.UPDATE,
+                           {"table_name": DBLinker.TRAIN_STATUS_TABLE, "item": item, "condition": condition})
 
+
+def test_db_linker():
+    db_config = {"database_hostname":"localhost", "database_port" : 27017,
+                 "database_type": "mongodb", "database_name": "chinese_annotator",
+                 "user_name":"anno_admin", "password": "123"}
+    linker = DBLinker(db_config)
+    exec_args = {"condition": {"timestamp": {"$gt": datetime.datetime(2016, 1, 1)}},
+                 "table_name": DBLinker.ANNO_DATA_TABLE,
+                 "sort_limit": ([("timestamp", pymongo.DESCENDING)], 0)}
+    res = linker.action(DBLinker.BATCH_FETCH, **exec_args)
+    print(res)
 
 def test_db():
-    config = {"database_hostname":"localhost", "database_port" : 27017, "database_type": "mongodb", "database_name": "chinese_annotator"}
-    linker = DBLinker(config)
+    db_config = {"database_hostname":"localhost", "database_port" : 27017,
+                 "database_type": "mongodb", "database_name": "chinese_annotator",
+                 "user_name":"anno_admin", "password": "123"}
+    linker = DBLinker(db_config)
+    task_config = {"condition": {"timestamp": {"$gt": datetime.datetime(2016, 1, 1)}},
+                    "sort_limit": ([("timestamp", pymongo.DESCENDING)], 0)}
+
     tm = TaskManager(4, 100)
-    btc = BatchTrainCmd(linker, {})
+    btc = BatchTrainCmd(linker, task_config)
     ret = tm.exec_command(btc)
     if not ret:
         print("can not add task")
@@ -117,4 +78,4 @@ def test_db():
         print("add task done!")
 
 if __name__ == "__main__":
-    test_task_manager()
+    test_db()

@@ -8,6 +8,7 @@ from concurrent.futures import ProcessPoolExecutor
 import time
 import multiprocessing
 import functools
+import pymongo
 
 
 class Linker(object):
@@ -37,6 +38,9 @@ class Linker(object):
 
 
 class Command(object):
+    STATUS_RUNNING = "running"
+    STATUS_ERROR = "error"
+    STATUS_DONE = "done"
 
     def __init__(self, linker, user_id=None, dataset_id=None):
         self.linker = linker
@@ -99,20 +103,15 @@ class DBManager(object):
     """
 
     def __init__(self, config):
-        self.hostname = config.get("database_hostname", "localhost")
+        self.hostname = config.get("database_hostname", "127.0.0.1")
         self.port = config.get("database_port", 27017)
         self.type = config.get("database_type", "mongodb")
         self.database = config.get("database_name", "chinese_annotator")
-
-        # TODO for test, this config param will be remove later.
-        self.active = config.get("database_active", True)
-
-        if self.type == "mongodb" and self.active:
-            self.client = MongoClient(self.hostname, self.port)
-        else:
-            # TODO some other database type in future.
-            # self.client = other interface
-            pass
+        self.user_name = config.get("user_name", "anno_admin")
+        self.pwd = config.get("password", "123")
+        con_url = 'mongodb://' + self.user_name + ':' + self.pwd + '@' + self.hostname \
+                  + ':' + str(self.port) + "/" + self.database
+        self.client = pymongo.MongoClient(con_url)
 
     def insert_row(self, item, table, database_name=None):
         """
@@ -132,7 +131,7 @@ class DBManager(object):
         # TODO catch exception
         return False
 
-    def insert_rows(self, item, database_name=None, table=None):
+    def insert_rows(self, item, table, database_name=None):
         """
         insert one row into database
         :param item: list of json format data
@@ -142,8 +141,6 @@ class DBManager(object):
         """
         if database_name is None:
             database_name = self.database
-        if table is None:
-            table = self.table
 
         if self.type == "mongodb":
             xids = self.client[database_name][table].insert(item).inserted_id
@@ -151,7 +148,7 @@ class DBManager(object):
         # TODO catch exception
         return False
 
-    def update_rows(self, condition, new_value, database_name=None, table=None):
+    def update_rows(self, condition, new_value, table, database_name=None):
         """
         insert one row into database
         :param new_value:
@@ -162,8 +159,6 @@ class DBManager(object):
         """
         if database_name is None:
             database_name = self.database
-        if table is None:
-            table = self.table
 
         if self.type == "mongodb":
             xids = self.client[database_name][table].update_many(condition, {"$set": new_value})
@@ -171,27 +166,26 @@ class DBManager(object):
                 return True
         return False
 
-    def get_rows(self, conditions, database_name=None, table=None):
+    def get_rows(self, conditions, table, sort_limit=([("timestamp", pymongo.DESCENDING)], 0), database_name=None):
         """
         get rows according conditions
         :param table:
         :param database_name:
         :param conditions: json format data
+        :param sort_limit sort = -1, limit =
         :return:
         """
         res = []
         if database_name is None:
             database_name = self.database
-        if table is None:
-            table = self.table
 
         if self.type == "mongodb":
-            result = self.client[database_name][table].find(conditions)
+            result = self.client[database_name][table].find(conditions).sort(sort_limit[0]).limit(sort_limit[1])
             for item in result:
                 res.append(item)
         return res
 
-    def get_row_by_ids(self, ids, col_name="uuid", database_name=None, table=None):
+    def get_row_by_ids(self, ids, table, col_name="uuid", database_name=None):
         """
         get rows according conditions
         :param col_name:
@@ -203,8 +197,6 @@ class DBManager(object):
         res = []
         if database_name is None:
             database_name = self.database
-        if table is None:
-            table = self.table
 
         if self.type == "mongodb":
             result = self.client[database_name][table].find({col_name: {"$in": ids}})
@@ -212,7 +204,7 @@ class DBManager(object):
                 res.append(item)
         return res
 
-    def get_row(self, condition, database_name=None, table=None):
+    def get_row(self, condition, table, database_name=None):
         """
         get row according conditions
         :param table:
@@ -222,8 +214,6 @@ class DBManager(object):
         """
         if database_name is None:
             database_name = self.database
-        if table is None:
-            table = self.table
 
         if self.type == "mongodb":
             result = self.client[database_name][table].find_one(condition)

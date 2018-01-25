@@ -5,6 +5,7 @@ author burkun
 time 
 """
 from common import Linker, DBManager
+import pymongo
 
 
 class DBLinker(Linker):
@@ -33,7 +34,8 @@ class DBLinker(Linker):
 
     def action(self, action_type, **args):
         if action_type == DBLinker.BATCH_FETCH:
-            return self.db_manager.get_rows(args["condition"], args["table_name"])
+            sort_limit = args.get("sort_limit", ([("timestamp", pymongo.DESCENDING)], 0))
+            return self.db_manager.get_rows(args["condition"], args["table_name"], sort_limit)
         elif action_type == DBLinker.SINGLE_FETCH:
             return self.db_manager.get_row(args["condition"], args["table_name"])
         elif action_type == DBLinker.INSERT_BATCH:
@@ -41,6 +43,6 @@ class DBLinker(Linker):
         elif action_type == DBLinker.INSERT_SINGLE:
             return self.db_manager.insert_row(args["item"], args["table_name"])
         elif action_type == DBLinker.UPDATE:
-            return self.db_manager.update_rows(args["condition"], args["table_name"])
+            return self.db_manager.update_rows(args["condition"], args["item"], args["table_name"])
         else:
             return None
