@@ -2,7 +2,7 @@
 #encoding=utf-8
 """
 author booker
-simple task manager
+simple task manager common class
 """
 from concurrent.futures import ProcessPoolExecutor
 import time
@@ -31,33 +31,100 @@ class Linker(object):
         do some action for database
         eg: get database; train a model
         :param action_type:
-        :param args:
+        :param args: database sql string or dict
         :return: dataset or not
         """
         raise NotImplementedError()
 
 
+class DBLinker(Linker):
+    # trian types
+    BATCH_FETCH = 1
+    SINGLE_FETCH = 2
+    INSERT_BATCH = 3
+    INSERT_SINGLE = 4
+    UPDATE = 5
+
+    RAW_DATA_TABLE = "annotation_raw_data"
+    ANNO_DATA_TABLE = "annotation_data"
+    USER_TABLE = "user"
+    DATASET_TABlE = "dataset"
+    TRAIN_STATUS_TABLE = "train_status"
+
+    def __init__(self, config):
+        self.config = config
+        self.db_manager = DBManager(self.config)
+
+    def open(self):
+        self.db_manager.open()
+        return True
+
+    def close(self):
+        self.db_manager.close()
+
+    def action(self, action_type, **args):
+        """
+        db insert, update, select
+        :param action_type:
+        :param args:
+        :return:
+        """
+        if self.db_manager is None:
+            return None
+        if action_type == DBLinker.BATCH_FETCH:
+            sort_limit = args.get("sort_limit", ([("timestamp", pymongo.DESCENDING)], 0))
+            return self.db_manager.get_rows(args["condition"], args["table_name"], sort_limit)
+        elif action_type == DBLinker.SINGLE_FETCH:
+            return self.db_manager.get_row(args["condition"], args["table_name"])
+        elif action_type == DBLinker.INSERT_BATCH:
+            return self.db_manager.insert_rows(args["items"], args["table_name"])
+        elif action_type == DBLinker.INSERT_SINGLE:
+            return self.db_manager.insert_row(args["item"], args["table_name"])
+        elif action_type == DBLinker.UPDATE:
+            return self.db_manager.update_rows(args["condition"], args["item"], args["table_name"])
+        else:
+            return None
+
+
 class Command(object):
+    # task status
     STATUS_RUNNING = "running"
     STATUS_ERROR = "error"
     STATUS_DONE = "done"
 
-    def __init__(self, linker, user_id=None, dataset_id=None):
-        self.linker = linker
+    def __init__(self, linker_config, user_id=None, dataset_id=None):
+        self.linker = DBLinker(linker_config)
         self.timestamp = time.time()
         self.uid = user_id
         self.dataset_id = dataset_id
 
     def __call__(self, *args, **kwargs):
-        return self.exec()
+        """
+        call for exec, do not modified!
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        self.linker.open()
+        ret = self.exec()
+        self.linker.close()
+        return ret
 
     def exec(self):
+        """
+        override this function for a new command
+        :return:
+        """
         raise NotImplementedError()
 
 
 class TaskManager:
 
     def __init__(self, process_num, max_task_in_queue=100):
+        """
+        :param process_num: max process number
+        :param max_task_in_queue: max_process_number + pending task number
+        """
         self.process_num = process_num
         self.max_task_in_queue = max_task_in_queue
         self.pool = ProcessPoolExecutor(max_workers=process_num)
@@ -80,6 +147,12 @@ class TaskManager:
             return False
 
     def task_done(self, command, future_obj):
+        """
+        do not change this function
+        :param command: comand obj
+        :param future_obj: command result
+        :return:
+        """
         self.lock.acquire()
         self.task_map.pop(command.timestamp)
         self.lock.release()
@@ -109,6 +182,9 @@ class DBManager(object):
         self.database = config.get("database_name", "chinese_annotator")
         self.user_name = config.get("user_name", "anno_admin")
         self.pwd = config.get("password", "123")
+        self.client = None
+
+    def open(self):
         con_url = 'mongodb://' + self.user_name + ':' + self.pwd + '@' + self.hostname \
                   + ':' + str(self.port) + "/" + self.database
         self.client = pymongo.MongoClient(con_url)
@@ -238,5 +314,3 @@ class DBManager(object):
             database = self.database
         if self.type == "mongodb":
             self.client.drop_database(database)
-
-

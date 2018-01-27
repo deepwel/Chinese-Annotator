@@ -14,26 +14,17 @@ DEFAULT_CONFIG_LOCATION = "config.json"
 
 # TODO this default config should consider more later
 DEFAULT_CONFIG = {
-    "project": None,
-    "fixed_model_name": None,
     "config": DEFAULT_CONFIG_LOCATION,
     "data": None,
-    "emulate": None,
     "language": "zh",
     "log_file": None,
     "log_level": 'INFO',
-    # "word2vec_file": os.path.join("data", "word2vec_feature_extractor.dat"),
-    "num_threads": 1,
-    "max_training_processes": 1,
+    "max_training_processes": 4,
     "path": "projects",
     "port": 5000,
     "embedding_path": "tests/data/test_embedding/vec.txt",
     "embedding_type": "text",
     "pipeline": [],
-    # "response_log": "logs",
-    # "aws_endpoint_url": None,
-    # "duckling_dimensions": None,
-    # "duckling_http_url": None,
     "classifier_sklearn": {
         "C": [1, 2, 5, 10, 20, 100],
         "kernel": "linear"

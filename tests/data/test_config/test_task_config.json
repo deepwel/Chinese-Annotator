@@ -1,0 +1,21 @@
+{
+    "name": "email_spam_classification",
+    "path": "./user_instance/classify",
+    "project": "email_spam_classification",
+    "model_name": "chi_annotator_models",
+    "model_type": "classification",
+    "pipeline": [
+        "char_tokenizer",
+        "sentence_embedding_extractor",
+        "SVM_classifier"
+    ],
+    "language": "zh",
+    "embedding_path": "./tests/data/test_embedding/vec.txt",
+    "embedding_type": "text",
+    "database_name": "chinese_annotator",
+    "confidence_threshold" : 0.95,
+    "inference_num" : 20,
+    "batch_num": 20,
+    "log_level": "INFO",
+    "log_file": null
+}
