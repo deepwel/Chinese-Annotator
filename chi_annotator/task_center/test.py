@@ -32,7 +32,8 @@ def test_batch_train():
                    "model_name": "classifer_task"}
     # merge default config
     # task_config.update(simplejson.load(open("./tests/data/test_config/test_task_config.json")))
-    btc = BatchTrainCmd(db_config, task_config)
+    # btc = BatchTrainCmd(db_config, task_config)
+    # btc.exec()
     tm = TaskManager(4, 100)
     for idx in range(10):
         btc = BatchTrainCmd(db_config, task_config, "123", "123")
