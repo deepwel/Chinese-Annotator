@@ -9,26 +9,58 @@ import os
 import six
 
 # Describes where to search for the config file if no location is specified
-
-DEFAULT_CONFIG_LOCATION = "config.json"
-
-# TODO this default config should consider more later
-DEFAULT_CONFIG = {
-    "config": DEFAULT_CONFIG_LOCATION,
-    "data": None,
-    "language": "zh",
-    "log_file": None,
-    "log_level": 'INFO',
-    "max_training_processes": 4,
-    "path": "projects",
+# global configure name
+TASK_CENTER_GLOBAL_CONFIG_NAME = "task_center_config.json"
+TASK_CENTER_GLOBAL_CONFIG = {
+    "config_name": TASK_CENTER_GLOBAL_CONFIG_NAME,
+    "max_process_number": 4,
+    "max_task_in_queue": 100,
+    "log_level": "INFO",
     "port": 5000,
-    "embedding_path": "tests/data/test_embedding/vec.txt",
-    "embedding_type": "text",
+    "language": "ZH",
+    "db_name": "chinese_annotator",
+    # user_uuid/task_type_data_set_uuid_model_version_
+    "save_path": "/home/burkun/git/Chinese-Annotator/chi_annotator/user_instance",
+    # make sure user dir is created
+    "user_instance_path_template": os.path.join("%s", "%s-%s")
+}
+# task configure
+CLASSIFY_TASK_CONFIG = {
+    "embedding_path": None,
+    "embedding_type": "txt",
+    "word_rep_path": None,
+    "max_token_size": 150,
+    "min_class_number": 2,
     "pipeline": [],
-    "classifier_sklearn": {
+    "classifier_sklearn":{
         "C": [1, 2, 5, 10, 20, 100],
-        "kernel": "linear"
-    }
+        "kernel": "linear",
+        "num_threads": 3
+    },
+    "max_train_epoch": 5,
+    "batch_num": 64,
+    "online_learning": {"use": True, "max_sample_number": 50},
+    "offline_max_sample_number": 1e7,
+    "condition": None,
+    "sort_limit": None,
+    "model_type": None,
+    "user_uuid": None,
+    "dataset_uuid": None,
+}
+
+# ner configure, TODO
+NER_TASK_CONFIG = {
+    "embedding_path": None,
+    "word_rep_path": None,
+    "max_token_size": 150,
+    "tagset": "BIESO",
+    "ne_template_path": None,
+    "pipeline": [],
+    "max_train_epoch": 5,
+    "batch_num": 64,
+    "eval_type": "hard", # hard and soft, TODO
+    "online_learning": {"use": True, "max_sample_number": 50},
+    "offline_max_sample_number": 500000
 }
 
 
@@ -41,30 +73,23 @@ class InvalidConfigError(ValueError):
 
 
 class AnnotatorConfig(object):
-    DEFAULT_PROJECT_NAME = "default"
 
-    def __init__(self, filename=None, env_vars=None, cmdline_args=None):
+    def __init__(self, task_config, global_config=None):
+        """
+        init taks config and global config
+        Args:
+            task_config:
+            global_config:
 
-        if filename is None and os.path.isfile(DEFAULT_CONFIG_LOCATION):
-            filename = DEFAULT_CONFIG_LOCATION
+        Returns:
 
-        self.override(DEFAULT_CONFIG)
-        if filename is not None:
-            try:
-                with io.open(filename, encoding='utf-8') as f:
-                    file_config = simplejson.loads(f.read())
-            except ValueError as e:
-                raise InvalidConfigError("Failed to read configuration file '{}'. Error: {}".format(filename, e))
-            self.override(file_config)
-
-        if env_vars is not None:
-            env_config = self.create_env_config(env_vars)
-            self.override(env_config)
-
-        if cmdline_args is not None:
-            cmdline_config = self.create_cmdline_config(cmdline_args)
-            self.override(cmdline_config)
-
+        """
+        if task_config is not None:
+            self.override(task_config)
+        if global_config is not None:
+            self.override(global_config)
+        else:
+            self.override(TASK_CENTER_GLOBAL_CONFIG)
         if isinstance(self.__dict__['pipeline'], six.string_types):
             from chi_annotator.algo_factory import registry
             if self.__dict__['pipeline'] in registry.registered_pipeline_templates:
@@ -74,7 +99,6 @@ class AnnotatorConfig(object):
                                          "'{}' passed. Known pipeline templates: {}".format(
                                                  self.__dict__['pipeline'],
                                                  ", ".join(registry.registered_pipeline_templates.keys())))
-
         for key, value in self.items():
             setattr(self, key, value)
 
@@ -83,6 +107,10 @@ class AnnotatorConfig(object):
 
     def get(self, key, default=None):
         return self.__dict__.get(key, default)
+
+    def update(self, kv):
+        for key in kv:
+            self[key] = kv[key]
 
     def __setitem__(self, key, value):
         self.__dict__[key] = value
@@ -111,50 +139,29 @@ class AnnotatorConfig(object):
     def view(self):
         return simplejson.dumps(self.__dict__, indent=4)
 
-    def split_arg(self, config, arg_name):
-        if arg_name in config and isinstance(config[arg_name], six.string_types):
-            config[arg_name] = config[arg_name].split(",")
-        return config
-
-    def split_pipeline(self, config):
-        if "pipeline" in config and isinstance(config["pipeline"], six.string_types):
-            config = self.split_arg(config, "pipeline")
-            if "pipeline" in config and len(config["pipeline"]) == 1:
-                config["pipeline"] = config["pipeline"][0]
-        return config
-
-    def create_cmdline_config(self, cmdline_args):
-        cmdline_config = {k: v
-                          for k, v in list(cmdline_args.items())
-                          if v is not None}
-        cmdline_config = self.split_pipeline(cmdline_config)
-        cmdline_config = self.split_arg(cmdline_config, "duckling_dimensions")
-        return cmdline_config
-
-    def create_env_config(self, env_vars):
-        keys = [key for key in env_vars.keys() if "RASA_" in key]
-        env_config = {key.split('RASA_')[1].lower(): env_vars[key] for key in keys}
-        env_config = self.split_pipeline(env_config)
-        env_config = self.split_arg(env_config, "duckling_dimensions")
-        return env_config
-
-    def make_paths_absolute(self, config, keys):
+    @staticmethod
+    def make_paths_absolute(config, keys):
+        """
+        make all path in keys to abs path
+        :param config: task config
+        :param keys: be abs path
+        :return:
+        """
         abs_path_config = dict(config)
         for key in keys:
             if key in abs_path_config and abs_path_config[key] is not None and not os.path.isabs(abs_path_config[key]):
                 abs_path_config[key] = os.path.join(os.getcwd(), abs_path_config[key])
         return abs_path_config
 
-    # noinspection PyCompatibility # TODO may remove in py3
-    def make_unicode(self, config):
-        if six.PY2:
-            # Sometimes (depending on the source of the config value) an argument will be str instead of unicode
-            # to unify that and ease further usage of the config, we convert everything to unicode
-            for k, v in config.items():
-                if type(v) is bytes:
-                    config[k] = str(v).encode("utf-8")
-        return config
-
     def override(self, config):
-        abs_path_config = self.make_unicode(self.make_paths_absolute(config, ["path", "response_log"]))
-        self.__dict__.update(abs_path_config)
+        # abs_path_config = self.make_unicode(self.make_paths_absolute(config, ["path", "response_log"]))
+        self.__dict__.update(config)
+
+    def get_save_path_prefix(self):
+        user_uuid = self.get("user_uuid", None)
+        dataset_uuid = self.get("dataset_uuid", None)
+        task_type = self.get("model_type", None)
+        if user_uuid is None or dataset_uuid is None or task_type is None:
+            return None
+        log_suffix = self.get("user_instance_path_template") % (user_uuid, dataset_uuid, task_type)
+        return os.path.join(self.get("save_path", "./chi_annotator/user_instance"), log_suffix)

@@ -20,7 +20,8 @@ def create_dir(dir_path):
     """Creates a directory and its super paths. Succeeds even if the path already exists."""
 
     try:
-        os.makedirs(dir_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
     except OSError as e:
         # be happy if someone already created the path
         if e.errno != errno.EEXIST:

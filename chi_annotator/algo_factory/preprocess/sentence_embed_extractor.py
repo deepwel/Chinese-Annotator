@@ -73,7 +73,7 @@ class SentenceEmbeddingExtractor(Component):
             return cached_component
         return SentenceEmbeddingExtractor(model_metadata)
 
-    def persist(self, model_dir):
+    def persist(self, model_dir, **args):
         # type: (Text) -> Dict[Text, Any]
         return {
             "embedding_path": self.embedding_path,

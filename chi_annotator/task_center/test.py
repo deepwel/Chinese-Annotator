@@ -6,13 +6,15 @@ time
 """
 
 import datetime, pymongo
-import simplejson
 from chi_annotator.task_center.common import DBLinker
 from chi_annotator.task_center.common import TaskManager
 from chi_annotator.task_center.cmds import BatchTrainCmd
+import chi_annotator.task_center.config as config
+import time
+import os
 
 
-def test_db_linker():
+def abc_test_db_linker():
     db_config = {"database_hostname":"localhost", "database_port" : 27017,
                  "database_type": "mongodb", "database_name": "chinese_annotator",
                  "user_name":"anno_admin", "password": "123"}
@@ -23,25 +25,45 @@ def test_db_linker():
     res = linker.action(DBLinker.BATCH_FETCH, **exec_args)
     print(res)
 
-def test_batch_train():
+def create_cfgs():
+    # task config
+    task_config = dict(config.CLASSIFY_TASK_CONFIG)
+    dir_name = os.path.realpath("../../")
+    task_config["embedding_path"] = dir_name + "/tests/data/test_embedding/vec.txt"
+    task_config["condition"] = {"timestamp": {"$gt": datetime.datetime(2016, 1, 1)}}
+    task_config["sort_limit"] = ([("timestamp", pymongo.DESCENDING)], 0)
+    task_config["model_type"] = "classify"
+    task_config["model_version"] = time.time()
+    task_config["pipeline"] = [
+        "char_tokenizer",
+        "sentence_embedding_extractor",
+        "SVM_classifier"
+    ]
+    task_config["user_uuid"] = "5a683cadfe61a3fe9262a310"
+    task_config["dataset_uuid"] = "5a6840b28831a3e06abbbcc9"
+    global_config = dict(config.TASK_CENTER_GLOBAL_CONFIG)
+    return global_config, task_config
+
+
+def abc_test_batch_train():
     db_config = {"database_hostname":"localhost", "database_port" : 27017,
                  "database_type": "mongodb", "database_name": "chinese_annotator",
                  "user_name":"anno_admin", "password": "123"}
-    task_config = {"condition": {"timestamp": {"$gt": datetime.datetime(2016, 1, 1)}},
-                    "sort_limit": ([("timestamp", pymongo.DESCENDING)], 0),
-                   "model_name": "classifer_task"}
-    # merge default config
-    # task_config.update(simplejson.load(open("./tests/data/test_config/test_task_config.json")))
-    # btc = BatchTrainCmd(db_config, task_config)
-    # btc.exec()
-    tm = TaskManager(4, 100)
+    global_config, task_config = create_cfgs()
+    # merged_config = config.AnnotatorConfig(task_config, global_config)
+    TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
     for idx in range(10):
-        btc = BatchTrainCmd(db_config, task_config, "123", "123")
-        ret = tm.exec_command(btc)
-        if not ret:
-            print("can not add task")
+        _, task_config = create_cfgs()
+        merged_config = config.AnnotatorConfig(task_config, global_config)
+        btc = BatchTrainCmd(db_config, merged_config)
+        ret = TM.exec_command(btc)
+        if ret:
+            print("add task ok!")
         else:
-            print("add task done!")
+            print("can not add task queue full!")
+
 
 if __name__ == "__main__":
-    test_batch_train()
+    # test_batch_train()
+    abc_test_batch_train()
+

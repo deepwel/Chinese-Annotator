@@ -18,6 +18,14 @@ import chi_annotator
 logger = logging.getLogger(__name__)
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
 class InvalidProjectError(Exception):
     """Raised when a model failed to load.
 
@@ -53,24 +61,23 @@ class Metadata(object):
     """
 
     @staticmethod
-    def load(model_dir):
+    def load(model_meta_path, timestamp):
         # type: (Text) -> 'Metadata'
         """Loads the metadata from a models directory."""
         try:
-            metadata_file = os.path.join(model_dir, 'metadata.json')
+            metadata_file = os.path.join(model_meta_path, str(timestamp) + "_meta.json")
             with io.open(metadata_file, encoding="utf-8") as f:
                 data = json.loads(f.read())
-            return Metadata(data, model_dir)
+            return Metadata(data, model_meta_path)
         except Exception as e:
-            abspath = os.path.abspath(os.path.join(model_dir, 'metadata.json'))
+            abspath = os.path.abspath(model_meta_path)
             raise InvalidProjectError("Failed to load model metadata "
                                       "from '{}'. {}".format(abspath, e))
 
-    def __init__(self, metadata, model_dir):
+    def __init__(self, metadata, model_meta_path):
         # type: (Dict[Text, Any], Optional[Text]) -> None
-
         self.metadata = metadata
-        self.model_dir = model_dir
+        self.model_meta_path = model_meta_path
 
     def get(self, property_name, default=None):
         return self.metadata.get(property_name, default)
@@ -79,7 +86,6 @@ class Metadata(object):
     def language(self):
         # type: () -> Optional[Text]
         """Language of the underlying model"""
-
         return self.get('language')
 
     @property
@@ -89,18 +95,19 @@ class Metadata(object):
 
         return self.get('pipeline', [])
 
-    def persist(self, model_dir):
+    def persist(self, model_meta_path=None):
         # type: (Text) -> None
         """Persists the metadata of a model to a given directory."""
-        metadata = self.metadata.copy()
-
+        metadata = self.metadata.as_dict()
         metadata.update({
             "trained_at": datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
             "algo_version": chi_annotator.algo_factory.__version__,
         })
-
-        with io.open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
-            f.write(json.dumps(metadata, ensure_ascii=False, indent=4))
+        if model_meta_path is None:
+            model_meta_path = self.model_meta_path
+        metadata_file = os.path.join(model_meta_path, str(self.get("model_version")) + "_meta.json")
+        with io.open(metadata_file, 'w') as f:
+            f.write(json.dumps(metadata, ensure_ascii=False, indent=4, cls=DateTimeEncoder))
 
 
 class Message(object):

@@ -10,7 +10,6 @@ from chi_annotator.algo_factory import components
 from chi_annotator.algo_factory.common import Metadata
 from chi_annotator.algo_factory.common import Message
 from chi_annotator.algo_factory import utils
-from chi_annotator.task_center.config import AnnotatorConfig
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,6 @@ class Trainer(object):
 
     def __init__(self, config, component_builder=None, skip_validation=False):
         # type: (AnnotatorConfig, Optional[ComponentBuilder], bool) -> None
-
         self.config = config
         self.skip_validation = skip_validation
         self.training_data = None  # type: Optional[TrainingData]
@@ -44,8 +42,7 @@ class Trainer(object):
 
         # Transform the passed names of the pipeline components into classes
         for component_name in config.pipeline:
-            component = component_builder.create_component(
-                component_name, config)
+            component = component_builder.create_component(component_name, config)
             self.pipeline.append(component)
 
     def train(self, data):
@@ -76,45 +73,29 @@ class Trainer(object):
             logger.info("Finished training component.")
             if updates:
                 context.update(updates)
-
         return Interpreter(self.pipeline, context)
 
-    def persist(self, path, project_name=None,
-                fixed_model_name=None):
+    def persist(self, dir_name):
         # type: (Text, Optional[Persistor], Text) -> Text
         """Persist all components of the pipeline to the passed path.
 
         Returns the directory of the persisted model."""
-
-        timestamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-        metadata = {
-            "language": self.config["language"],
-            "pipeline": [utils.module_path_from_object(component)
-                         for component in self.pipeline],
-        }
-
-        if project_name is None:
-            project_name = "default"
-
-        if fixed_model_name:
-            model_name = fixed_model_name
-        else:
-            model_name = "model_" + timestamp
-        dir_name = os.path.join(path, project_name, model_name)
+        self.config.update({"pipeline": [utils.module_path_from_object(component) for component in self.pipeline]})
 
         # create model dir
         utils.create_dir(dir_name)
         # TODO we have no need to copy and save train data to model.
         # if self.training_data:
         #     # self.training_data.persist return nothing here
-        #     metadata.update(self.training_data.persist(dir_name))
-
+        #     metadata.update(self.training_
+        # data.persist(dir_name))
         for component in self.pipeline:
-            update = component.persist(dir_name)
-            if update:
-                metadata.update(update)
+            config_dict = self.config.as_dict()
+            update = component.persist(dir_name, **config_dict)
+            if update is not None:
+                self.config.update(update)
         # save metadata to dir_name
-        Metadata(metadata, dir_name).persist(dir_name)
+        Metadata(self.config, dir_name).persist(dir_name)
         logger.info("Successfully saved model into "
                     "'{}'".format(os.path.abspath(dir_name)))
         return dir_name
@@ -129,34 +110,29 @@ class Interpreter(object):
         return {'classifylabel': {'name': '', 'confidence': 0.0}}
 
     @staticmethod
-    def load(model_dir, config=AnnotatorConfig(), component_builder=None,
-             skip_valdation=False):
-        """Creates an interpreter based on a persisted model."""
-
-        if isinstance(model_dir, Metadata):
-            # this is for backwards compatibilities (metadata passed as a dict)
-            model_metadata = model_dir
-            logger.warning("Deprecated use of `Interpreter.load` with a metadata "
-                           "object. If you want to directly pass the metadata, "
-                           "use `Interpreter.create(metadata, ...)`. If you want "
-                           "to load the metadata from file, use "
-                           "`Interpreter.load(model_dir, ...)")
-        else:
-            model_metadata = Metadata.load(model_dir)
+    def load(meta_dir, timestamp, config=None, component_builder=None, skip_valdation=False):
+        """
+        Creates an interpreter based on a persisted model
+        Args:
+            meta_dir: task config
+            config: additional config
+            component_builder: build component
+            skip_valdation: valid data
+        Returns:
+        """
+        model_metadata = Metadata.load(meta_dir, timestamp)
         return Interpreter.create(model_metadata, config, component_builder,
                                   skip_valdation)
 
     @staticmethod
-    def create(model_metadata,  # type: Metadata
-               config,  # type: AnnotatorConfig
+    def create(model_metadata,  # type: Metadata or annotation config
+               config = {},  # type: addtional config
                component_builder=None,  # type: Optional[ComponentBuilder]
                skip_valdation=False  # type: bool
                ):
         # type: (...) -> Interpreter
         """Load stored model and components defined by the provided metadata."""
-
         context = {}
-
         if component_builder is None:
             # If no builder is passed, every interpreter creation will result
             # in a new builder. hence, no components are reused.

@@ -117,7 +117,7 @@ class Component(object):
         on any context attributes created by a call to `process` of components previous to this one."""
         pass
 
-    def persist(self, model_dir):
+    def persist(self, model_dir, **args):
         # type: (Text) -> Optional[Dict[Text, Any]]
         """Persist this component to disk for future loading."""
         pass

@@ -92,11 +92,9 @@ class Command(object):
     STATUS_ERROR = "error"
     STATUS_DONE = "done"
 
-    def __init__(self, linker_config, user_id=None, dataset_id=None):
+    def __init__(self, linker_config):
         self.linker = DBLinker(linker_config)
         self.timestamp = time.time()
-        self.uid = user_id
-        self.dataset_id = dataset_id
 
     def __call__(self, *args, **kwargs):
         """
@@ -106,6 +104,7 @@ class Command(object):
         :return:
         """
         self.linker.open()
+        # time.sleep(0.01)
         ret = self.exec()
         self.linker.close()
         return ret
@@ -154,6 +153,7 @@ class TaskManager:
         :return:
         """
         self.lock.acquire()
+        # print("pop:" + str(command.timestamp))
         self.task_map.pop(command.timestamp)
         self.lock.release()
 

@@ -9,7 +9,7 @@ import this in module scope."""
 from chi_annotator.algo_factory import utils
 from chi_annotator.algo_factory.online.sklearn_cluster import SklearnCluster
 from chi_annotator.algo_factory.preprocess.char_tokenizer import CharTokenizer
-from chi_annotator.algo_factory.preprocess.jieba_tokenizer import JiebaTokenizer
+# from chi_annotator.algo_factory.preprocess.jieba_tokenizer import JiebaTokenizer
 from chi_annotator.algo_factory.preprocess.sentence_embed_extractor import SentenceEmbeddingExtractor
 from chi_annotator.algo_factory.preprocess.embedding import Embedding
 from chi_annotator.algo_factory.preprocess.embedding import EmbeddingExtractor
@@ -22,7 +22,7 @@ from chi_annotator.algo_factory.online.sklearn_classifier import AdaBoostClassif
 # its class name should be listed here.
 component_classes = [
     CharTokenizer,
-    JiebaTokenizer,
+#   JiebaTokenizer,
     SentenceEmbeddingExtractor,
     Embedding,
     EmbeddingExtractor,
