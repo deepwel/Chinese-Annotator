@@ -63,7 +63,6 @@ class BaseSKlearnClassifier(Component):
         sorted_indices = np.fliplr(np.argsort(pred_result, axis=1))
         return sorted_indices, pred_result[:, sorted_indices]
 
-    @classmethod
     def persist(cls, model_dir, **args):
         """
         save pickle model
@@ -89,8 +88,8 @@ class BaseSKlearnClassifier(Component):
     def load(cls, model_dir=None, model_metadata=None, cached_component=None, **kwargs):
         # type: (Text, Metadata, Optional[Component], **Any) -> SklearnClassifier
         import cloudpickle
-        if model_dir and model_metadata.get("model_name"):
-            classifier_file = os.path.join(model_dir, model_metadata.get("model_name"))
+        if model_dir and model_metadata.get("model_name"+"_"+cls.name):
+            classifier_file = os.path.join(model_dir, model_metadata.get("model_name"+"_"+cls.name))
             with io.open(classifier_file, 'rb') as f:  # pragma: no test
                 return cloudpickle.load(f, encoding="latin-1")
         else:
