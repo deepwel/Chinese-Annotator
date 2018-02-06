@@ -76,7 +76,7 @@ class BaseSKlearnClassifier(Component):
         # type: (Text) -> Dict[Text, Any]
         """Persist this model into the passed directory. Returns the metadata necessary to load the model again."""
         import cloudpickle
-        model_name = str(args["model_version"]) + "-" + cls.name + ".pickle"
+        model_name = str(args["model_version"]) + "_" + cls.name + ".pickle"
         classifier_file = os.path.join(model_dir, model_name)
         with io.open(classifier_file, 'wb') as f:
             cloudpickle.dump(cls, f)

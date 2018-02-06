@@ -6,6 +6,8 @@ time
 """
 
 import datetime, pymongo
+from glob import glob
+
 from chi_annotator.task_center.common import DBLinker
 from chi_annotator.task_center.common import TaskManager
 from chi_annotator.task_center.cmds import BatchTrainCmd, BatchPredictCmd
@@ -54,7 +56,7 @@ def create_pred_cfgs():
     task_config["condition"] = {"labeled": False}
     task_config["batch_num"] = 5
     task_config["model_type"] = "classify"
-    task_config["model_version"] = "1517845125.5345774"
+    # task_config["model_version"] = "1517845125.5345774"
     task_config["pipeline"] = [
         "char_tokenizer",
         "sentence_embedding_extractor",
@@ -62,7 +64,6 @@ def create_pred_cfgs():
     ]
     task_config["user_uuid"] = "5a683cadfe61a3fe9262a310"
     task_config["dataset_uuid"] = "5a6840b28831a3e06abbbcc9"
-    task_config["model_path"] = "/home/zqh/mygit/Chinese-Annotator/chi_annotator/user_instance/5a683cadfe61a3fe9262a310/5a6840b28831a3e06abbbcc9-classify"
     global_config = dict(config.TASK_CENTER_GLOBAL_CONFIG)
     return global_config, task_config
 
@@ -90,8 +91,13 @@ def test_batch_predict():
                  "database_type": "mongodb", "database_name": "chinese_annotator",
                  "user_name":"anno_admin", "password": "123"}
     global_config, task_config = create_pred_cfgs()
-    TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
     merged_config = config.AnnotatorConfig(task_config, global_config)
+    merged_config["model_path"] = merged_config.get_save_path_prefix()
+    # get newest model version
+    model_lists = sorted(glob(merged_config["model_path"] + "/*"), reverse=True)
+    merged_config["model_version"] = model_lists[0].split("/")[-1].split("_")[0]
+
+    TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
     btc = BatchPredictCmd(db_config, merged_config)
     ret = TM.exec_command(btc)
     if ret:

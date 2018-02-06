@@ -63,7 +63,10 @@ class BatchTrainCmd(Command):
 
 
 class BatchPredictCmd(Command):
-
+    """
+    batch predicted command, this command using certain ${model_version} predict ${batch_num} samples, which
+     have not been labeled.
+    """
     def __init__(self, db_config, task_config):
         super(BatchPredictCmd, self).__init__(db_config)
         self.db_config = db_config
@@ -111,7 +114,13 @@ class BatchPredictCmd(Command):
         # create interpreter
         interpreter = Interpreter.load(self.task_config.get("model_path"), self.task_config.get("model_version"), self.task_config)
         for item in batch_result:
+            # print(item)
             pred = interpreter.parse(item["text"])
             print(pred)
-        # save predict result to table and label predicted flag.
+            classify_label = pred["classifylabel"]
+            # save predict result to table and label predicted flag.
+            to_update = {"predicted": True, "predict_label": classify_label["name"], "predict_confidence": classify_label["confidence"]}
+            condition = {'_id': item['_id']}
+            self.linker.action(DBLinker.UPDATE,
+                               **{"table_name": DBLinker.RAW_DATA_TABLE, "item": to_update, "condition": condition})
         return True
