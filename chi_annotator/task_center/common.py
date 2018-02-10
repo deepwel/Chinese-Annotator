@@ -84,7 +84,7 @@ class DBLinker(Linker):
         elif action_type == DBLinker.UPDATE:
             return self.db_manager.update_rows(args["condition"], args["item"], args["table_name"])
         elif action_type == DBLinker.LIMIT_BATCH_FETCH:
-            return self.db_manager.get_n_rows(args["condition"], args["table_name"], limit=args["batch_num"])
+            return self.db_manager.get_n_rows(args["condition"], args["table_name"], limit=args["limit"])
         else:
             return None
 

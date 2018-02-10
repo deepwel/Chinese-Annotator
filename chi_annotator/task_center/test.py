@@ -94,8 +94,8 @@ def test_batch_predict():
     merged_config = config.AnnotatorConfig(task_config, global_config)
     merged_config["model_path"] = merged_config.get_save_path_prefix()
     # get newest model version
-    model_lists = sorted(glob(merged_config["model_path"] + "/*"), reverse=True)
-    merged_config["model_version"] = model_lists[0].split("/")[-1].split("_")[0]
+    # model_lists = sorted(glob(merged_config["model_path"] + "/*"), reverse=True)
+    # merged_config["model_version"] = model_lists[0].split("/")[-1].split("_")[0]
 
     TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
     btc = BatchPredictCmd(db_config, merged_config)
