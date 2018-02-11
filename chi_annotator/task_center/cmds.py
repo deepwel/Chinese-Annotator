@@ -84,12 +84,8 @@ class BatchPredictCmd(Command):
                            "table_name": DBLinker.RAW_DATA_TABLE,
                            "limit": self.task_config.get("batch_num", 100)}
         batch_result = self.linker.action(DBLinker.LIMIT_BATCH_FETCH, **batch_exec_args)
-        # train process
-        self._predict_batch(batch_result)
-        # mark train done in db
-        condition, item = self.__create_update(Command.STATUS_DONE)
-        self.linker.action(DBLinker.UPDATE,
-                           **{"table_name": DBLinker.RAW_DATA_TABLE, "item": item, "condition": condition})
+        # predict
+        return self._predict_batch(batch_result)
 
     def _predict_batch(self, batch_result):
         # from result to train_data, create train data
@@ -105,17 +101,22 @@ class BatchPredictCmd(Command):
                            "sort_limit": ([("end_timestamp", -1)], 1)}
         status_result = self.linker.action(DBLinker.BATCH_FETCH, **batch_exec_args)
         # print(status_result)
+        if len(status_result) < 1:
+            print("no model trained now, please train model first or wait model train done.")
+            return None
         model_version = str(status_result[0]["model_version"])
         print("now model version is : ", model_version)
         # get newest model version according user_id, dataset_id, and model_type.
 
         interpreter = Interpreter.load(self.task_config.get("model_path"), model_version, self.task_config)
+        preds = []
         for item in batch_result:
             pred = interpreter.parse(item["text"])
-            classify_label = pred["classifylabel"]
-            # save predict result to table and label predicted flag.
-            to_update = {"predicted": True, "predict_label": classify_label["name"], "predict_confidence": classify_label["confidence"]}
-            condition = {'_id': item['_id']}
-            self.linker.action(DBLinker.UPDATE,
-                               **{"table_name": DBLinker.RAW_DATA_TABLE, "item": to_update, "condition": condition})
-        return True
+            preds.append(pred)
+            # classify_label = pred["classifylabel"]
+            # # save predict result to table and label predicted flag.
+            # to_update = {"predicted": True, "predict_label": classify_label["name"], "predict_confidence": classify_label["confidence"]}
+            # condition = {'_id': item['_id']}
+            # self.linker.action(DBLinker.UPDATE,
+            #                    **{"table_name": DBLinker.RAW_DATA_TABLE, "item": to_update, "condition": condition})
+        return preds

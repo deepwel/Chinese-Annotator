@@ -93,17 +93,17 @@ def test_batch_predict():
     global_config, task_config = create_pred_cfgs()
     merged_config = config.AnnotatorConfig(task_config, global_config)
     merged_config["model_path"] = merged_config.get_save_path_prefix()
-    # get newest model version
-    # model_lists = sorted(glob(merged_config["model_path"] + "/*"), reverse=True)
-    # merged_config["model_version"] = model_lists[0].split("/")[-1].split("_")[0]
 
-    TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
+    # TM = TaskManager(global_config["max_process_number"], global_config["max_task_in_queue"])
     btc = BatchPredictCmd(db_config, merged_config)
-    ret = TM.exec_command(btc)
-    if ret:
-        print("add task ok!")
-    else:
-        print("can not add task queue full!")
+    preds = btc()
+    print(preds)
+    # ret = TM.exec_command(btc)
+    # print(ret)
+    # if ret:
+    #     print("add task ok!")
+    # else:
+    #     print("can not add task queue full!")
 
 if __name__ == "__main__":
     # test_batch_train()
