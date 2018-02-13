@@ -44,6 +44,7 @@ class DBLinker(Linker):
     INSERT_BATCH = 3
     INSERT_SINGLE = 4
     UPDATE = 5
+    LIMIT_BATCH_FETCH = 6
 
     RAW_DATA_TABLE = "annotation_raw_data"
     ANNO_DATA_TABLE = "annotation_data"
@@ -82,6 +83,8 @@ class DBLinker(Linker):
             return self.db_manager.insert_row(args["item"], args["table_name"])
         elif action_type == DBLinker.UPDATE:
             return self.db_manager.update_rows(args["condition"], args["item"], args["table_name"])
+        elif action_type == DBLinker.LIMIT_BATCH_FETCH:
+            return self.db_manager.get_n_rows(args["condition"], args["table_name"], limit=args["limit"])
         else:
             return None
 
@@ -257,6 +260,25 @@ class DBManager(object):
 
         if self.type == "mongodb":
             result = self.client[database_name][table].find(conditions).sort(sort_limit[0]).limit(sort_limit[1])
+            for item in result:
+                res.append(item)
+        return res
+
+    def get_n_rows(self, conditions, table, limit=0, database_name=None):
+        """
+        get rows according conditions
+        :param table:
+        :param database_name:
+        :param conditions: json format data
+        :param limit
+        :return:
+        """
+        res = []
+        if database_name is None:
+            database_name = self.database
+
+        if self.type == "mongodb":
+            result = self.client[database_name][table].find(conditions).limit(limit)
             for item in result:
                 res.append(item)
         return res

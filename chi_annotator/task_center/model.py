@@ -137,16 +137,14 @@ class Interpreter(object):
             # If no builder is passed, every interpreter creation will result
             # in a new builder. hence, no components are reused.
             component_builder = components.ComponentBuilder()
-
         pipeline = []
         # Before instantiating the component classes,
         # lets check if all required packages are available
         # if not skip_valdation:
         #     components.validate_requirements(model_metadata.pipeline)
-
         for component_name in model_metadata.pipeline:
             component = component_builder.load_component(
-                component_name, model_metadata.model_dir,
+                component_name, model_metadata.model_meta_path,
                 model_metadata, config=config, **context)
             try:
                 updates = component.provide_context()
@@ -156,7 +154,6 @@ class Interpreter(object):
             except components.MissingArgumentError as e:
                 raise Exception("Failed to initialize component '{}'. "
                                 "{}".format(component.name, e))
-
         return Interpreter(pipeline, context, model_metadata)
 
     def __init__(self, pipeline, context, model_metadata=None):

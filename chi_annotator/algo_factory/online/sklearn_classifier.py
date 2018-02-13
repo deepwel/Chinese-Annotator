@@ -63,7 +63,6 @@ class BaseSKlearnClassifier(Component):
         sorted_indices = np.fliplr(np.argsort(pred_result, axis=1))
         return sorted_indices, pred_result[:, sorted_indices]
 
-    @classmethod
     def persist(cls, model_dir, **args):
         """
         save pickle model
@@ -77,7 +76,7 @@ class BaseSKlearnClassifier(Component):
         # type: (Text) -> Dict[Text, Any]
         """Persist this model into the passed directory. Returns the metadata necessary to load the model again."""
         import cloudpickle
-        model_name = str(args["model_version"]) + "-" + cls.name + ".pickle"
+        model_name = str(args["model_version"]) + "_" + cls.name + ".pickle"
         classifier_file = os.path.join(model_dir, model_name)
         with io.open(classifier_file, 'wb') as f:
             cloudpickle.dump(cls, f)
@@ -89,8 +88,8 @@ class BaseSKlearnClassifier(Component):
     def load(cls, model_dir=None, model_metadata=None, cached_component=None, **kwargs):
         # type: (Text, Metadata, Optional[Component], **Any) -> SklearnClassifier
         import cloudpickle
-        if model_dir and model_metadata.get("model_name"):
-            classifier_file = os.path.join(model_dir, model_metadata.get("model_name"))
+        if model_dir and model_metadata.get("model_name"+"_"+cls.name):
+            classifier_file = os.path.join(model_dir, model_metadata.get("model_name"+"_"+cls.name))
             with io.open(classifier_file, 'rb') as f:  # pragma: no test
                 return cloudpickle.load(f, encoding="latin-1")
         else:

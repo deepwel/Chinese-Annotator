@@ -20,7 +20,7 @@ TASK_CENTER_GLOBAL_CONFIG = {
     "language": "ZH",
     "db_name": "chinese_annotator",
     # user_uuid/task_type_data_set_uuid_model_version_
-    "save_path": "/home/burkun/git/Chinese-Annotator/chi_annotator/user_instance",
+    "save_path": "/home/zqh/mygit/Chinese-Annotator/chi_annotator/user_instance",
     # make sure user dir is created
     "user_instance_path_template": os.path.join("%s", "%s-%s")
 }

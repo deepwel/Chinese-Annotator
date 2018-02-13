@@ -3,7 +3,7 @@ import datetime
 from chi_annotator.task_center.common import Command
 from chi_annotator.task_center.common import DBLinker
 from chi_annotator.algo_factory.common import Message, TrainingData
-from chi_annotator.task_center.model import Trainer
+from chi_annotator.task_center.model import Trainer, Interpreter
 
 
 class BatchTrainCmd(Command):
@@ -61,3 +61,62 @@ class BatchTrainCmd(Command):
         # save model meta for config
         trainer.persist(self.task_config.get_save_path_prefix())
         return True
+
+
+class BatchPredictCmd(Command):
+    """
+    batch predicted command, this command using certain ${model_version} predict ${batch_num} samples, which
+     have not been labeled.
+    """
+    def __init__(self, db_config, task_config):
+        super(BatchPredictCmd, self).__init__(db_config)
+        self.db_config = db_config
+        self.task_config = task_config
+        self.uid = self.task_config.get("user_uuid")
+        self.dataset_id = self.task_config.get("dataset_uuid")
+        if "model_version" in task_config:
+            # override timestamp
+            self.timestamp = task_config["model_version"]
+
+    def exec(self):
+        # get batch data
+        batch_exec_args = {"condition": self.task_config["condition"],
+                           "table_name": DBLinker.RAW_DATA_TABLE,
+                           "limit": self.task_config.get("batch_num", 100)}
+        batch_result = self.linker.action(DBLinker.LIMIT_BATCH_FETCH, **batch_exec_args)
+        # predict
+        return self._predict_batch(batch_result)
+
+    def _predict_batch(self, batch_result):
+        # from result to train_data, create train data
+        msg = []
+        # load interpreter # todo model can be load from cache later.
+        filter_condition = {'user_uuid': self.uid, \
+                            "dataset_uuid": self.dataset_id, \
+                            "model_type": self.task_config["model_type"],\
+                            "status": "done"}
+
+        batch_exec_args = {"condition": filter_condition,
+                           "table_name": DBLinker.TRAIN_STATUS_TABLE,
+                           "sort_limit": ([("end_timestamp", -1)], 1)}
+        status_result = self.linker.action(DBLinker.BATCH_FETCH, **batch_exec_args)
+        # print(status_result)
+        if len(status_result) < 1:
+            print("no model trained now, please train model first or wait model train done.")
+            return None
+        model_version = str(status_result[0]["model_version"])
+        print("now model version is : ", model_version)
+        # get newest model version according user_id, dataset_id, and model_type.
+
+        interpreter = Interpreter.load(self.task_config.get("model_path"), model_version, self.task_config)
+        preds = []
+        for item in batch_result:
+            pred = interpreter.parse(item["text"])
+            preds.append(pred)
+            # classify_label = pred["classifylabel"]
+            # # save predict result to table and label predicted flag.
+            # to_update = {"predicted": True, "predict_label": classify_label["name"], "predict_confidence": classify_label["confidence"]}
+            # condition = {'_id': item['_id']}
+            # self.linker.action(DBLinker.UPDATE,
+            #                    **{"table_name": DBLinker.RAW_DATA_TABLE, "item": to_update, "condition": condition})
+        return preds
