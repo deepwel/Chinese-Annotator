@@ -104,10 +104,9 @@ class Command(object):
         call for exec, do not modified!
         :param args:
         :param kwargs:
-        :return:
+        :return command exec result
         """
         self.linker.open()
-        # time.sleep(0.01)
         ret = self.exec()
         self.linker.close()
         return ret

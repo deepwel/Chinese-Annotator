@@ -3,7 +3,6 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from builtins import object
-import io
 import simplejson
 import os
 import six
@@ -19,8 +18,8 @@ TASK_CENTER_GLOBAL_CONFIG = {
     "port": 5000,
     "language": "ZH",
     "db_name": "chinese_annotator",
-    # user_uuid/task_type_data_set_uuid_model_version_
-    "save_path": "/home/zqh/mygit/Chinese-Annotator/chi_annotator/user_instance",
+    # cur path
+    "save_path": os.path.dirname(os.path.abspath(__file__)) + "/../user_instance",
     # make sure user dir is created
     "user_instance_path_template": os.path.join("%s", "%s-%s")
 }
@@ -165,3 +164,8 @@ class AnnotatorConfig(object):
             return None
         log_suffix = self.get("user_instance_path_template") % (user_uuid, dataset_uuid, task_type)
         return os.path.join(self.get("save_path", "./chi_annotator/user_instance"), log_suffix)
+
+if __name__ == "__main__":
+    import os
+    print(TASK_CENTER_GLOBAL_CONFIG)
+    print(os.path.dirname(os.path.abspath(__file__)))

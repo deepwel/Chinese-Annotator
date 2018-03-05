@@ -24,6 +24,7 @@ def create_dir(dir_path):
             os.makedirs(dir_path)
     except OSError as e:
         # be happy if someone already created the path
+        # TODO print log
         if e.errno != errno.EEXIST:
             raise
 
