@@ -4,7 +4,7 @@
 author: bookerbai
 create:2017/11/22
 """
-
+import chi_annotator.task_center.config as config
 
 class TestTokenizer(object):
     """
@@ -17,14 +17,15 @@ class TestTokenizer(object):
         from chi_annotator.task_center.config import AnnotatorConfig
         msg = Message(u"你好，我是一个demo!!!!")
         cb = ComponentBuilder()
-        config = AnnotatorConfig()
-        ct = cb.create_component("char_tokenizer", config)
+        cfg = AnnotatorConfig(config.CLASSIFY_TASK_CONFIG)
+        ct = cb.create_component("char_tokenizer", cfg)
         assert ct is not None
         ct.process(msg, **{})
         assert len(msg.get("tokens")) > 0
 
-    def test_words_jieba_tokenizer(self):
+    def ignor_test_words_jieba_tokenizer(self):
         """
+        #TODO jieba will add later
         test word tokenizer using jieba
         :return:
         """
@@ -33,8 +34,8 @@ class TestTokenizer(object):
         from chi_annotator.task_center.config import AnnotatorConfig
         msg = Message(u"你好，我是一个demo!!!!")
         cb = ComponentBuilder()
-        config = AnnotatorConfig()
-        ct = cb.create_component("tokenizer_jieba", config)
+        cfg = AnnotatorConfig(config.CLASSIFY_TASK_CONFIG)
+        ct = cb.create_component("tokenizer_jieba", cfg)
         assert ct is not None
         ct.process(msg, **{})
         assert len(msg.get("tokens")) > 0

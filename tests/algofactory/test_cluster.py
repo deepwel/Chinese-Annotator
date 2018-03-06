@@ -1,4 +1,5 @@
-
+import chi_annotator.task_center.config as config
+import os
 
 class TestCluster(object):
 
@@ -7,7 +8,11 @@ class TestCluster(object):
         from chi_annotator.algo_factory.common import Message
         from chi_annotator.task_center.config import AnnotatorConfig
         from chi_annotator.algo_factory.common import TrainingData
-        cfg = AnnotatorConfig()
+        task_config = dict(config.CLASSIFY_TASK_CONFIG)
+        dir_name = os.path.dirname(os.path.abspath(__file__))
+        task_config["embedding_path"] = dir_name + "/../data/test_embedding/vec.txt"
+        task_config["embedding_type"] = "w2v"
+        cfg = AnnotatorConfig(task_config)
         pos_msg1 = Message(u"你好，我是一个demo!!!!")
         pos_msg2 = Message(u"你好,你好,你好")
         neg_msg1 = Message(u"如果发现有文件漏提或注释有误")

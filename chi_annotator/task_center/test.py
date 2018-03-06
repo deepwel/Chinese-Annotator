@@ -9,7 +9,7 @@ import datetime, pymongo
 
 from chi_annotator.task_center.common import DBLinker
 from chi_annotator.task_center.common import TaskManager
-from chi_annotator.task_center.cmds import BatchTrainCmd, BatchPredictCmd, BatchNoDbPredictCmd
+from chi_annotator.task_center.cmds import BatchTrainCmd, BatchPredictCmd, BatchNoDbPredictCmd, StatusCmd
 import chi_annotator.task_center.config as config
 import time
 import os
@@ -60,7 +60,7 @@ def create_pred_cfgs():
 def abc_test_batch_train():
     db_config = {"database_hostname":"localhost", "database_port" : 27017,
                  "database_type": "mongodb", "database_name": "chinese_annotator",
-                 "user_name":"anno_admin", "password": "123"}
+                 "user_name": "anno_admin", "password": "123"}
     global_config, task_config = create_cfgs()
     # TM = TaskManager(global_config["max_process_number"], global_cornfig["max_task_in_queue"])
     for idx in range(1):
@@ -118,8 +118,18 @@ def abc_test_batch_nodb_predict():
     #     print("can not add task queue full!")
 
 
+def abs_test_status():
+    db_config = {"database_hostname":"localhost", "database_port" : 27017,
+                 "database_type": "mongodb", "database_name": "chinese_annotator",
+                 "user_name":"anno_admin", "password": "123"}
+    global_config, task_config = create_pred_cfgs()
+    merged_config = config.AnnotatorConfig(task_config, global_config)
+    st_cmd = StatusCmd(db_config, merged_config)
+    print(st_cmd())
+
 if __name__ == "__main__":
-    pass
+    abs_test_status()
+
     # abc_test_batch_train()
     # abc_test_batch_train()
     # abc_test_batch_predict()

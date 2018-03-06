@@ -78,12 +78,11 @@ class BatchNoDbPredictCmd(Command):
 
     def exec(self):
         # from result to train_data, create train data
-        msg = []
         # load interpreter # todo model can be load from cache later.
         filter_condition = {'user_uuid': self.uid,
                             "dataset_uuid": self.dataset_id,
                             "model_type": self.task_config["model_type"],
-                            "status": "done"}
+                            "status": Command.STATUS_DONE}
 
         batch_exec_args = {"condition": filter_condition,
                            "table_name": DBLinker.TRAIN_STATUS_TABLE,
@@ -133,12 +132,11 @@ class BatchPredictCmd(Command):
 
     def _predict_batch(self, batch_result):
         # from result to train_data, create train data
-        msg = []
         # load interpreter # todo model can be load from cache later.
         filter_condition = {'user_uuid': self.uid,
                             "dataset_uuid": self.dataset_id,
                             "model_type": self.task_config["model_type"],
-                            "status": "done"}
+                            "status": Command.STATUS_DONE}
 
         batch_exec_args = {"condition": filter_condition,
                            "table_name": DBLinker.TRAIN_STATUS_TABLE,
@@ -158,3 +156,33 @@ class BatchPredictCmd(Command):
             pred = interpreter.parse(item["text"])
             preds.append(pred)
         return preds
+
+
+class StatusCmd(Command):
+    """
+    batch predicted command, this command using certain ${model_version} predict ${batch_num} samples, which
+     have not been labeled.
+    """
+    def __init__(self, db_config, task_config):
+        super(StatusCmd, self).__init__(db_config)
+        self.db_config = db_config
+        self.task_config = task_config
+        self.uid = self.task_config.get("user_uuid")
+        self.dataset_id = self.task_config.get("dataset_uuid")
+        if "model_version" in task_config:
+            # override timestamp
+            self.timestamp = task_config["model_version"]
+
+    def exec(self):
+        filter_condition = {'user_uuid': self.uid,
+                            "dataset_uuid": self.dataset_id,
+                            "model_type": self.task_config["model_type"]}
+        batch_exec_args = {"condition": filter_condition,
+                           "table_name": DBLinker.TRAIN_STATUS_TABLE,
+                           "sort_limit": ([("start_timestamp", -1)], 1)}
+        batch_result = self.linker.action(DBLinker.BATCH_FETCH, **batch_exec_args)
+        # predict
+        if len(batch_result) == 1:
+            return batch_result[0]["status"], batch_result[0]["end_timestamp"]
+        else:
+            return "not found!", None

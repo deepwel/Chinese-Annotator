@@ -24,7 +24,7 @@ class TestDatabase(object):
         db.drop_database()
         db.close()
 
-    def test_insert_one(self):
+    def ignor_test_insert_one(self):
         """
         test insert one item into database
         :return:
@@ -36,7 +36,7 @@ class TestDatabase(object):
         db.drop_database()
         db.close()
 
-    def test_update(self):
+    def ignor_test_update(self):
         """
         test batch update
         :return:
@@ -48,7 +48,7 @@ class TestDatabase(object):
         db.drop_database()
         db.close()
 
-    def test_get_rows(self):
+    def ignor_test_get_rows(self):
         """
         test get rows
         :return:
@@ -63,7 +63,7 @@ class TestDatabase(object):
         db.drop_database()
         db.close()
 
-    def test_get_rows_by_ids(self):
+    def ignor_test_get_rows_by_ids(self):
         """
         test get rows
         :return:

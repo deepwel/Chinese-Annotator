@@ -1,7 +1,7 @@
 import logging
 
 from chi_annotator.algo_factory.common import TrainingData, Message
-from chi_annotator.task_center.db import DBManager
+from chi_annotator.task_center.common import DBManager
 from chi_annotator.task_center.model import Trainer, Interpreter
 
 logger = logging.getLogger(__name__)
