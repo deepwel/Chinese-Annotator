@@ -160,8 +160,7 @@ class BatchPredictCmd(Command):
 
 class StatusCmd(Command):
     """
-    batch predicted command, this command using certain ${model_version} predict ${batch_num} samples, which
-     have not been labeled.
+    query task status by user id && dataset id && task type
     """
     def __init__(self, db_config, task_config):
         super(StatusCmd, self).__init__(db_config)
