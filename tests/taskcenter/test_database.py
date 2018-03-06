@@ -1,4 +1,4 @@
-from chi_annotator.task_center.db import DBManager
+from chi_annotator.task_center.common import DBManager
 
 
 class TestDatabase(object):
