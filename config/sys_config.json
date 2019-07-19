@@ -1,5 +1,5 @@
 {
-  "ip" : "localhost",  
+  "ip": "localhost",
   "port": "8000",
   "database_type": "mongodb",
   "type": "classification"
