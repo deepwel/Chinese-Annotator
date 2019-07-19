@@ -233,11 +233,11 @@ var annotation_history = new Vue({
     annptaion_list: [],
   },
   methods: {
-    query_annotatoin_history: function (event) {
+    query_annotation_history: function (event) {
       var params = new URLSearchParams();
       params.append('RecNum', this.history_annotaiton_number);
       params.append('page_number', this.history_annotation_page);
-      axios.get('/query_annotatoin_history/',{
+      axios.get('/query_annotation_history/',{
         params: {
           'RecNum': this.history_annotaiton_number,
           'page_number': this.history_annotation_page

@@ -209,7 +209,7 @@ def annotate_single_unlabeled(request):
     return JsonResponse(serializer.data)
 
 
-def query_annotatoin_history(request):
+def query_annotation_history(request):
     """
     load one unlabeled text from Mongo DB to web
     :return:

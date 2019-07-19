@@ -142,8 +142,8 @@
             <article class="expanded">
                 <h3>Show Annotation History</h3>
                 <fieldset>
-                    <p>web service interface 
-                        <strong>http://localhost:8000/query_annotatoin_history/</strong>
+                    <p>web service interface
+                        <strong>http://localhost:8000/query_annotation_history/</strong>
                         it's function is to query the user annotation history it can define which page and how many number on a page to query</p>
                     <div id="annotation_history">
                         <h3>History</h3>
@@ -151,7 +151,7 @@
                         <input type="number" name="annotaiton_number" v-model="history_annotaiton_number" />
                         <label for="annotation_page">History Number</label>
                         <input type="number" name="annotation_page" v-model="history_annotation_page" />
-                        <a href="javascript:void(0);" class="button" v-on:click="query_annotatoin_history">Query</a>
+                        <a href="javascript:void(0);" class="button" v-on:click="query_annotation_history">Query</a>
                         <br>
                         <table>
                             <tr>
