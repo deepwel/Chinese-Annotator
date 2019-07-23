@@ -13,6 +13,6 @@ urlpatterns = [
     path('export_data/', views.export_data, name='export_data'),
     path('load_single_unlabeled/', views.load_single_unlabeled, name='load_single_unlabeled'),
     path('annotate_single_unlabeled/', views.annotate_single_unlabeled, name='annotate_single_unlabeled'),
-    path('query_annotatoin_history/', views.query_annotatoin_history, name='query_annotatoin_history'),
+    path('query_annotation_history/', views.query_annotation_history, name='query_annotation_history'),
 
 ]

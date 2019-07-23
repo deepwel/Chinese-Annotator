@@ -25,7 +25,7 @@ class AnnotationDataViewSet(APIView):
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.split('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def project_info(request):
@@ -209,7 +209,7 @@ def annotate_single_unlabeled(request):
     return JsonResponse(serializer.data)
 
 
-def query_annotatoin_history(request):
+def query_annotation_history(request):
     """
     load one unlabeled text from Mongo DB to web
     :return:
