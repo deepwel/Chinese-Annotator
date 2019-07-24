@@ -2,11 +2,11 @@ import os
 import io
 import json
 
-DEFAULT_CONFIG_LOCATION = "../../../config/sys_config.json"
+DEFAULT_CONFIG_LOCATION = "config/sys_config.json"
 
 DEFAULT_CONFIG = {
-    # "project": None,
-    # "fixed_model_name": None,
+    "project": None,
+    "fixed_model_name": None,
 }
 
 

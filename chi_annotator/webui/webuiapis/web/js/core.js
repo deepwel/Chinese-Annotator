@@ -48,7 +48,7 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
 var project_info = new Vue({
   el: '#project_info',
   data: {
-    message: "Click Test to see if can connnect Backend REST, and got project info",
+    message: "Click Test to see if can connect Backend REST, and got project info",
     project_info: '',
   },
   // define methods under the `methods` object
@@ -159,7 +159,7 @@ var load_and_annotation_data = new Vue({
     message: "select file to do upload",
     incorrect_label: false,
     uuid: "",
-    calss_list: [{
+    class_list: [{
       name: "span"
     },
     {
@@ -177,9 +177,8 @@ var load_and_annotation_data = new Vue({
       axios.get('/load_single_unlabeled/')
         .then(function (response) {
           this.auto_label = "span"
-          var annotaton_data = JSON.parse(response.data.data)
-          this.annotation_text = annotaton_data.text
-          this.uuid = annotaton_data.uuid
+          this.annotation_text = JSON.parse(response.data.data)
+          this.uuid = annotation_text.uuid
           console.log(response);
         }.bind(this))
         .catch(function (error) {
@@ -228,24 +227,23 @@ var load_and_annotation_data = new Vue({
 var annotation_history = new Vue({
   el: '#annotation_history',
   data: {
-    history_annotaiton_number:1,
+    history_annotation_number:1,
     history_annotation_page:0,
-    annptaion_list: [],
+    annotation_list: [],
   },
   methods: {
     query_annotation_history: function (event) {
       var params = new URLSearchParams();
-      params.append('RecNum', this.history_annotaiton_number);
+      params.append('RecNum', this.history_annotation_number);
       params.append('page_number', this.history_annotation_page);
       axios.get('/query_annotation_history/',{
         params: {
-          'RecNum': this.history_annotaiton_number,
+          'RecNum': this.history_annotation_number,
           'page_number': this.history_annotation_page
           }
         })
         .then(function (response) {
-          var annotaton_data = JSON.parse(response.data.data)
-          this.annptaion_list = annotaton_data
+          this.annotation_list = JSON.parse(response.data.data)
           this.message = response.data.message
           console.log(response);
         }.bind(this))

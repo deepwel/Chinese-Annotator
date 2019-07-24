@@ -1,4 +1,4 @@
-#!/usr/bin/python  
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
 author: bookerbai
@@ -25,7 +25,7 @@ class TestTokenizer(object):
 
     def ignor_test_words_jieba_tokenizer(self):
         """
-        #TODO jieba will add later
+        #TODO: jieba will add later
         test word tokenizer using jieba
         :return:
         """

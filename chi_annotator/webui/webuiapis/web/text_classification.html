@@ -75,9 +75,9 @@ License: Creative Commons Attribution
 					<br/>
 					<p></p>
 					<div v-show="incorrect_label">
-						<label for="file_paht_local">Select a right class</label>
+						<label for="file_path_local">Select a right class</label>
 						<select v-model='item'>
-							<option v-for=" item in calss_list"> {{ item.name}}</option>
+							<option v-for=" item in class_list"> {{ item.name}}</option>
 						</select>
 						<a href="#" v-on:click="annotate_single_correct" class="button">submit</a>
 					</div>
@@ -92,11 +92,11 @@ License: Creative Commons Attribution
 						<tr>
 							<th>Label</th>
 							<th>Text</th>
-							
+
 						</tr>
-						<tr v-for=" annptaion in annptaion_list">
-							<td>{{ annptaion.label }}</td>
-							<td>{{ annptaion.text }}</td>
+						<tr v-for=" annotation in annotation_list">
+							<td>{{ annotation.label }}</td>
+							<td>{{ annotation.text }}</td>
 						</tr>
 					</table>
 					<p>&nbsp;</p>
@@ -116,7 +116,7 @@ License: Creative Commons Attribution
 	</section>
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="js/vue.js"></script>
+	<script src="https://unpkg.com/vue"></script>
 	<script src="js/core.js"></script>
 </body>
 
