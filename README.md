@@ -17,6 +17,7 @@ Many NLP tasks require lots of labelling data. Current annotators are mostly for
 - 安装 python3.6
 - 安装 virtualenv
 - 新建 python 虚拟环境, 激活虚拟环境
+- 安装 mongodb
 
 ```bash
 virtualenv --python $path_of_python_3.6 $target_virtual_env_path
@@ -37,6 +38,42 @@ cd $repository_directory
 pip install -e .
 ```
 
+- 开启 mongodb
+
+```bash
+mongod
+```
+
+- 导入样例数据
+
+```bash
+cd $repository_directory
+bash scripts/init_db.sh
+```
+
+- 启动 python api 服务
+
+```bash
+cd $repository_directory
+bash scripts/run_webui.sh
+```
+
+- 安装 nodejs, 推荐 lts 版本
+- 安装 yarn
+- 安装 npm 依赖
+
+```bash
+npm install -g yarn
+cd $repository_directory/web
+yarn
+```
+
+- 启动前端开发服务
+
+```bash
+yarn start
+```
+
 ## Project Alignment
 
 ![](/docs/images/chinese_annotator_arch.png)
@@ -47,7 +84,7 @@ pip install -e .
 ├── docs                    # Documentations
 ├── tests                   # Test cases
 │   └── data                # Raw data for tests
-├── chi_annotator           # Main project folder
+├── chi_annotator           # Main backend project folder
 │   ├── algo_factory        # Algorithm Factory module containing general algorithms
 │       ├── preprocess      # Preprocess codes
 │       ├── online          # Online Algorithms for Active Learning (svm for now)
@@ -63,6 +100,7 @@ pip install -e .
 |           ├── ner         # Named Entity Recognition
 |           ├── pos_tagger  # POS Tagger
 |           └── re          # Relation Extraction
+├── web                     # Main frontend project folder
 └── ...
 
 ```

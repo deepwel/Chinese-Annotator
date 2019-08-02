@@ -1,0 +1,19 @@
+html {
+  font-size: 10px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  height: 100%;
+  width: 100%;
+}
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+}

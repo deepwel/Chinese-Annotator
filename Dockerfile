@@ -15,4 +15,4 @@ RUN pip install -e /Chinese-Annotator/chi_annotator
 
 EXPOSE 5000
 
-CMD ["python3.6","/Chinese-Annotator/chi_annotator/webui/apis/ca.py"]
+CMD ["python3.6", "/Chinese-Annotator/scripts/run_webui.sh"]

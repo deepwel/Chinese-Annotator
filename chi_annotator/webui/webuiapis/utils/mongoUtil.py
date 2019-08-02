@@ -9,11 +9,11 @@ from pymongo.errors import ConnectionFailure
     Author: Gupern 周起超
     CreateTime: 2017-05-16
     Description: This is a file for easy manipulate the MongoDB
-    
-    LastModified: 
+
+    LastModified:
         2017-05-24 : change class to func, for easily use
         2017-05-17 : add note params and return
-    FunctionNote: 
+    FunctionNote:
         renameField(col, _id, oldField, newField): 重命名field
         removeDocById(col, _id): 通过Id移除doc
         findOneById(col, _id): 通过id查找doc

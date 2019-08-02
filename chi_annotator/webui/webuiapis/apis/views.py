@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from werkzeug.utils import secure_filename
@@ -14,7 +14,7 @@ from chi_annotator.webui.webuiapis.utils.mongoUtil import get_mongo_client
 from rest_framework.renderers import JSONRenderer
 import json
 
-UPLOAD_FOLDER = '../../data/files'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'chi_annotator/data/files')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 config = WebUIConfig()
 
@@ -117,7 +117,7 @@ def load_local_dataset(request):
         with open(file_path, 'r', encoding='utf-8') as f:
             for line in f:
                 # label, txt = line.split(" ", 1)
-                print("get string %s" % line)
+                # print("get string %s" % line)
                 text = line.strip()
                 text_uuid = uuid.uuid1()
                 annotation_raw_data = AnnotationRawData(text=text, uuid=text_uuid)
@@ -142,7 +142,7 @@ def export_data(request):
     """
     # read file
     ca = get_mongo_client(uri='mongodb://localhost:27017/')
-    with open("../../data/files/annotation_data.json", "w") as f:
+    with open(os.path.join(UPLOAD_FOLDER, "annotation_data.json"), "w") as f:
         annotations = ca["annotation_data"].find({}).batch_size(50)
         result = []
         for annotation in annotations:
@@ -175,6 +175,30 @@ def load_single_unlabeled(request):
 
     response = APIResponse()
     response.data = json.dumps(annotation_data_serializer.data)
+    response.code = 200
+    response.message = "SUCCESS"
+    serializer = APIResponseSerializer(response)
+    return JsonResponse(serializer.data)
+
+def load_all_unlabeled(request):
+    """
+    load all unlabeled text from Mongo DB to web
+    :return:
+    """
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 10))
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
+
+    all_unlabeled= ca["annotation_raw_data"].find({"labeled": False})
+    count = all_unlabeled.count()
+    unlabeled = all_unlabeled.limit(limit).skip(limit * offset)
+    result = list()
+    for t in unlabeled:
+        annotation_data = AnnotationRawData(text=t.get("text"), uuid=uuid.uuid1(), dataset_uuid=t.get("dataset_uuid"))
+        annotation_data_serializer = AnnotationRawDataSerializer(annotation_data)
+        result.append(annotation_data_serializer.data)
+    response = APIResponse()
+    response.data = json.dumps({ 'data': result, 'total_count': count })
     response.code = 200
     response.message = "SUCCESS"
     serializer = APIResponseSerializer(response)
@@ -216,10 +240,10 @@ def query_annotation_history(request):
     """
     # read file
     ca = get_mongo_client(uri='mongodb://localhost:27017/')
-    rec_number = int(request.GET.get("RecNum"))
-    page_number = int(request.GET.get("page_number"))
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 10))
 
-    text = ca["annotation_data"].find().limit(rec_number).skip(page_number * rec_number)
+    text = ca["annotation_data"].find().limit(limit).skip(limit * offset)
     result = list()
     for t in text:
         data = dict()
@@ -248,7 +272,7 @@ def check_offline_progress(request):
     label = request.form.get("label", "")
     print(text)
     print(label)
-    ca = get_mongo_client()
+    ca = get_mongo_client(uri='mongodb://localhost:27017/')
     text = ca["annotation_data"].insert_one({"label": label, "text": text})
 
     return JsonResponse(data={"progress": 50}, code=200, message="annotate success")
