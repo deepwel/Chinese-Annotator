@@ -17,5 +17,5 @@ scikit-learn==0.18.1
 django==2.2.18
 Markdown==2.6.10
 django-cors-headers==2.1.0
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 pytest
