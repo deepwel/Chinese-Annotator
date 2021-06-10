@@ -14,7 +14,7 @@ numpy
 jieba
 docopt
 scikit-learn==0.18.1
-django==2.2.21
+django==2.2.24
 Markdown==2.6.10
 django-cors-headers==2.1.0
 djangorestframework==3.11.2
